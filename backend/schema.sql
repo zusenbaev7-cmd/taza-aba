@@ -6,10 +6,12 @@ create table if not exists public.taza_profiles (
   user_id    uuid primary key references auth.users(id) on delete cascade,
   enc_salt   text not null,              -- base64, 16 байт, случайная соль для ключа шифрования
   kdf_iter   integer not null default 310000 check (kdf_iter >= 310000),
+  wk         jsonb,                      -- обёртки ключа данных: {pw:{iv,ct}, rc:{salt,iter,iv,ct}} — шифротекст (паролем и кодом восстановления)
   iv         text not null,              -- base64, 12 байт
   ct         text not null,              -- base64, AES-GCM шифротекст JSON профиля
   updated_at timestamptz not null default now()
 );
+alter table public.taza_profiles add column if not exists wk jsonb;
 alter table public.taza_profiles enable row level security;
 alter table public.taza_profiles force row level security;
 

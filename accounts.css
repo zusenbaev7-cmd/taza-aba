@@ -20,3 +20,8 @@
 .ac-bad{margin-top:8px;background:rgba(229,72,77,.14);border-radius:10px;padding:8px 10px;font-weight:600}
 .ac-priv li{margin:8px 0;line-height:1.5}.ac-plink{display:block}
 .ac-home .gv-chip{display:inline-block;min-width:34px;text-align:center;padding:2px 7px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;text-shadow:0 1px 1px rgba(0,0,0,.3)}
+.ac-rcbox{border:2px solid var(--leaf)}
+.ac-rc{display:block;font:700 18px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;padding:10px 12px;margin:8px 0;border-radius:10px;background:rgba(127,127,127,.12);word-break:break-all;user-select:all}
+.ac-forgot{margin-top:6px}.ac-forgot summary{cursor:pointer;text-decoration:underline;width:max-content;max-width:100%}
+.ac-forgot[open] summary{margin-bottom:6px}
+.ac-form input:disabled,.ac-form button:disabled{opacity:.6;cursor:not-allowed}

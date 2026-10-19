@@ -1,0 +1,4 @@
+.tf3-row{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 4px}.tf3-row label{display:flex;flex-direction:column;gap:3px;flex:1 1 150px;min-width:0}
+.tf3-row select{width:100%;min-width:0}
+#tfMean{font-weight:600;margin-top:2px}
+.tf-leg .small{align-self:center}
