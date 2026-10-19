@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://zusenbaev7-cmd.github.io/taza-aba/icons/og.png">
 
 <script>/* тема до отрисовки, без вспышки */(function(){var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";document.querySelector('meta[name="theme-color"]').content=d?"#0E1A14":"#EEF1DF";})();</script>
+<script>/* полифиллы для старых Firefox/Safari + класс ff (в Firefox backdrop-filter очень тормозит прокрутку) */(function(){var w=window,h=document.documentElement;if(/Firefox\//.test(navigator.userAgent))h.classList.add("ff");if(!w.structuredClone)w.structuredClone=function(o){return o===undefined?o:JSON.parse(JSON.stringify(o))};if(!w.requestIdleCallback){w.requestIdleCallback=function(f,o){var t=Date.now();return setTimeout(function(){f({didTimeout:false,timeRemaining:function(){return Math.max(0,50-(Date.now()-t))}})},1)};w.cancelIdleCallback=clearTimeout}if(w.AbortSignal&&!AbortSignal.timeout)AbortSignal.timeout=function(ms){var c=new AbortController();setTimeout(function(){c.abort()},ms);return c.signal};})();</script>
 <title>Таза Аба — чистый воздух Бишкека</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd166'/><path d='M20 44c0-14 10-22 26-24-2 16-10 26-24 26' fill='%232e9e5b'/></svg>">
 <link rel="manifest" href="manifest.webmanifest">
@@ -101,7 +102,9 @@
 <script src="icons-nav.js"></script>
 <script src="search.js"></script>
 <script src="features.js"></script>
+<script src="traffic2.js"></script>
 <script src="gov-boot.js"></script>
 <script src="counter.js"></script>
+<script>/* app.js рисует экран до регистрации разделов из features/gov/traffic2 — перерисовать, если прямая ссылка (#traffic, #gov…) открылась как «Главная» */(function(){var t=(location.hash||"#home").slice(1).split("/")[0];if(t&&views[t]&&!document.getElementById("view").classList.contains("v-"+t))route(true);})();</script>
 </body>
 </html>

@@ -29,3 +29,9 @@ html[data-theme="dark"] .ca-pin.ver{background:#123222}
 html[data-theme="dark"] .ca-pin.unv{background:#2a2a24;border-color:#a59c88}
 html[data-theme="dark"] .send-row .sh-a,html[data-theme="dark"] .tr-plant .share-row .sh-a{background:#17241d;color:#e8efe4;border-color:#3b5145}
 html[data-theme="dark"] .ca-empty{border-color:#3b5145}
+.tf2-ctl{padding:10px 14px;margin:8px 0}
+.tf2-ctl input[type=range]{width:100%;accent-color:#e05a2b}
+.tf2-how{padding:10px 14px}.tf2-how summary{cursor:pointer}.tf2-how ul{padding-left:18px}
+.tf-leg b{margin-right:4px}
+.tf2-only{display:flex;gap:6px;align-items:center;margin-top:6px}
+.tf2-only{justify-content:flex-start;text-align:left}.tf2-only input{width:auto!important;flex:0 0 auto;margin:0;min-height:0}

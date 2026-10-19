@@ -211,7 +211,7 @@ async function ftRoads() {
 function ftSimplify(p) { if (p.length < 4) return p; const o = [p[0]]; for (let i = 1; i < p.length - 1; i++) { const a = o[o.length - 1]; if (Math.abs(p[i][0] - a[0]) + Math.abs(p[i][1] - a[1]) > 0.0004) o.push(p[i]); } o.push(p[p.length - 1]); return o; }
 async function ftGreenPoi() {
   const sn = await ftSnap();
-  if (sn && sn.v === 2) return { G: sn.green || [], P: (sn.poi || []).map(([k, n, lat, lon]) => ({ k, n, lat, lon })) };
+  if (sn && sn.v >= 2) return { G: sn.green || [], P: (sn.poi || []).map(([k, n, lat, lon]) => ({ k, n, lat, lon })) };
   if (!ftLive[CITY]) throw ftNoSnap();
   const [s, w, n, e] = ftCityBox();
   const j = await ftOverpass(`green.${CITY}`, `[out:json][timeout:60];(nwr[leisure~"^(park|garden|playground)$"](${s},${w},${n},${e});nwr[landuse~"^(forest|grass|recreation_ground|village_green|meadow|orchard)$"](${s},${w},${n},${e});nwr[natural=wood](${s},${w},${n},${e}););out center qt;(nwr[amenity~"^(school|kindergarten|hospital)$"](${s},${w},${n},${e}););out center tags qt;`);
