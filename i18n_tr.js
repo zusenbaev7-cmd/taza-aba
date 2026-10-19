@@ -125,3 +125,5 @@ Object.values(CITIES).forEach(C => {
   (C.routes || []).forEach(r => { if (r.avoid && !r.avoid.tr) r.avoid.tr = r.avoid.en; });
 });
 DTYPE.apts.tr = "apartman blokları"; DTYPE.private.tr = "müstakil evler"; DTYPE.micro.tr = "mikro bölge"; DTYPE.village.tr = "köy / kasaba";
+
+Object.assign(DICT.tr, {tgAlert:"Telegram uyarıları",tgAlertSub:"Semt AQI eşiğin üstündeyken Telegram mesajı — sekme kapalı olsa bile.",tgAlertGo:"Telegram'da abone ol",tgAlertNeed:"Bot henüz bağlı değil. Sahip: @BotFather ile bot oluşturun, config.js içinde TELEGRAM_BOT ve GitHub Actions'ta TELEGRAM_BOT_TOKEN ayarlayın.",tgAlertHint:"Telegram açılır. Start'a basın — yukarıda seçilen semte abone olursunuz."});

@@ -290,14 +290,15 @@ function viewHome2(el) {
 /* ---------- 4. Меню «Ещё» — сетка ---------- */
 function viewMore2(el) {
   const mt = k => (typeof MT === "function" ? MT(k) : "Maarif");
+  const ico = k => (typeof navIco === "function" ? navIco(k) : "");
   const items = [
-    ["#house", "🏡", t("tab_house"), Q("mHouse")], ["#group", "👥", t("tab_group"), Q("mGroup")],
-    ["#routes", "🚲", t("m_routes"), t("m_routesSub")], ["#complaints", "📸", t("m_complaints"), t("m_complaintsSub")],
-    ["#weather", "🌤️", Q("mWeather"), Q("mWeatherSub")], ["#history", "📈", Q("hist"), Q("histSub")], ["#schools", "🏫", mt("title"), mt("moreSub")],
-    ["#profile", "🧑‍🌾", t("m_profile"), t("m_profileSub")], ["#profile/alertsCard", "🔔", t("m_alerts"), t("m_alertsSub")],
+    ["#house", "house", t("tab_house"), Q("mHouse")], ["#group", "group", t("tab_group"), Q("mGroup")],
+    ["#routes", "routes", t("m_routes"), t("m_routesSub")], ["#complaints", "complaints", t("m_complaints"), t("m_complaintsSub")],
+    ["#weather", "weather", Q("mWeather"), Q("mWeatherSub")], ["#history", "history", Q("hist"), Q("histSub")], ["#schools", "schools", mt("title"), mt("moreSub")],
+    ["#profile", "profile", t("m_profile"), t("m_profileSub")], ["#profile/alertsCard", "alerts", t("m_alerts"), t("m_alertsSub")],
   ];
   el.innerHTML = `<h1>${t("moreTitle")}</h1><p class="sub">${t("moreSub")}</p>
-    <div class="more-grid">${items.map(([h, e, a, b]) => `<a href="${h}" class="card more-tile"><span class="mt-e">${e}</span><b>${a}</b><small>${b}</small></a>`).join("")}</div>
+    <div class="more-grid">${items.map(([h, k, a, b]) => `<a href="${h}" class="card more-tile"><span class="mt-e">${ico(k)}</span><b>${esc(a)}</b><small>${esc(b)}</small></a>`).join("")}</div>
     <div class="foot">${t("footProto")}</div>`;
 }
 

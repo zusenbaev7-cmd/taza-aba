@@ -8,7 +8,7 @@ const FT_T = {
     ca: "Чистый воздух внутри", caSub: "Кафе, коворкинги и ТЦ с очистителями воздуха, где можно переждать смог",
     tf: "Транспорт и смог", tfSub: "Главные дороги, NO₂ по районам и оценка вклада транспорта",
     tr: "Где посадить деревья", trSub: "Кандидаты для посадки: много смога, мало зелени, рядом дороги и школы",
-    lCa: "🫧 Чистый воздух внутри", lTf: "🚗 Транспорт · NO₂", lTr: "🌳 Посадка деревьев", lTt: "🚦 Пробки (TomTom)",
+    lCa: "Чистый воздух внутри", lTf: "Транспорт · NO₂", lTr: "Посадка деревьев", lTt: "🚦 Пробки (TomTom)",
     verified: "проверено", unverified: "не проверено", caEmptyH: "Проверенных мест пока нет",
     caEmpty: "Мы не выдумываем места. Знаете кафе, коворкинг или ТЦ, где работает очиститель воздуха (лучше HEPA H13/H14)? Предложите его — оно появится у вас на карте с пометкой «не проверено», а отправленное в проект после проверки попадёт в общий список.",
     caOwner: "Для владельца проекта: проверенные места добавляются в файл data/clean-places.json.",
@@ -47,7 +47,7 @@ const FT_T = {
     ca: "Ичинде таза аба", caSub: "Аба тазалагычы бар кафе, коворкинг жана соода борборлору — смогду күтүп турууга",
     tf: "Транспорт жана смог", tfSub: "Негизги жолдор, райондогу NO₂ жана транспорттун үлүшүн баалоо",
     tr: "Дарак кайда отургузуу керек", trSub: "Отургузууга талапкерлер: смог көп, жашыл аз, жанында жол жана мектеп",
-    lCa: "🫧 Ичинде таза аба", lTf: "🚗 Транспорт · NO₂", lTr: "🌳 Дарак отургузуу", lTt: "🚦 Тыгын (TomTom)",
+    lCa: "Ичинде таза аба", lTf: "Транспорт · NO₂", lTr: "Дарак отургузуу", lTt: "🚦 Тыгын (TomTom)",
     verified: "текшерилген", unverified: "текшерилген эмес", caEmptyH: "Азырынча текшерилген жер жок",
     caEmpty: "Биз жерлерди ойлоп чыгарбайбыз. Аба тазалагычы (жакшысы HEPA H13/H14) иштеген кафе, коворкинг же соода борборун билесизби? Сунуштаңыз — ал картаңызда «текшерилген эмес» белгиси менен чыгат, ал эми долбоорго жөнөтүлгөнү текшерүүдөн кийин жалпы тизмеге кошулат.",
     caOwner: "Долбоордун ээси үчүн: текшерилген жерлер data/clean-places.json файлына кошулат.",
@@ -86,7 +86,7 @@ const FT_T = {
     ca: "Clean air indoors", caSub: "Cafés, coworkings and malls with air purifiers where you can wait out smog",
     tf: "Traffic and smog", tfSub: "Major roads, NO₂ by district and an estimate of traffic's share",
     tr: "Where to plant trees", trSub: "Planting candidates: lots of smog, little greenery, near roads and schools",
-    lCa: "🫧 Clean air indoors", lTf: "🚗 Traffic · NO₂", lTr: "🌳 Tree planting", lTt: "🚦 Traffic jams (TomTom)",
+    lCa: "Clean air indoors", lTf: "Traffic · NO₂", lTr: "Tree planting", lTt: "🚦 Traffic jams (TomTom)",
     verified: "verified", unverified: "not verified", caEmptyH: "No verified places yet",
     caEmpty: "We don't make places up. Know a café, coworking or mall with a working air purifier (ideally HEPA H13/H14)? Suggest it — it appears on your map marked “not verified”, and once sent to the project and checked it can join the shared list.",
     caOwner: "For the project owner: verified places go into data/clean-places.json.",
@@ -125,7 +125,7 @@ const FT_T = {
     ca: "İç mekânda temiz hava", caSub: "Dumanı beklemek için hava temizleyicili kafe, ortak çalışma alanı ve AVM'ler",
     tf: "Trafik ve duman", tfSub: "Ana yollar, semtlere göre NO₂ ve trafiğin payına dair tahmin",
     tr: "Nereye ağaç dikilir", trSub: "Dikim adayları: duman çok, yeşil az, yol ve okullara yakın",
-    lCa: "🫧 İçeride temiz hava", lTf: "🚗 Trafik · NO₂", lTr: "🌳 Ağaç dikimi", lTt: "🚦 Trafik (TomTom)",
+    lCa: "İçeride temiz hava", lTf: "Trafik · NO₂", lTr: "Ağaç dikimi", lTt: "🚦 Trafik (TomTom)",
     verified: "doğrulandı", unverified: "doğrulanmadı", caEmptyH: "Henüz doğrulanmış yer yok",
     caEmpty: "Yer uydurmuyoruz. Hava temizleyicisi (tercihen HEPA H13/H14) çalışan bir kafe, ortak çalışma alanı veya AVM biliyor musunuz? Önerin — haritanızda “doğrulanmadı” işaretiyle görünür; projeye gönderilip kontrol edildikten sonra ortak listeye eklenebilir.",
     caOwner: "Proje sahibi için: doğrulanmış yerler data/clean-places.json dosyasına eklenir.",
@@ -232,7 +232,7 @@ const CA_TYPES = { cafe: ["tCafe", "☕"], coworking: ["tCowork", "💻"], mall:
 const CA_PUR = { h13: "pH13", hepa: "pHepa", other: "pOther", unk: "pUnk" };
 const caIcon = (p, ver) => L.divIcon({ className: "", html: `<div class="ca-pin ${ver ? "ver" : "unv"}">${(CA_TYPES[p.type] || CA_TYPES.other)[1]}${ver ? '<b class="ca-badge" aria-hidden="true">✓</b>' : ""}</div>`, iconSize: [32, 32], iconAnchor: [16, 16] });
 function caPop(p, ver) {
-  return `<b>${esc(p.name)}</b><br><span class="chip ${ver ? "ok" : "demo"}">${ver ? "✓ " + FT("verified") : FT("unverified")}</span><br>${esc(FT((CA_TYPES[p.type] || CA_TYPES.other)[0]))}${p.address ? " · " + esc(p.address) : ""}<br>🫧 ${esc(p.purifier && CA_PUR[p.purifier] ? FT(CA_PUR[p.purifier]) : p.purifier || "—")}${p.measured || p.meas != null ? `<br>📏 ${esc(p.measured || ("PM2.5 " + p.meas + " µg/m³" + (p.dev ? " · " + p.dev : "")))}` : ""}${ver && p.source ? `<br><small>${esc(p.source)}${p.verified ? " · " + esc(p.verified) : ""}</small>` : ""}`;
+  return `<b>${esc(p.name)}</b><br><span class="chip ${ver ? "ok" : "demo"}">${ver ? "✓ " + FT("verified") : FT("unverified")}</span><br>${esc(FT((CA_TYPES[p.type] || CA_TYPES.other)[0]))}${p.address ? " · " + esc(p.address) : ""}<br>${esc(p.purifier && CA_PUR[p.purifier] ? FT(CA_PUR[p.purifier]) : p.purifier || "—")}${p.measured || p.meas != null ? `<br>📏 ${esc(p.measured || ("PM2.5 " + p.meas + " µg/m³" + (p.dev ? " · " + p.dev : "")))}` : ""}${ver && p.source ? `<br><small>${esc(p.source)}${p.verified ? " · " + esc(p.verified) : ""}</small>` : ""}`;
 }
 function caText(p) {
   return [FT("plTxt"), `${FT("fName")}: ${p.name}`, `${FT("fType")}: ${FT((CA_TYPES[p.type] || CA_TYPES.other)[0])}`, `${FT("fAddr")}: ${p.address || "—"}`,
@@ -283,7 +283,7 @@ function caLayer() {
 }
 async function viewCleanAir(el) {
   const V = (await caLoadVerified()).filter(p => p.city === CITY), mine = caMine().filter(p => p.city === CITY);
-  el.innerHTML = `<h1>🫧 ${FT("ca")}</h1><p class="sub">${FT("caSub")}</p>
+  el.innerHTML = `<h1>${FT("ca")}</h1><p class="sub">${FT("caSub")}</p>
     <div class="map-grid"><div class="map-col"><div id="caBig" class="mini-map" style="height:360px"></div>
       <div class="toggles"><button class="btn" id="caAdd" type="button">${FT("suggest")}</button></div></div>
     <div class="list-col">
@@ -307,7 +307,7 @@ async function caAdvisorHint(el) {
   const V = (await caLoadVerified()).filter(p => p.city === CITY); if (!V.length) return;
   const n = V.map(p => ({ p, k: kmDist(d, p) })).sort((x, y) => x.k - y.k)[0];
   if (!el.isConnected || el.querySelector(".ca-hint")) return;
-  el.insertAdjacentHTML("afterbegin", `<div class="card ca-hint">🫧 ${esc(FT("advCa", { n: n.p.name, k: fmt(n.k, 1) }))} <a href="#cleanair">→</a></div>`);
+  el.insertAdjacentHTML("afterbegin", `<div class="card ca-hint">${esc(FT("advCa", { n: n.p.name, k: fmt(n.k, 1) }))} <a href="#cleanair">→</a></div>`);
 }
 
 /* ---------- B) Транспорт и смог ---------- */
@@ -359,7 +359,7 @@ function tfHowOpen() {
 async function tfCardFill(box, d) {
   box.innerHTML = `<p class="small muted">${FT("loadingH")}</p>`;
   try { const E = tfEstimate(await tfHourly(d)); if (!box.isConnected) return; if (!E) { box.innerHTML = `<p class="small muted">${FT("noData")}</p>`; return; }
-    box.innerHTML = `<div class="tf-bar" role="img" aria-label="${FT("trans")} ${E.tp}% / ${FT("heat")} ${E.hp}%"><span class="tf-t" style="width:${E.tp}%">🚗 ${E.tp}%</span><span class="tf-h" style="width:${E.hp}%">🔥 ${E.hp}%</span></div>
+    box.innerHTML = `<div class="tf-bar" role="img" aria-label="${FT("trans")} ${E.tp}% / ${FT("heat")} ${E.hp}%"><span class="tf-t" style="width:${E.tp}%">${E.tp}%</span><span class="tf-h" style="width:${E.hp}%">🔥 ${E.hp}%</span></div>
       <div class="row between small" style="margin-top:4px"><span>${FT("trans")}</span><span>${FT("heat")}</span></div>
       <p class="small muted" style="margin-top:8px"><b>${FT("estNote")}</b></p>
       <div class="small">${esc(FT("inputs", { d: dName(d) }))}<ul class="tf-in"><li>${FT("rush")}: <b>${E.R == null ? "—" : fmt(E.R, 2)}</b></li><li>${FT("ratioNP")}: <b>${E.np == null ? "—" : fmt(E.np, 2)}</b></li><li>${FT("ratioPP")}: <b>${E.pp == null ? "—" : fmt(E.pp, 2)}</b></li><li>${FT("cold")}: <b>${E.temp == null ? "—" : fmt(E.temp, 1) + " °C"}</b></li></ul></div>`;
@@ -367,7 +367,7 @@ async function tfCardFill(box, d) {
 }
 function viewTraffic(el) {
   const d = DISTRICTS.find(x => x.id === state.district) || DISTRICTS[0];
-  el.innerHTML = `<h1>🚗 ${FT("tf")}</h1><p class="sub">${FT("tfSub")}</p>
+  el.innerHTML = `<h1>${FT("tf")}</h1><p class="sub">${FT("tfSub")}</p>
     <div class="map-grid"><div class="map-col"><div id="tfMap" class="mini-map" style="height:400px"></div>
       <div class="legend tf-leg">${[[5, "<10"], [15, "10–25"], [30, "25–40"], [50, "40–60"], [70, "60+"]].map(([v, l]) => `<span style="background:${no2Col(v)}">NO₂ ${l}</span>`).join("")}</div>
       <p class="small muted" id="tfStat">${FT("roadsLoad")}</p><p class="small muted">${FT("roadsSrc")}</p>
@@ -410,13 +410,13 @@ function trLayer(onState) {
   lg.on("add", async () => { if (built) return; built = true;
     try { const C = await trCandidates(); if (!ftAlive(lg)) { built = false; return; } onState && onState(C.length);
       C.forEach(c => L.circle([c.lat, c.lon], { radius: 160, color: "#1f7a3a", weight: 2, dashArray: "4 4", fillColor: "#3ccf6b", fillOpacity: 0.25 })
-        .bindPopup(() => `<b>🌳 ${FT("cand")}</b><br><small>${FT("whyH")}</small><ul class="small" style="margin:4px 0 0 16px;padding:0"><li>${FT("wAqi", { a: c.a })}</li><li>${FT("wGreen", { m: c.gm >= 9 ? ">1000" : Math.round(c.gm * 1000) })}</li>${c.rn ? `<li>${esc(FT("wRoad", { r: c.rn }))}</li>` : ""}${c.sn ? `<li>${esc(FT("wSchool", { s: c.sn }))}</li>` : ""}</ul>`).addTo(lg));
+        .bindPopup(() => `<b>${FT("cand")}</b><br><small>${FT("whyH")}</small><ul class="small" style="margin:4px 0 0 16px;padding:0"><li>${FT("wAqi", { a: c.a })}</li><li>${FT("wGreen", { m: c.gm >= 9 ? ">1000" : Math.round(c.gm * 1000) })}</li>${c.rn ? `<li>${esc(FT("wRoad", { r: c.rn }))}</li>` : ""}${c.sn ? `<li>${esc(FT("wSchool", { s: c.sn }))}</li>` : ""}</ul>`).addTo(lg));
     } catch (e) { built = false; if (e.nosnap) { onState ? onState("nosnap") : toast(FT("noSnap")); } else { console.warn("trees:", e.message); onState ? onState("err") : toast(FT("roadsErr")); } } });
   return lg;
 }
 function viewTrees(el) {
   const bk = CITY === "bishkek", trc = cityObj().country === "tr";
-  el.innerHTML = `<h1>🌳 ${FT("tr")}</h1><p class="sub">${FT("trSub")}</p>
+  el.innerHTML = `<h1>${FT("tr")}</h1><p class="sub">${FT("trSub")}</p>
     <div class="map-grid"><div class="map-col"><div id="trMap" class="mini-map" style="height:400px"></div>
       <p class="small muted" id="trStat">${FT("trLoad")}</p><p class="small muted">${FT("trSrc")}</p></div>
     <div class="list-col">
@@ -427,7 +427,7 @@ function viewTrees(el) {
       <div class="card"><h3>📝 ${FT("permH")}</h3><p>${FT(bk ? "permBk" : trc ? "permTr" : "permGen")}</p>${bk ? `<p class="small">${FT("srcLbl")}: ${ftLink(SRC_LINKS.zelen, "TopNews.kg")}</p>` : ""}</div>
     </div></div><div class="foot">${t("footProto")}</div>`;
   const m = mkMap("trMap", { zoomControl: true }).setView(cityObj().center, cityObj().zoom || 12); map = m; baseTiles(m);
-  trLayer(st => ftStat("#trStat", st, n => n ? "🌳 " + FT("candN", { n }) + " · " + FT("cand") : FT("trNone"))).addTo(m);
+  trLayer(st => ftStat("#trStat", st, n => n ? "" + FT("candN", { n }) + " · " + FT("cand") : FT("trNone"))).addTo(m);
   const upd = () => { const n = treesN(), txt = FT("plantShare", { n }), e = encodeURIComponent; $("#trN").textContent = FT("plantedN", { n });
     $("#trShTg").href = `https://t.me/share/url?url=${e(SITE_URL)}&text=${e(txt)}`; $("#trShWa").href = `https://wa.me/?text=${e(txt + " " + SITE_URL)}`; $("#trShCp").onclick = async () => { await copyText(txt + " " + SITE_URL); toast(FT("copied")); }; };
   upd(); $("#trPlant").onclick = () => { localStorage.setItem(TREE_KEY, String(treesN() + 1)); upd(); };
@@ -442,8 +442,9 @@ const FT_ON = { ca: true, tf: true, tr: true };   // какие слои вкл�
   if (FT_ON.tr) { views.trees = viewTrees; TAB_OF.trees = "more"; }
   const _more = views.more;
   views.more = el => { _more(el); const g = el.querySelector(".more-grid");
-    const items = [FT_ON.ca && ["#cleanair", "🫧", FT("ca"), FT("caSub")], FT_ON.tf && ["#traffic", "🚗", FT("tf"), FT("tfSub")], FT_ON.tr && ["#trees", "🌳", FT("tr"), FT("trSub")]].filter(Boolean);
-    const html = items.map(([h, e, a, b]) => `<a href="${h}" class="card more-tile"><span class="mt-e">${e}</span><b>${esc(a)}</b><small>${esc(b)}</small></a>`).join("");
+    const ico = k => (typeof navIco === "function" ? navIco(k) : "");
+    const items = [FT_ON.ca && ["#cleanair", "cleanair", FT("ca"), FT("caSub")], FT_ON.tf && ["#traffic", "traffic", FT("tf"), FT("tfSub")], FT_ON.tr && ["#trees", "trees", FT("tr"), FT("trSub")]].filter(Boolean);
+    const html = items.map(([h, k, a, b]) => `<a href="${h}" class="card more-tile"><span class="mt-e">${ico(k)}</span><b>${esc(a)}</b><small>${esc(b)}</small></a>`).join("");
     if (g) g.insertAdjacentHTML("beforeend", html); else el.insertAdjacentHTML("beforeend", `<div class="more-grid">${html}</div>`); };
   const LKEY = "tazaAba.ftLayers", st = (() => { try { return JSON.parse(localStorage.getItem(LKEY) || "{}"); } catch (e) { return {}; } })();
   const _map = views.map;

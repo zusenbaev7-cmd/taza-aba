@@ -165,7 +165,21 @@ function renderChrome() {
   else { b.className = "data-badge demo"; b.innerHTML = `<span class="dot"></span>${Q("nodata")}`; }
   $(".brand-sub").textContent = t("brandSub");
   $(".brand-name").textContent = (LANG === "en" || LANG === "tr") ? "Taza Aba" : "Таза Аба";
-  document.querySelectorAll(".tabbar a").forEach(a => { $("span", a).textContent = t(TAB_LABEL[a.dataset.tab]); });
+  document.querySelectorAll(".tabbar a").forEach(a => {
+    const sp = $("span", a); if (!sp) return;
+    const k = a.dataset.tab;
+    if (TAB_LABEL[k]) sp.textContent = t(TAB_LABEL[k]);
+    else if (k === "weather") sp.textContent = Q("mWeather");
+    else if (k === "history") sp.textContent = Q("hist");
+    else if (k === "schools") sp.textContent = typeof MT === "function" ? MT("title") : "Maarif";
+    else if (k === "routes") sp.textContent = t("m_routes");
+    else if (k === "complaints") sp.textContent = t("m_complaints");
+    else if (k === "profile") sp.textContent = t("m_profile");
+    else if (k === "alerts") sp.textContent = t("m_alerts");
+    else if (k === "cleanair" && typeof FT === "function") sp.textContent = FT("ca");
+    else if (k === "traffic" && typeof FT === "function") sp.textContent = FT("tf");
+    else if (k === "trees" && typeof FT === "function") sp.textContent = FT("tr");
+  });
   document.querySelectorAll("#langSw button").forEach(x => x.classList.toggle("on", x.dataset.lang === LANG));
   renderThemeBtn();
   const cs = $("#citySel");
@@ -207,12 +221,18 @@ function applyCity(id) {
 let map = null;
 const views = { home: viewHome2, map: viewMap, house: viewHouse, group: viewGroup, advisor: el => viewAdvisor2(el), more: viewMore2,
   profile: viewProfile, complaints: el => viewComplaints2(el), routes: el => viewRoutes2(el), news: el => viewNews(el), weather: el => viewNews(el) };
-const TAB_OF = { house: "more", group: "more", profile: "more", complaints: "more", routes: "more", weather: "news" };
+const TAB_OF = { house: "more", group: "more", profile: "more", complaints: "more", routes: "more", weather: "news", history: "more", schools: "more", cleanair: "more", traffic: "more", trees: "more" };
 function route(keepScroll) {
   const [tab, anchor] = (location.hash || "#home").slice(1).split("/");
   const v = views[tab] ? tab : "home";
   const activeTab = TAB_OF[v] || v;
-  document.querySelectorAll(".tabbar a").forEach(a => a.classList.toggle("active", a.dataset.tab === activeTab));
+  const hash = location.hash || "#home";
+  document.querySelectorAll(".tabbar a").forEach(a => {
+    const href = a.getAttribute("href") || "";
+    const sideHit = a.classList.contains("side-only") && (href === hash || href === "#" + v);
+    const primaryHit = !a.classList.contains("side-only") && a.dataset.tab === activeTab && !document.querySelector(`.tabbar a.side-only[href="${CSS.escape(hash)}"]`);
+    a.classList.toggle("active", sideHit || primaryHit);
+  });
   if (map) { try { map.stop(); map.off(); map.remove(); } catch (e) { /* карта уже удалена */ } map = null; }
   const el = $("#view");
   const y = window.scrollY;
@@ -1058,6 +1078,14 @@ function viewProfile(el) {
       ${tomorrow != null ? `<div class="small" style="font-weight:800;margin-top:10px;color:${level(tomorrow).color}">📅 ${t("tomorrowFc", { in: dLoc(byId(al.district)), aqi: tomorrow })}</div>` : ""}
       <button class="btn sun block" id="alTest" style="margin-top:12px">${t("testBtn")}</button>
       <div class="small muted" style="font-weight:700;margin-top:8px">${t("checkNote")}</div>
+      <hr style="border:0;border-top:1px dashed var(--line);margin:14px 0">
+      <b style="font-size:15px">✈️ ${t("tgAlert")}</b>
+      <div class="small muted" style="font-weight:700;margin:4px 0 8px">${t("tgAlertSub")}</div>
+      ${(() => { const bot = (window.TAZA_CONFIG && TAZA_CONFIG.TELEGRAM_BOT || "").replace(/^@/, "");
+        if (!bot) return `<p class="small muted" style="font-weight:700">${t("tgAlertNeed")}</p>`;
+        const start = encodeURIComponent(al.district || state.district);
+        return `<a class="btn block" id="tgSub" href="https://t.me/${bot}?start=${start}" target="_blank" rel="noopener">${t("tgAlertGo")}</a>
+          <div class="small muted" style="font-weight:700;margin-top:6px">${t("tgAlertHint")}</div>`; })()}
     </div>
 
     <h2>${t("myImpact")}</h2>

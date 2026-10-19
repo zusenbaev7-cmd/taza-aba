@@ -19,4 +19,6 @@ window.TAZA_CONFIG = Object.assign({
   /* Куда отправлять предложения мест «Чистый воздух внутри»: e-mail и/или Telegram-имя проекта (без @). Пусто = пользователь выбирает сам. */
   PROJECT_EMAIL: "",
   PROJECT_TG: "",
+  /* TELEGRAM_BOT — username бота смог-алертов без @ (например "taza_aba_bot"). Пусто = кнопка подписки скрыта. */
+  TELEGRAM_BOT: "",
 }, window.TAZA_CONFIG || {});

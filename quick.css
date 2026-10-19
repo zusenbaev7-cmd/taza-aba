@@ -96,3 +96,6 @@ html[data-theme="dark"] .send-row .sh-a{background:#17251D;color:#EDE6D6;border-
 .ms-pin.sq{width:26px;height:26px;border-radius:6px}
 .ms-pin.dm{width:26px;height:26px;transform:rotate(45deg);border-radius:4px;margin:4px}.ms-pin.dm span{transform:rotate(-45deg)}
 html[data-theme="dark"] .src-list li{background:#ffffff08;border-color:#ffffff14}
+.more-tile .mt-e{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:var(--green-100,#e7f0e4);color:var(--green-700,#1f5a3d)}
+.more-tile .mt-e svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html[data-theme="dark"] .more-tile .mt-e{background:#1a2a21;color:#9fd4a8}

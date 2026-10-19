@@ -1,0 +1,5 @@
+{
+  "about": "Подписчики Telegram-алертов. Файл обновляет workflow/бот. Не хранить PII кроме chat_id.",
+  "defaultThreshold": 100,
+  "subscribers": []
+}
