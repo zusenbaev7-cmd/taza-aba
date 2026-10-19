@@ -21,4 +21,6 @@ window.TAZA_CONFIG = Object.assign({
   PROJECT_TG: "",
   /* TELEGRAM_BOT — username бота смог-алертов без @ (например "taza_aba_bot"). Пусто = кнопка подписки скрыта. */
   TELEGRAM_BOT: "",
+  /* GOATCOUNTER — код сайта GoatCounter (например "taza-aba" для taza-aba.goatcounter.com) или полный URL /count. Пусто = выключено. */
+  GOATCOUNTER: "",
 }, window.TAZA_CONFIG || {});
