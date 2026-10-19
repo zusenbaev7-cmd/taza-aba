@@ -9,9 +9,14 @@
 /* SITE_URL — публичный адрес сайта со слешем на конце (для ссылок «Поделиться» и og:image), например
  *   "https://USER.github.io/taza-aba/". Пусто = берётся текущий адрес страницы. mkzip.py подставляет его в og:url/og:image. */
 window.TAZA_CONFIG = Object.assign({
-  SITE_URL: "",
+  SITE_URL: "https://zusenbaev7-cmd.github.io/taza-aba/",
   AIRNOW_KEY: "",
   WAQI_TOKEN: "",
   OPENAQ_KEY: "",
   OPENAQ_BASE: "https://api.openaq.org",
+  /* TOMTOM_KEY — живые пробки (TomTom Traffic Flow, бесплатный ключ: https://developer.tomtom.com/). Пусто = слой выключен, запросов нет. */
+  TOMTOM_KEY: "",
+  /* Куда отправлять предложения мест «Чистый воздух внутри»: e-mail и/или Telegram-имя проекта (без @). Пусто = пользователь выбирает сам. */
+  PROJECT_EMAIL: "",
+  PROJECT_TG: "",
 }, window.TAZA_CONFIG || {});

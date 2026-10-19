@@ -12,6 +12,7 @@ const DTYPE = {
   apts:    { ru: "многоэтажки", ky: "көп кабаттуу үйлөр", en: "apartment blocks" },
   private: { ru: "частный сектор", ky: "жеке сектор", en: "private houses" },
   micro:   { ru: "микрорайон", ky: "кичи район", en: "microdistrict" },
+  village: { ru: "село / посёлок", ky: "айыл / кыштак", en: "village" },
 };
 const BK_DISTRICTS = [
   { id: "center",   lat: 42.8765, lon: 74.6040, factor: 1.00, coalShare: 0.05, type: "apts",

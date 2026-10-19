@@ -454,7 +454,7 @@ const escRx = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 function cityNewsRx() {
   const c = cityObj(), parts = [c.name.ru, c.name.ky, c.name.en, c.name.tr].filter((v, i, arr) => v && arr.indexOf(v) === i).map(escRx);
   const extra = CITY_RX[CITY] || c.newsRx;
-  const base = c.id === "osh" ? null : new RegExp(parts.join("|"), "i");
+  const base = c.id === "osh" || (c.newsRx && c.country !== "tr") ? null : new RegExp(parts.join("|"), "i");   // у KG-городов с newsRx — только он (с границами слова: «Кант» ≠ «Кантор»)
   return { test: s => (base ? base.test(s) : false) || (extra ? extra.test(s) : false) };
 }
 function newsHTML() {

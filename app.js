@@ -253,6 +253,8 @@ const RED_MOTION = (() => { try { return matchMedia("(prefers-reduced-motion: re
 const LOWEND = RED_MOTION || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3;
 const IS_MOB = (() => { try { return matchMedia("(max-width: 1023px), (pointer: coarse)").matches; } catch (e) { return false; } })();
 document.documentElement.classList.toggle("lowend", LOWEND);
+/* защита от гонки: отложенный колбэк/анимация трогает уже удалённую карту (быстрое переключение разделов) */
+if (window.L && L.Map && !L.Map.prototype.__tzGuard) { const gp = L.Map.prototype._getMapPanePos; L.Map.prototype._getMapPanePos = function () { return this._mapPane ? gp.call(this) : L.point(0, 0); }; L.Map.prototype.__tzGuard = true; }
 function mkMap(id, o = {}) {
   return L.map(id, Object.assign({ preferCanvas: true, renderer: L.canvas({ padding: 0.3 }), fadeAnimation: !LOWEND, zoomAnimation: !LOWEND, markerZoomAnimation: !LOWEND, inertia: !LOWEND }, o));
 }

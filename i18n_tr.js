@@ -124,4 +124,4 @@ Object.values(CITIES).forEach(C => {
   C.districts.forEach(d => { d.name.tr = placeTR(d.name, isTR); if (d.loc) d.loc.tr = d.name.tr; });
   (C.routes || []).forEach(r => { if (r.avoid && !r.avoid.tr) r.avoid.tr = r.avoid.en; });
 });
-DTYPE.apts.tr = "apartman blokları"; DTYPE.private.tr = "müstakil evler"; DTYPE.micro.tr = "mikro bölge";
+DTYPE.apts.tr = "apartman blokları"; DTYPE.private.tr = "müstakil evler"; DTYPE.micro.tr = "mikro bölge"; DTYPE.village.tr = "köy / kasaba";

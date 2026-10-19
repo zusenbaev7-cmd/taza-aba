@@ -1,0 +1,31 @@
+/* A/B/C — «Чистый воздух внутри», «Транспорт и смог», «Где посадить деревья» */
+.ca-pin{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.ca-pin.ver{background:#e7f7ec;border:2.5px solid #1f7a3a}
+.ca-pin.unv{background:#f3f1ea;border:2.5px dashed #8a8170;opacity:.92}
+.ca-badge{position:absolute;right:-5px;top:-5px;width:16px;height:16px;border-radius:50%;background:#1f7a3a;color:#fff;font-size:11px;line-height:16px;text-align:center}
+.ca-empty{border:2px dashed var(--line,#d9cfb8)}
+.ca-empty p{margin:6px 0 0}
+.ca-item{font-size:14px;line-height:1.45}
+.ca-item.ver{border-left:4px solid #1f7a3a}
+.ca-hint{border-left:4px solid #1f7a3a;font-weight:700}
+.ca-form{max-height:92vh;overflow:auto}
+.ca-form .mini-map{border-radius:12px;margin-top:4px}
+.ca-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.ca-2{grid-template-columns:1fr}}
+.send-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.send-row .sh-a{font-size:13px;padding:7px 10px}
+.tr-plant .share-row .sh-a{background:var(--paper,#fff);color:var(--walnut,#2b1d12);border:1.5px dashed var(--line,#d9cfb8)}
+.tf-leg span{color:#111}
+.tf-bar{display:flex;height:30px;border-radius:999px;overflow:hidden;margin-top:10px;font-weight:800;font-size:13px}
+.tf-bar span{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;min-width:0}
+.tf-t{background:#5b7cfa;color:#fff}.tf-h{background:#ff8a3d;color:#111}
+.tf-in{margin:4px 0 0 18px;padding:0}
+.tf-card select{width:100%;margin-bottom:6px}
+.tf-how{max-height:90vh;overflow:auto;line-height:1.5}
+.tf-how ol{padding-left:20px}.tf-how h4{margin:12px 0 4px}
+.ft-toggle{white-space:nowrap}
+.list-col .card h3{margin:0 0 6px}
+html[data-theme="dark"] .ca-pin.ver{background:#123222}
+html[data-theme="dark"] .ca-pin.unv{background:#2a2a24;border-color:#a59c88}
+html[data-theme="dark"] .send-row .sh-a,html[data-theme="dark"] .tr-plant .share-row .sh-a{background:#17241d;color:#e8efe4;border-color:#3b5145}
+html[data-theme="dark"] .ca-empty{border-color:#3b5145}
