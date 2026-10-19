@@ -48,10 +48,10 @@ async function tg(method, body) {
 }
 
 const MSG = {
-  ru: (n, a, p) => `⚠️ Смог в «${n}»: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nОткройте карту: https://zusenbaev7-cmd.github.io/taza-aba/#map\n/stop — отписаться`,
-  ky: (n, a, p) => `⚠️ «${n}» аймагында смог: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nКарта: https://zusenbaev7-cmd.github.io/taza-aba/#map\n/stop — жазылууну токтотуу`,
-  en: (n, a, p) => `⚠️ Smog in “${n}”: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nMap: https://zusenbaev7-cmd.github.io/taza-aba/#map\n/stop to unsubscribe`,
-  tr: (n, a, p) => `⚠️ “${n}” semtinde duman: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nHarita: https://zusenbaev7-cmd.github.io/taza-aba/#map\n/stop — abonelikten çık`,
+  ru: (n, a, p) => `⚠️ Смог в «${n}»: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nОткройте карту: https://taza-aba.surge.sh/#map\n/stop — отписаться`,
+  ky: (n, a, p) => `⚠️ «${n}» аймагында смог: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nКарта: https://taza-aba.surge.sh/#map\n/stop — жазылууну токтотуу`,
+  en: (n, a, p) => `⚠️ Smog in “${n}”: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nMap: https://taza-aba.surge.sh/#map\n/stop to unsubscribe`,
+  tr: (n, a, p) => `⚠️ “${n}” semtinde duman: US AQI ${a}${p != null ? `, PM2.5 ${Math.round(p)} µg/m³` : ""}.\nHarita: https://taza-aba.surge.sh/#map\n/stop — abonelikten çık`,
 };
 
 (async () => {
