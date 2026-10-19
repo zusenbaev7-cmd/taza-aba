@@ -1,0 +1,27 @@
+/* Таза Аба — защита от горизонтального переполнения (грузится последним).
+ * Причина бага: колонки grid «1fr» имеют min-width:auto = min-content содержимого; лента часового прогноза
+ * (flex, 24+ карточки) растягивала колонку новостей/погоды шире экрана → вся страница уезжала вбок. */
+html,body{max-width:100%;overflow-x:clip}
+.view,#view{min-width:0;max-width:100%;overflow-x:clip}
+.view>*,.card,.col,.map-col,.list-col{min-width:0;max-width:100%}
+.news-grid>*,.home-grid>*,.map-grid>*,.h-grid>*,.mf-grid>*,.mf-layout>*,.v-group>*,.v-routes>*,.v-complaints>*,.v-more>*,.v-profile>*,
+#results>*,.stat-grid>*,.more-grid>*,.wx-grid>*,.forecast>*,.inputs>*,.pgrid>*,.h-kpis>*,.mf-off-g>*,.badges>*{min-width:0}
+@media (min-width:1024px){.news-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (min-width:1024px){.v-group,.v-routes,.v-complaints,.v-more{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.h-grid{grid-template-columns:minmax(0,1fr)}@media (min-width:900px){.h-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+/* лента часового прогноза — свой горизонтальный скролл, страницу не расширяет */
+.wx-hours{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+/* длинные строки (советы, инверсия, адреса, ссылки) переносятся */
+.view p,.view .card,.view li,.view .small,.view .sub,.view h1,.view h2,.view h3{overflow-wrap:anywhere}
+.view .card .chip,.view .badge,.view em,.view .aqi-pin{overflow-wrap:normal}
+.view img,.view svg,.view video,.view table,.view pre{max-width:100%}
+/* боковая панель с орнаментом всегда поверх и у своего края */
+@media (min-width:1024px){.tabbar{z-index:1001}}
+/* быстрые кнопки на главной: длинные кыргызские подписи не распирают сетку */
+.quick>*,.tabbar>*{min-width:0}
+.quick a{overflow-wrap:anywhere;hyphens:auto}
+/* кластеры районов на карте */
+.aqi-pin.aqi-cl{flex-direction:column;line-height:1;font-size:13px;border-style:double}
+.aqi-pin.aqi-cl small{font-size:9px;font-weight:800;opacity:.9}
+.dlist{max-height:70vh;overflow-y:auto}
+.d-search{display:flex;gap:6px;margin-top:8px}.d-search input{flex:1;min-width:0;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:inherit;font:inherit}

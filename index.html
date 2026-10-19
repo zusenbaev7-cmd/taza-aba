@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EEF1DF">
+<meta name="description" content="Таза Аба — качество воздуха по районам Бишкека и городов Кыргызстана (и Турции) в реальном времени: AQI, прогноз смога, советы и жалобы на дым.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Таза Аба">
+<meta property="og:url" content="./">
+<meta property="og:title" content="Таза Аба — чистый воздух рядом с домом">
+<meta property="og:description" content="Реальный AQI по районам, риск вечернего смога, эко-маршруты и честные жалобы на дым. Данные Open-Meteo и Sensor.Community.">
+<meta property="og:image" content="icons/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Таза Аба — тундук, название и слоган">
+<meta property="og:locale" content="ru_RU"><meta property="og:locale:alternate" content="ky_KG"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Таза Аба — чистый воздух рядом с домом">
+<meta name="twitter:description" content="Реальный AQI по районам, риск вечернего смога, эко-маршруты и честные жалобы на дым.">
+<meta name="twitter:image" content="icons/og.png">
+
+<script>/* тема до отрисовки, без вспышки */(function(){var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";document.querySelector('meta[name="theme-color"]').content=d?"#0E1A14":"#EEF1DF";})();</script>
+<title>Таза Аба — чистый воздух Бишкека</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd166'/><path d='M20 44c0-14 10-22 26-24-2 16-10 26-24 26' fill='%232e9e5b'/></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="ethno.css">
+<link rel="stylesheet" href="dark.css">
+<link rel="stylesheet" href="quick.css">
+<link rel="stylesheet" href="maarif.css">
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="mobile.css">
+
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><div class="orn-strip" aria-hidden="true"></div>
+    <div class="brand">
+      <svg class="logo tunduk" viewBox="0 0 64 64" aria-hidden="true"><g fill="#F2B705"><path d="M51.0 32.0L61.9 33.8L61.9 30.2z"/><path d="M50.4 36.9L60.5 41.5L61.4 38.0z"/><path d="M48.5 41.5L57.0 48.5L58.8 45.4z"/><path d="M45.4 45.4L51.9 54.4L54.4 51.9z"/><path d="M41.5 48.5L45.4 58.8L48.5 57.0z"/><path d="M36.9 50.4L38.0 61.4L41.5 60.5z"/><path d="M32.0 51.0L30.2 61.9L33.8 61.9z"/><path d="M27.1 50.4L22.5 60.5L26.0 61.4z"/><path d="M22.5 48.5L15.5 57.0L18.6 58.8z"/><path d="M18.6 45.4L9.6 51.9L12.1 54.4z"/><path d="M15.5 41.5L5.2 45.4L7.0 48.5z"/><path d="M13.6 36.9L2.6 38.0L3.5 41.5z"/><path d="M13.0 32.0L2.1 30.2L2.1 33.8z"/><path d="M13.6 27.1L3.5 22.5L2.6 26.0z"/><path d="M15.5 22.5L7.0 15.5L5.2 18.6z"/><path d="M18.6 18.6L12.1 9.6L9.6 12.1z"/><path d="M22.5 15.5L18.6 5.2L15.5 7.0z"/><path d="M27.1 13.6L26.0 2.6L22.5 3.5z"/><path d="M32.0 13.0L33.8 2.1L30.2 2.1z"/><path d="M36.9 13.6L41.5 3.5L38.0 2.6z"/><path d="M41.5 15.5L48.5 7.0L45.4 5.2z"/><path d="M45.4 18.6L54.4 12.1L51.9 9.6z"/><path d="M48.5 22.5L58.8 18.6L57.0 15.5z"/><path d="M50.4 27.1L61.4 26.0L60.5 22.5z"/></g><circle cx="32" cy="32" r="18" fill="#1F5A3D"/><circle cx="32" cy="32" r="13" fill="#F2B705"/><g stroke="#1F5A3D" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M21 27q11 -6 22 0M21 32h22M21 37q11 6 22 0M27 21q-6 11 0 22M32 19v26M37 21q6 11 0 22"/></g></svg>
+      <div>
+        <div class="brand-name">Таза Аба</div>
+        <div class="brand-sub">чистый воздух Бишкека</div>
+      </div>
+    </div>
+    <div class="hdr-right" id="hdrRight"><button id="themeBtn" class="theme-btn" type="button"></button>
+      <div class="lang" id="langSw"><button data-lang="ru">RU</button><button data-lang="ky">KG</button><button data-lang="en">EN</button><button data-lang="tr">TR</button></div>
+      <div id="dataBadge" class="data-badge">…</div>
+    </div>
+    <div class="cityrow"><span class="ctry-wrap"><span class="ctry-flag" aria-hidden="true">🇰🇬</span><select id="ctrySel" class="ctry-sel"></select></span><svg class="cpin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><select id="citySel" aria-label="Город"></select><button id="gsBtn" class="gs-btn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="gs-ph"></span></button></div>
+    <button id="hdrMore" class="hdr-more" type="button" aria-expanded="false" aria-controls="hdrRight"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+  </header>
+
+  <div id="alertBanner" class="alert-banner hidden"></div>
+  <main id="view" class="view"></main>
+
+  <nav class="tabbar" id="tabbar" aria-label="Навигация">
+    <div class="side-brand"><svg class="tunduk" viewBox="0 0 64 64" aria-hidden="true"><g fill="#F2B705"><path d="M51.0 32.0L61.9 33.8L61.9 30.2z"/><path d="M50.4 36.9L60.5 41.5L61.4 38.0z"/><path d="M48.5 41.5L57.0 48.5L58.8 45.4z"/><path d="M45.4 45.4L51.9 54.4L54.4 51.9z"/><path d="M41.5 48.5L45.4 58.8L48.5 57.0z"/><path d="M36.9 50.4L38.0 61.4L41.5 60.5z"/><path d="M32.0 51.0L30.2 61.9L33.8 61.9z"/><path d="M27.1 50.4L22.5 60.5L26.0 61.4z"/><path d="M22.5 48.5L15.5 57.0L18.6 58.8z"/><path d="M18.6 45.4L9.6 51.9L12.1 54.4z"/><path d="M15.5 41.5L5.2 45.4L7.0 48.5z"/><path d="M13.6 36.9L2.6 38.0L3.5 41.5z"/><path d="M13.0 32.0L2.1 30.2L2.1 33.8z"/><path d="M13.6 27.1L3.5 22.5L2.6 26.0z"/><path d="M15.5 22.5L7.0 15.5L5.2 18.6z"/><path d="M18.6 18.6L12.1 9.6L9.6 12.1z"/><path d="M22.5 15.5L18.6 5.2L15.5 7.0z"/><path d="M27.1 13.6L26.0 2.6L22.5 3.5z"/><path d="M32.0 13.0L33.8 2.1L30.2 2.1z"/><path d="M36.9 13.6L41.5 3.5L38.0 2.6z"/><path d="M41.5 15.5L48.5 7.0L45.4 5.2z"/><path d="M45.4 18.6L54.4 12.1L51.9 9.6z"/><path d="M48.5 22.5L58.8 18.6L57.0 15.5z"/><path d="M50.4 27.1L61.4 26.0L60.5 22.5z"/></g><circle cx="32" cy="32" r="18" fill="#1F5A3D"/><circle cx="32" cy="32" r="13" fill="#F2B705"/><g stroke="#1F5A3D" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M21 27q11 -6 22 0M21 32h22M21 37q11 6 22 0M27 21q-6 11 0 22M32 19v26M37 21q6 11 0 22"/></g></svg><b>Таза Аба</b></div>
+    <a href="#home" data-tab="home"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg><span>Главная</span></a>
+    <a href="#map" data-tab="map"><svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg><span>Карта</span></a>
+    <a href="#advisor" data-tab="advisor"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/><path d="M9 10h.01M12 10h.01M15 10h.01"/></svg><span>Советник</span></a>
+    <a href="#news" data-tab="news"><svg viewBox="0 0 24 24"><path d="M4 5h13v14H6a2 2 0 0 1-2-2V5z"/><path d="M17 9h3v8a2 2 0 0 1-2 2"/><path d="M7 9h7M7 13h7M7 16h4"/></svg><span>Новости</span></a>
+    <a href="#more" data-tab="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><span>Ещё</span></a>
+  </nav>
+  <div id="toast" class="toast"></div>
+  <div id="modal" class="modal hidden"></div>
+</div>
+<script src="config.js"></script>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="i18n.js"></script>
+<script src="data.js"></script>
+<script src="kg-places.js"></script>
+<script src="extra.js"></script>
+<script src="i18n_tr.js"></script>
+<script src="quick.js"></script>
+<script src="sources.js"></script>
+<script src="app.js"></script>
+<script src="maarif.js"></script>
+<script src="search.js"></script>
+</body>
+</html>

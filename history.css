@@ -1,0 +1,37 @@
+/* История и статистика — обе темы */
+.h-back{font-weight:800;text-decoration:none;color:inherit;opacity:.75}
+.h-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.h-tabs button{font:inherit;font-weight:800;padding:9px 16px;border-radius:999px;border:1.5px solid var(--line,#cfd8c4);background:var(--paper,#fff);color:inherit;cursor:pointer}
+.h-tabs button.on{background:#1F5A3D;color:#fff;border-color:#F2B705}
+.h-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.h-kpis>div{background:var(--paper,#fff);border:1.5px solid var(--line,#cfd8c4);border-left:6px solid var(--c,#F2B705);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column}
+.h-kpis span{font-size:12px;font-weight:800;opacity:.75}.h-kpis b{font-size:26px;line-height:1.15}.h-kpis small{font-weight:700;opacity:.8}
+.h-kpis .h-pol b{font-size:16px;margin-top:4px}
+@media (max-width:700px){.h-kpis{grid-template-columns:repeat(2,1fr)}.h-kpis b{font-size:22px}}
+.h-svg{width:100%;height:auto;display:block;overflow:visible}
+
+.h-svg .hg{stroke:currentColor;opacity:.12;stroke-width:1}
+.h-svg .hl{font-size:10px;fill:currentColor;opacity:.65;font-weight:700}
+.h-svg .hline{fill:none;stroke:#1F5A3D;stroke-width:2;stroke-linejoin:round}
+.h-svg rect.hi{stroke:#1F3A2A;stroke-width:1.5}
+.h-chart h3,.h-grid h3,.card h3{margin:0 0 8px;font-size:15px}
+.h-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:900px){.h-grid{grid-template-columns:1fr 1fr}}
+.h-grid .card{margin:0!important}
+.h-cats{display:flex;gap:4px;border-radius:12px;overflow:hidden;min-height:56px}
+.h-cat{background:var(--c);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6px 4px;min-width:42px;text-align:center}
+.h-cat b{font-size:18px;text-shadow:0 1px 2px #0006}.h-cat span{font-size:10.5px;font-weight:800;text-shadow:0 1px 2px #0006;line-height:1.1}
+.h-who{display:flex;flex-direction:column;gap:8px;font-weight:600}
+.h-whobar{height:12px;border-radius:999px;background:#2fbf7140;overflow:hidden}.h-whobar i{display:block;height:100%;background:linear-gradient(90deg,#e6b800,#c9303a)}
+.h-rank{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.h-rank li{display:grid;grid-template-columns:24px minmax(90px,1.1fr) 2fr 38px;gap:8px;align-items:center;font-size:13px;font-weight:700;padding:3px 6px;border-radius:10px}
+.h-rank li.me{background:#F2B70522;outline:1.5px solid #F2B705}
+.h-rn{opacity:.6;text-align:right}.h-rd{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.h-rd small{opacity:.7}
+.h-rb{height:10px;border-radius:999px;background:#9992;overflow:hidden}.h-rb i{display:block;height:100%;border-radius:999px}
+.h-src{border-left:4px solid #F2B705;font-weight:600;line-height:1.45}
+.hist-link{display:block;text-decoration:none;font-weight:800;color:inherit;border-left:4px solid #F2B705}
+[data-theme="dark"] .h-svg .hline{stroke:#9fd8b4}
+[data-theme="dark"] .h-svg rect.hi{stroke:#F4EFE0}
+[data-theme="dark"] .h-tabs button.on{background:#2c7a52}
+@media (max-width:600px){.h-tabs{flex-wrap:nowrap}.h-tabs button{flex:1;padding:8px 6px;font-size:13.5px}}
+.h-mdot{fill:#D9A400;stroke:#fff;stroke-width:1}

@@ -1,0 +1,91 @@
+/* Таза Аба — компактная мобильная шапка, safe-area (iOS), глобальный поиск, подписи городов на карте, производительность. */
+/* ---------- кнопка поиска и «⋯» ---------- */
+.gs-btn{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:inherit;font:inherit;font-weight:700;font-size:13px;cursor:pointer;padding:6px 8px;border-radius:10px;flex:0 0 auto;min-height:36px}
+.gs-btn svg,.gs-in svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.gs-btn .gs-ph{color:var(--muted);font-weight:600;white-space:nowrap}
+.gs-btn:hover{background:rgba(0,0,0,.05)}
+.hdr-more{display:none;border:0;background:transparent;color:inherit;width:38px;height:38px;border-radius:10px;cursor:pointer;flex:0 0 38px;padding:0}
+.hdr-more svg{width:20px;height:20px;fill:currentColor}
+.ctry-wrap{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+.ctry-flag{display:none}
+@media (min-width:1024px){.topbar .cityrow{max-width:640px}.ctry-sel{max-width:none!important}.gs-btn{border-left:1px solid var(--line);border-radius:0 10px 10px 0;margin-left:2px}}
+@media (min-width:1024px) and (max-width:1279px){.gs-btn .gs-ph{display:none}}
+/* ---------- мобильная шапка: фиксированная, компактная, прячется при прокрутке вниз ---------- */
+@media (max-width:1023px){
+  .topbar{position:fixed!important;top:0;left:0;right:0;margin:0 auto;max-width:520px;z-index:900;display:flex!important;flex-wrap:nowrap!important;align-items:center;gap:6px;
+    padding:calc(env(safe-area-inset-top, 0px) + 6px) 10px 6px!important;min-height:0;background:#F4EAD5!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    transition:transform .22s ease;will-change:transform;box-shadow:0 1px 0 rgba(31,90,61,.12)}
+  html[data-theme="dark"] .topbar{background:#0E1A14!important}
+  .topbar.hide{transform:translateY(-110%)}
+  .topbar .orn-strip{display:none}
+  .topbar .brand{flex:0 0 auto;gap:6px}.topbar .brand .logo{width:30px;height:30px}
+  .topbar .brand-sub{display:none}.topbar .brand-name{font-size:15px}
+  .topbar .cityrow{flex:1 1 auto;min-width:0;flex-basis:auto!important;padding:1px 2px 1px 6px!important;gap:2px;border-radius:12px!important}
+  .topbar .cityrow .cpin{display:none}
+  .topbar #citySel{flex:1 1 auto;min-width:0;font-size:14px;padding:7px 2px;text-overflow:ellipsis}
+  .ctry-flag{display:inline-block;font-size:18px;line-height:1;padding:0 4px;pointer-events:none}
+  .ctry-wrap .ctry-sel{position:absolute;inset:0;width:100%!important;max-width:none!important;opacity:0;cursor:pointer}
+  .ctry-wrap::after{content:"";width:0;height:0;border:4px solid transparent;border-top-color:currentColor;margin:4px 4px 0 0;opacity:.6}
+  .gs-btn{padding:6px;min-width:36px;justify-content:center}.gs-btn .gs-ph{display:none}
+  .hdr-more{display:inline-flex;align-items:center;justify-content:center}
+  .topbar .hdr-right{display:none!important}
+  .topbar.more-open .hdr-right{display:flex!important;position:absolute;top:100%;right:8px;flex-direction:row!important;flex-wrap:wrap;gap:8px;align-items:center;
+    background:#FFFBF1;border:1px solid var(--line);border-radius:16px;padding:10px;box-shadow:0 10px 30px -12px rgba(0,0,0,.35);max-width:calc(100vw - 16px)}
+  html[data-theme="dark"] .topbar.more-open .hdr-right{background:#17251D}
+  .app{padding-top:calc(env(safe-area-inset-top, 0px) + 60px)!important;padding-bottom:calc(112px + env(safe-area-inset-bottom, 0px))!important}
+  [id],.card,h1,h2{scroll-margin-top:calc(env(safe-area-inset-top, 0px) + 72px);scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom, 0px))}
+  .alert-banner{position:relative!important;top:auto!important}
+  /* производительность: без размытия фона под карточками/панелями на мобильном */
+  .card,.tabbar,.hero .meta span{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .tabbar{background:#FFFBF1!important}
+  html[data-theme="dark"] .tabbar{background:#101d16!important}
+}
+@media (max-width:400px){.topbar .brand-name{display:none}}
+@media (min-width:640px) and (max-width:1023px){.topbar{max-width:760px}}
+/* ---------- оверлей поиска ---------- */
+.gs-ov{position:fixed;inset:0;z-index:5000;background:rgba(10,30,20,.45);display:flex;justify-content:center;align-items:flex-start;padding:10vh 16px 16px}
+.gs-ov[hidden]{display:none}
+.gs-box{width:min(620px,100%);background:#FFFBF1;color:var(--walnut,#2b1d12);border-radius:20px;box-shadow:0 20px 60px -20px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column;max-height:80vh}
+.gs-in{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.gs-in input{flex:1;min-width:0;border:0;background:transparent;color:inherit;font:inherit;font-size:17px;font-weight:600;outline:none;padding:6px 2px}
+.gs-x{border:0;background:rgba(0,0,0,.06);color:inherit;width:34px;height:34px;border-radius:10px;cursor:pointer;font-weight:900}
+.gs-list{list-style:none;margin:0;padding:6px;overflow-y:auto;overscroll-behavior:contain}
+.gs-list li{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;cursor:pointer}
+.gs-list li.on,.gs-list li:hover{background:rgba(31,90,61,.1)}
+.gs-list .gs-none{color:var(--muted);cursor:default}
+.gs-ic{font-size:18px;flex:0 0 24px;text-align:center}
+.gs-tx{flex:1;min-width:0;display:flex;flex-direction:column}.gs-tx b{overflow-wrap:anywhere}.gs-tx small{color:var(--muted);font-weight:600}
+.gs-aqi{flex:0 0 auto;min-width:36px;text-align:center;color:#fff;font-weight:900;border-radius:10px;padding:4px 6px;font-size:13px}
+.gs-hint{padding:8px 14px;border-top:1px solid var(--line)}
+html[data-theme="dark"] .gs-box{background:#13211A;color:var(--walnut)}
+html[data-theme="dark"] .gs-list li.on,html[data-theme="dark"] .gs-list li:hover{background:rgba(242,183,5,.12)}
+html[data-theme="dark"] .gs-x{background:rgba(255,255,255,.08)}
+@media (max-width:1023px){.gs-ov{padding:0;background:transparent}.gs-box{width:100%;max-height:none;height:100%;border-radius:0;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px)}.gs-hint{display:none}}
+@media (min-width:1024px){.gs-ov{left:var(--side,0)}}
+/* ---------- карта страны: пины и подписи без наложений ---------- */
+.city-pin{position:relative;width:100%;height:100%}
+.city-pin .aqi-pin{width:100%!important;height:100%!important;font-size:11px!important;border-width:2px!important}
+.city-pin span{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);pointer-events:none}
+.city-pin.nol span{display:none}
+.city-pin .cp-n{position:absolute;right:-8px;top:-8px;background:#1F5A3D;color:#fff;font:800 10px/1 system-ui,sans-serif;border-radius:999px;padding:3px 5px;border:1.5px solid #fff}
+.cp-pop a{display:block;padding:4px 0;font-weight:800}
+/* ---------- иконки (SVG вместо эмодзи, которые на iOS выглядят как серые квадраты) ---------- */
+.ev-ico svg{width:34px;height:34px;display:block}
+/* ---------- производительность и движение ---------- */
+html.lowend .aqi-pin,html.lowend .city-pin span,html.lowend .home-pin,html.lowend .c-pin,html.lowend .ms-pin{box-shadow:none!important}
+html.lowend[data-theme="dark"] .tl-osm{filter:none!important;opacity:.6}
+html.lowend[data-theme="dark"] .leaflet-container{background:#0b1510}
+@media (prefers-reduced-motion: reduce){.topbar{transition:none}}
+.list-col{min-width:0}
+@media (max-width:1023px){.map-grid{display:block}.list-col{width:100%;margin-top:14px}.toggles{flex-wrap:wrap}.toggles .toggle{flex:0 1 auto;white-space:normal}}
+/* 1024–1279: страна — только флаг (полное название в выпадающем списке), чтобы название города не обрезалось */
+@media (min-width:1024px) and (max-width:1279px){
+  .ctry-flag{display:inline-block;font-size:18px;line-height:1;padding:0 4px;pointer-events:none}
+  .ctry-wrap .ctry-sel{position:absolute;inset:0;width:100%!important;opacity:0;cursor:pointer}
+  .ctry-wrap::after{content:"";width:0;height:0;border:4px solid transparent;border-top-color:currentColor;margin:4px 4px 0 0;opacity:.6}
+  .gs-btn{min-width:36px;justify-content:center}
+}
+.cityrow .gs-btn{flex:0 0 auto}.cityrow #citySel{flex:1 1 auto;min-width:0}
+/* Safari: единый вид выпадающего списка города (без серой системной «плашки») */
+.cityrow #citySel{-webkit-appearance:none;appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 6px center/10px 6px;padding-right:22px!important;border-radius:8px}
+@media (max-width:600px){.bm-ctl button{padding:5px 7px!important;font-size:11.5px!important}}

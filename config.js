@@ -1,0 +1,17 @@
+/* Таза Аба — ключи внешних источников измерений (необязательно).
+ * Пусто = источник выключен, приложение работает на Open-Meteo (модель CAMS) + Sensor.Community (без ключа).
+ * Бесплатные ключи:
+ *   AIRNOW_KEY  — https://docs.airnowapi.org/account/request/   (AirNow, мониторы посольств США; CORS: *)
+ *   WAQI_TOKEN  — https://aqicn.org/data-platform/token/        (World Air Quality Index; CORS: *; демо-токен «demo» не использовать)
+ *   OPENAQ_KEY  — https://explore.openaq.org/register           (OpenAQ v3; ключ в заголовке X-API-Key —
+ *                 их сервер не отвечает на CORS-preflight, поэтому из браузера нужен свой прокси в OPENAQ_BASE)
+ * Внимание: ключ в статическом сайте виден всем — используйте отдельный бесплатный ключ с лимитами. */
+/* SITE_URL — публичный адрес сайта со слешем на конце (для ссылок «Поделиться» и og:image), например
+ *   "https://USER.github.io/taza-aba/". Пусто = берётся текущий адрес страницы. mkzip.py подставляет его в og:url/og:image. */
+window.TAZA_CONFIG = Object.assign({
+  SITE_URL: "",
+  AIRNOW_KEY: "",
+  WAQI_TOKEN: "",
+  OPENAQ_KEY: "",
+  OPENAQ_BASE: "https://api.openaq.org",
+}, window.TAZA_CONFIG || {});
