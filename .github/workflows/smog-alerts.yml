@@ -9,20 +9,22 @@ permissions:
 jobs:
   alerts:
     runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - name: Inert without token
-        if: ${{ !secrets.TELEGRAM_BOT_TOKEN }}
+        if: env.HAS_TOKEN != 'true'
         run: echo "TELEGRAM_BOT_TOKEN not set — skip"; exit 0
       - name: Pull new /start subscriptions
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        if: env.HAS_TOKEN == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: node bot/webhook_stub.js
       - name: Commit subscriber updates
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        if: env.HAS_TOKEN == 'true'
         run: |
           git config user.name "taza-aba-bot"
           git config user.email "bot@users.noreply.github.com"
@@ -30,7 +32,7 @@ jobs:
           git diff --staged --quiet || git commit -m "bot: update subscribers"
           git push || true
       - name: Send alerts
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        if: env.HAS_TOKEN == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: node bot/send_alerts.js
