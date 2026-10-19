@@ -23,4 +23,8 @@ window.TAZA_CONFIG = Object.assign({
   TELEGRAM_BOT: "",
   /* GOATCOUNTER — код сайта GoatCounter (например "taza-aba" для taza-aba.goatcounter.com) или полный URL /count. Пусто = выключено. */
   GOATCOUNTER: "",
+  /* Серверные аккаунты (Supabase). Пусто = только локальные зашифрованные аккаунты на устройстве.
+     Заполняется скриптом backend/setup.sh. Anon key публичный по замыслу: доступ ограничен RLS. */
+  SUPABASE_URL: "",
+  SUPABASE_ANON_KEY: "",
 }, window.TAZA_CONFIG || {});

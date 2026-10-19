@@ -20,7 +20,7 @@
 <meta name="twitter:description" content="Реальный AQI по районам, риск вечернего смога, эко-маршруты и честные жалобы на дым.">
 <meta name="twitter:image" content="https://zusenbaev7-cmd.github.io/taza-aba/icons/og.png">
 
-<script>/* тема до отрисовки, без вспышки */(function(){var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";document.querySelector('meta[name="theme-color"]').content=d?"#0E1A14":"#EEF1DF";})();</script>
+<script>/* тема до отрисовки, без вспышки */(function(){var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var ac=localStorage.getItem("tazaAba.accent")==="blue";document.documentElement.dataset.accent=ac?"blue":"green";document.querySelector('meta[name="theme-color"]').content=d?(ac?"#0D1722":"#0E1A14"):(ac?"#E9F1F6":"#EEF1DF");})();</script>
 <script>/* полифиллы для старых Firefox/Safari + класс ff (в Firefox backdrop-filter очень тормозит прокрутку) */(function(){var w=window,h=document.documentElement;if(/Firefox\//.test(navigator.userAgent))h.classList.add("ff");if(!w.structuredClone)w.structuredClone=function(o){return o===undefined?o:JSON.parse(JSON.stringify(o))};if(!w.requestIdleCallback){w.requestIdleCallback=function(f,o){var t=Date.now();return setTimeout(function(){f({didTimeout:false,timeRemaining:function(){return Math.max(0,50-(Date.now()-t))}})},1)};w.cancelIdleCallback=clearTimeout}if(w.AbortSignal&&!AbortSignal.timeout)AbortSignal.timeout=function(ms){var c=new AbortController();setTimeout(function(){c.abort()},ms);return c.signal};})();</script>
 <title>Таза Аба — чистый воздух Бишкека</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd166'/><path d='M20 44c0-14 10-22 26-24-2 16-10 26-24 26' fill='%232e9e5b'/></svg>">
@@ -39,6 +39,8 @@
 <link rel="stylesheet" href="layout.css">
 <link rel="stylesheet" href="mobile.css">
 <link rel="stylesheet" href="features.css">
+<link rel="stylesheet" href="accounts.css">
+<link rel="stylesheet" href="blue.css">
 
 </head>
 <body>
@@ -82,6 +84,7 @@
     <a href="#cleanair" data-tab="cleanair" class="side-only"><svg viewBox="0 0 24 24"><path d="M4 14.5c0-2 1.5-3.5 3.5-3.5h.3A4.2 4.2 0 0 1 16 9.5 3.5 3.5 0 0 1 20 13.5c0 .3 0 .6-.1.9"/><path d="M5 17.5h11M7.5 20h8"/></svg><span data-i18n="ca">Чистый воздух</span></a>
     <a href="#traffic" data-tab="traffic" class="side-only"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="3"/><circle cx="12" cy="8" r="1.6"/><circle cx="12" cy="12.5" r="1.6"/><circle cx="12" cy="17" r="1.6"/></svg><span data-i18n="tf">Транспорт</span></a>
     <a href="#trees" data-tab="trees" class="side-only"><svg viewBox="0 0 24 24"><path d="M12 21v-7"/><path d="M7 14c0-3.5 2.2-6 5-7.5C14.8 8 17 10.5 17 14c-1.6 0-3 .7-5 2-2-1.3-3.4-2-5-2z"/><path d="M9 10.5c.5-2 1.7-3.5 3-4.5 1.3 1 2.5 2.5 3 4.5"/></svg><span data-i18n="tr">Деревья</span></a>
+    <a href="#account" data-tab="account" class="side-only"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4"/></svg><span>Аккаунт</span></a>
     <a href="#gov" data-tab="gov" class="side-only"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5"/><path d="M4 21h16M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/></svg><span>Для мэрии и государства</span></a>
     <a href="#govpolicy" data-tab="govpolicy" class="side-only"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 15.5h7M9 9h3"/></svg><span>Меры с доказанной пользой</span></a>
   </nav>
@@ -104,6 +107,7 @@
 <script src="features.js"></script>
 <script src="traffic2.js"></script>
 <script src="gov-boot.js"></script>
+<script src="accounts.js"></script>
 <script src="counter.js"></script>
 <script>/* app.js рисует экран до регистрации разделов из features/gov/traffic2 — перерисовать, если прямая ссылка (#traffic, #gov…) открылась как «Главная» */(function(){var t=(location.hash||"#home").slice(1).split("/")[0];if(t&&views[t]&&!document.getElementById("view").classList.contains("v-"+t))route(true);})();</script>
 </body>
