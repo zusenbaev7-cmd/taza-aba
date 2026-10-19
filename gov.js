@@ -1,0 +1,279 @@
+/* «Для мэрии и государства» — панель решений, прогноз смога, жалобы, экспорт открытых данных и страница мер.
+ * Данные: Open-Meteo Air Quality (модель CAMS) по координатам районов, past_days=30, forecast_days=2. Без выдуманных чисел:
+ * всё, что показано, посчитано из ответа API; вклад отопления/транспорта — помеченная оценка (tfEstimate из features.js). */
+"use strict";
+const GV_S = {
+ru: { gridNote: "Важно: разрешение модели CAMS — около 11 км в европейской зоне (включая Турцию) и около 40 км в остальных регионах (включая Кыргызстан), поэтому соседние районы часто попадают в одну ячейку и получают одинаковые значения. Здесь модель различает {z} зон(ы) на {n} районов. Колонка «Сейчас» может учитывать ближайшие датчики. Для решений по отдельным районам нужны наземные датчики.", title: "Для мэрии и государства", sub: "Панель решений по {city}: данные модели CAMS (Open-Meteo) по каждому району — не измерения датчиков.",
+  print: "Отчёт / PDF", csv: "CSV (30 дней)", json: "JSON", polLink: "Меры с доказанной пользой →", loading: "Считаю данные по районам…", err: "Не удалось загрузить данные Open-Meteo.", retry: "Повторить",
+  tmrH: "Прогноз смога на завтра ({date})", tmrWorst: "Хуже всего: {d} — до AQI {a}", tmrCity: "Среднесуточный максимум по городу: AQI {a}", tmrSrc: "Прогноз CAMS (Copernicus) через Open-Meteo. Прогноз модели может ошибаться.",
+  measH: "Рекомендуемые меры для этого уровня", measNote: "Рекомендации по шкале AQI (AirNow, US EPA) и ВОЗ по информированию о рисках. Это не нормативные акты; решения принимают уполномоченные органы.", copyWarn: "📋 Скопировать текст предупреждения", warnTxt: "Предупреждение о смоге на {date} ({city}): ожидается AQI до {a} — «{lvl}». Хуже всего: {d}.",
+  kNow: "AQI сейчас (среднее по районам)", k7: "Средний AQI за 7 дней", k30: "Средний AQI за 30 дней", kH: "Часов с PM2.5 > 15 мкг/м³ (30 дн.)", kD: "Дней выше суточной нормы ВОЗ (30 дн.)",
+  rankH: "Рейтинг районов (худшие сверху, по 30 дням)", cD: "Район", cNow: "Сейчас", c7: "7 дн.", c30: "30 дн.", cH: "Часы > ВОЗ", cT: "Завтра макс.",
+  whoNote: "Норма ВОЗ (2021) для PM2.5: 15 мкг/м³ в среднем за сутки, 5 мкг/м³ за год. «Часы > ВОЗ» — часы, когда PM2.5 выше 15 мкг/м³ (ориентир, т.к. норма суточная).",
+  contH: "Вклад отопления и транспорта (оценка)", contNote: "ОЦЕНКА, а не измерение: по суточному ходу NO₂, отношениям NO₂/PM2.5 и PM2.5/PM10 и температуре за 72 часа. Методика — раздел «Транспорт и смог».", heat: "Отопление", trans: "Транспорт", how: "Как считаем →",
+  priH: "Приоритет районов для мер", priSub: "Где вмешательство даст больше пользы прямо сейчас — по прозрачной формуле.",
+  fH: "Формула", fTxt: "Приоритет P = 100 × (0,5·a + 0,3·b + 0,2·c), где a — средний PM2.5 района за 30 дней, делённый на максимум по городу; b — доля часов с PM2.5 > 15 мкг/м³ за 30 дней; c — прогнозный максимум AQI на завтра, делённый на максимум по городу. Мера: «замена угля», если оценка вклада отопления ≥ 55 %; «автобусы / транспорт», если вклад транспорта ≥ 50 %; «деревья и пылеподавление», если PM2.5/PM10 < 0,55 (много крупной пыли).",
+  mHeat: "Замена угля: тепловые насосы, газ, утепление", mBus: "Автобусы и чистый транспорт", mTree: "Деревья и пылеподавление", mNone: "Нет данных для оценки источника", pts: "балл",
+  cmpH: "Жалобы жителей по районам", cmpNote: "Честно: у приложения нет сервера, поэтому здесь только жалобы, отправленные с этого устройства (примерные жалобы-образцы не учитываются). Для городской картины нужен общий приёмник жалоб.", cmpNone: "На этом устройстве пока нет жалоб по этому городу.", cmpAll: "Всего",
+  expH: "Открытые данные", expTxt: "CSV/JSON: по каждому району и дню за 30 дней — средний и максимальный AQI, средний PM2.5, часы с PM2.5 > 15 мкг/м³. Данные: Open-Meteo (CC BY 4.0), модель CAMS (Copernicus).",
+  repH: "Отчёт по качеству воздуха", repGen: "Сформировано {t} · Таза Аба", srcH: "Источники",
+  meas: [["Ограничений не требуется.", "Хорошее время для занятий на улице."],
+    ["Предупредить особо чувствительных людей (астма, болезни сердца).", "Ограничений для школ не требуется."],
+    ["Школы и детсады: сократить долгие и интенсивные занятия на улице для детей с астмой и чувствительных детей.", "Опубликовать предупреждение для жителей и поликлиник.", "Призвать пользоваться общественным транспортом, не жечь мусор и листья."],
+    ["Школы: перенести физкультуру и перемены в помещения.", "Перенести массовые мероприятия на улице.", "Усилить выпуск общественного транспорта, рейды против открытого сжигания мусора.", "Поликлиникам — готовность к росту обращений."],
+    ["Отменить занятия детей на улице; всем — ограничить время на улице.", "Держать окна закрытыми, если снаружи хуже; использовать очистители воздуха в школах и больницах при наличии.", "Широкое оповещение: СМИ, SMS, Telegram."],
+    ["Чрезвычайный уровень: максимально ограничить пребывание на улице, все занятия — в помещениях.", "Широкое оповещение и защита уязвимых групп в первую очередь."]],
+  pTitle: "Меры с доказанной пользой", pSub: "Что рекомендуют международные исследования для городов Кыргызстана. Только опубликованные источники, со ссылками.",
+  pTr: "Источники ниже — по Бишкеку и Кыргызстану; для городов Турции они применимы как ориентир, нормы ВОЗ — универсальны.",
+  p1H: "1. Замена угольного отопления", p1: "Главный зимний источник PM2.5 — бытовое отопление углём. ЮНИСЕФ (2023): дети в домах с угольными печами вдыхают в среднем на 17 мкг/м³ больше PM2.5 зимой; рекомендует зоны без угля, утепление окон, стен и крыш, стимулы для перехода. Всемирный банк (2023): 32,3 млн $ на кредиты домохозяйствам Бишкека для перехода на тепловые насосы, электрокотлы и солнечный нагрев (около 13 000 домов). АБР (2023): газ снижает загрязнение, но дороже в долгосрочной перспективе и сохраняет выбросы парниковых газов; приоритет — утепление, тепловые насосы и расширение центрального отопления.",
+  p2H: "2. Система управления качеством воздуха", p2: "Всемирный банк (проект Air Quality Improvement, 2023): улучшение сбора и анализа данных о воздухе, усиление инспекций и межведомственной координации. ЮНИСЕФ: больше использовать научные данные о вреде загрязнения при принятии решений.",
+  p3H: "3. Транспорт", p3: "ПРООН (2023): автотранспорт — крупнейший источник NOx в Бишкеке. Модельное исследование (журнал Air, 2024): транспорт — около 27 % PM2.5 за год, летом до ~30 %. Меры по сокращению выбросов транспорта (общественный транспорт, контроль выхлопа) направлены именно на этот источник.",
+  p4H: "4. Озеленение", p4: "Всемирный банк (2023): пилотный «зелёный пояс», спроектированный для снижения загрязнения воздуха, и инвестиции в городской полив.",
+  p5H: "5. Защита здоровья и раннее предупреждение", p5: "ВОЗ (2021): нормы PM2.5 — 15 мкг/м³ за сутки и 5 мкг/м³ за год. ВОЗ (2020): информирование о рисках и личные меры защиты в дни сильного загрязнения. ЮНИСЕФ (2023): 112 смертей и 3 568 лет здоровой жизни (DALY) потеряно в Бишкеке за июль 2021 – июнь 2022 из-за PM2.5; экономический ущерб — около 2 млрд сомов (24,9 млн $).",
+  pitchH: "Как «Таза Аба» помогает государству", pitch: ["Прозрачность данных: AQI, PM2.5 и NO₂ по каждому району, открытая выгрузка CSV/JSON и печатный отчёт в один клик.", "Раннее предупреждение: прогноз смога на завтра (CAMS) с готовым текстом оповещения и мерами по уровням; Telegram-оповещения жителям.", "Вовлечение граждан: жалобы с фото и геометкой, посадка деревьев, карта мест с чистым воздухом внутри.", "Бесплатно и без сервера: открытые источники, работает на телефоне, 4 языка (кыргызский, русский, английский, турецкий)."],
+  back: "← Панель решений" },
+ky: { gridNote: "Маанилүү: CAMS моделинин тактыгы европалык зонада (Түркияны кошо) болжол менен 11 км, башка аймактарда (Кыргызстанды кошо) болжол менен 40 км, ошондуктан коңшу райондор көп учурда бир уячага түшүп, бирдей маани алышат. Бул жерде модель {n} районго {z} зонаны айырмалайт. «Азыр» мамычасы жакынкы датчиктерди эске алышы мүмкүн. Өзүнчө райондор боюнча чечим үчүн жердеги датчиктер керек.", title: "Мэрия жана мамлекет үчүн", sub: "{city} боюнча чечим панели: ар бир район боюнча CAMS моделинин маалыматы (Open-Meteo) — датчиктердин өлчөөсү эмес.",
+  print: "Отчёт / PDF", csv: "CSV (30 күн)", json: "JSON", polLink: "Пайдасы далилденген чаралар →", loading: "Райондор боюнча маалымат эсептелүүдө…", err: "Open-Meteo маалыматын жүктөө мүмкүн болгон жок.", retry: "Кайталоо",
+  tmrH: "Эртеңки түтүн божомолу ({date})", tmrWorst: "Эң начары: {d} — AQI {a} чейин", tmrCity: "Шаар боюнча орточо максимум: AQI {a}", tmrSrc: "CAMS (Copernicus) божомолу, Open-Meteo аркылуу. Модель жаңылышы мүмкүн.",
+  measH: "Бул деңгээл үчүн сунушталган чаралар", measNote: "AQI шкаласы (AirNow, АКШ EPA) жана ДССУнун тобокелдик тууралуу маалымдоо боюнча сунуштары. Бул ченемдик актылар эмес; чечимди ыйгарым укуктуу органдар кабыл алат.", copyWarn: "📋 Эскертүү текстин көчүрүү", warnTxt: "{date} күнгө түтүн эскертүүсү ({city}): AQI {a} чейин күтүлөт — «{lvl}». Эң начары: {d}.",
+  kNow: "Азыркы AQI (райондордун орточосу)", k7: "7 күндүк орточо AQI", k30: "30 күндүк орточо AQI", kH: "PM2.5 > 15 мкг/м³ болгон сааттар (30 күн)", kD: "ДССУнун суткалык ченеминен жогору күндөр (30 күн)",
+  rankH: "Райондордун рейтинги (начарлары жогоруда, 30 күн)", cD: "Район", cNow: "Азыр", c7: "7 күн", c30: "30 күн", cH: "Саат > ДССУ", cT: "Эртең макс.",
+  whoNote: "ДССУнун (2021) PM2.5 ченеми: суткасына орточо 15 мкг/м³, жылына 5 мкг/м³. «Саат > ДССУ» — PM2.5 15 мкг/м³тен жогору болгон сааттар (болжолдуу көрсөткүч, анткени ченем суткалык).",
+  contH: "Жылытуу менен транспорттун үлүшү (баалоо)", contNote: "Бул БААЛОО, өлчөө эмес: 72 сааттагы NO₂ суткалык жүрүшү, NO₂/PM2.5 жана PM2.5/PM10 катыштары жана температура боюнча. Методика — «Транспорт жана түтүн» бөлүмүндө.", heat: "Жылытуу", trans: "Транспорт", how: "Кантип эсептейбиз →",
+  priH: "Чаралар үчүн райондордун артыкчылыгы", priSub: "Азыр кайсы жерде чара көбүрөөк пайда берет — ачык формула боюнча.",
+  fH: "Формула", fTxt: "Артыкчылык P = 100 × (0,5·a + 0,3·b + 0,2·c), мында a — райондун 30 күндүк орточо PM2.5, шаардагы максимумга бөлүнгөн; b — 30 күндө PM2.5 > 15 мкг/м³ болгон сааттардын үлүшү; c — эртеңки AQI божомолунун максимуму, шаардагы максимумга бөлүнгөн. Чара: жылытуунун баалоо үлүшү ≥ 55 % болсо — «көмүрдү алмаштыруу»; транспорттуку ≥ 50 % болсо — «автобустар / транспорт»; PM2.5/PM10 < 0,55 болсо (ири чаң көп) — «дарактар жана чаңды басуу».",
+  mHeat: "Көмүрдү алмаштыруу: жылуулук насостору, газ, жылуулоо", mBus: "Автобустар жана таза транспорт", mTree: "Дарактар жана чаңды басуу", mNone: "Булакты баалоо үчүн маалымат жок", pts: "упай",
+  cmpH: "Тургундардын даттануулары райондор боюнча", cmpNote: "Чынын айтканда: тиркеменин сервери жок, ошондуктан бул жерде ушул түзмөктөн жөнөтүлгөн даттануулар гана (үлгү даттануулар эсептелбейт). Шаардык сүрөт үчүн жалпы кабыл алгыч керек.", cmpNone: "Бул түзмөктө бул шаар боюнча азырынча даттануу жок.", cmpAll: "Бардыгы",
+  expH: "Ачык маалымат", expTxt: "CSV/JSON: ар бир район жана 30 күндүн ар бир күнү боюнча — орточо жана максималдуу AQI, орточо PM2.5, PM2.5 > 15 мкг/м³ болгон сааттар. Маалымат: Open-Meteo (CC BY 4.0), CAMS модели (Copernicus).",
+  repH: "Абанын сапаты боюнча отчёт", repGen: "Түзүлгөн убакыт {t} · Таза Аба", srcH: "Булактар",
+  meas: [["Чектөө талап кылынбайт.", "Сыртта машыгууга жакшы убакыт."],
+    ["Өтө сезгич адамдарга (астма, жүрөк оорулары) эскертүү.", "Мектептер үчүн чектөө талап кылынбайт."],
+    ["Мектептер жана бала бакчалар: астмасы бар жана сезгич балдар үчүн сырттагы узак жана катуу машыгууларды кыскартуу.", "Тургундарга жана емканаларга эскертүү жарыялоо.", "Коомдук транспортту колдонууга, таштанды жана жалбырак өрттөбөөгө чакыруу."],
+    ["Мектептер: дене тарбия жана тыныгууларды имаратка которуу.", "Сырттагы массалык иш-чараларды кийинкиге калтыруу.", "Коомдук транспортту көбөйтүү, таштандыны ачык өрттөөгө каршы рейддер.", "Емканалар кайрылуулардын көбөйүшүнө даяр болсун."],
+    ["Балдардын сырттагы сабактарын жокко чыгаруу; бардыгына сыртта болууну чектөө.", "Сырт начар болсо терезелерди жабык кармоо; мүмкүн болсо мектеп жана ооруканаларда аба тазалагычтарды колдонуу.", "Кеңири кабарлоо: ЖМК, SMS, Telegram."],
+    ["Өзгөчө деңгээл: сыртта болууну максималдуу чектөө, бардык сабактар — имаратта.", "Кеңири кабарлоо жана биринчи кезекте аялуу топторду коргоо."]],
+  pTitle: "Пайдасы далилденген чаралар", pSub: "Эл аралык изилдөөлөр Кыргызстандын шаарларына эмнени сунуштайт. Шилтемелери менен жарыяланган булактар гана.",
+  pTr: "Төмөнкү булактар Бишкек жана Кыргызстан боюнча; Түркиянын шаарлары үчүн багыт катары колдонулат, ДССУнун ченемдери бардык жерде бирдей.",
+  p1H: "1. Көмүр менен жылытууну алмаштыруу", p1: "Кышкы PM2.5тин башкы булагы — үйлөрдү көмүр менен жылытуу. ЮНИСЕФ (2023): көмүр меши бар үйлөрдөгү балдар кышында орточо 17 мкг/м³ көбүрөөк PM2.5 жутушат; көмүрсүз зоналарды, терезе, дубал жана чатырды жылуулоону, өтүүгө түрткү берүүнү сунуштайт. Дүйнөлүк банк (2023): Бишкектин үй чарбаларына жылуулук насосторуна, электр казандарына жана күн жылыткычтарына өтүү үчүн 32,3 млн $ насыя (13 000ге жакын үй). АӨБ (2023): газ булганууну азайтат, бирок узак мөөнөттө кымбатыраак жана парник газдарын чыгара берет; артыкчылык — жылуулоо, жылуулук насостору жана борбордук жылытууну кеңейтүү.",
+  p2H: "2. Абанын сапатын башкаруу системасы", p2: "Дүйнөлүк банк (Air Quality Improvement долбоору, 2023): аба тууралуу маалыматты чогултууну жана талдоону жакшыртуу, текшерүүлөрдү жана ведомстволор аралык координацияны күчөтүү. ЮНИСЕФ: чечим кабыл алууда булгануунун зыяны тууралуу илимий маалыматты көбүрөөк колдонуу.",
+  p3H: "3. Транспорт", p3: "БУУӨП (2023): автотранспорт — Бишкекте NOxтун эң ири булагы. Моделдик изилдөө (Air журналы, 2024): транспорт — жылына PM2.5тин 27 %га жакыны, жайында ~30 %га чейин. Транспорттун чыгындыларын азайтуу чаралары (коомдук транспорт, түтүндү текшерүү) дал ушул булакка багытталган.",
+  p4H: "4. Жашылдандыруу", p4: "Дүйнөлүк банк (2023): абанын булганышын азайтуу үчүн долбоорлонгон пилоттук «жашыл алкак» жана шаардык сугатка инвестициялар.",
+  p5H: "5. Ден соолукту коргоо жана алдын ала эскертүү", p5: "ДССУ (2021): PM2.5 ченемдери — суткасына 15 мкг/м³, жылына 5 мкг/м³. ДССУ (2020): катуу булганган күндөрү тобокелдик тууралуу маалымдоо жана жеке коргонуу чаралары. ЮНИСЕФ (2023): 2021-жылдын июлу – 2022-жылдын июну аралыгында Бишкекте PM2.5тен улам 112 өлүм жана 3 568 дени сак жашоо жылы (DALY) жоголгон; экономикалык зыян — 2 млрд сомго жакын (24,9 млн $).",
+  pitchH: "«Таза Аба» мамлекетке кантип жардам берет", pitch: ["Маалыматтын ачыктыгы: ар бир район боюнча AQI, PM2.5 жана NO₂, ачык CSV/JSON жүктөө жана бир басуу менен басма отчёт.", "Алдын ала эскертүү: эртеңки түтүн божомолу (CAMS), даяр эскертүү тексти жана деңгээлдер боюнча чаралар; тургундарга Telegram-эскертүүлөр.", "Жарандарды тартуу: сүрөт жана геобелги менен даттануулар, дарак отургузуу, ичинде абасы таза жерлердин картасы.", "Акысыз жана серверсиз: ачык булактар, телефондо иштейт, 4 тил (кыргыз, орус, англис, түрк)."],
+  back: "← Чечим панели" },
+en: { gridNote: "Important: the CAMS model resolution is about 11 km in the European domain (including Turkey) and about 40 km elsewhere (including Kyrgyzstan), so neighbouring districts often fall into the same grid cell and get identical values. Here the model distinguishes {z} zone(s) across {n} districts. The \"Now\" column may include nearby sensors. District-level decisions need ground sensors.", title: "For city hall & government", sub: "Decision dashboard for {city}: CAMS model data (Open-Meteo) for every district — not sensor measurements.",
+  print: "Report / PDF", csv: "CSV (30 days)", json: "JSON", polLink: "Evidence-based measures →", loading: "Crunching district data…", err: "Couldn't load Open-Meteo data.", retry: "Retry",
+  tmrH: "Smog forecast for tomorrow ({date})", tmrWorst: "Worst: {d} — up to AQI {a}", tmrCity: "City average of daily maxima: AQI {a}", tmrSrc: "CAMS (Copernicus) forecast via Open-Meteo. Model forecasts can be wrong.",
+  measH: "Suggested measures for this level", measNote: "Based on AQI activity guidance (AirNow, US EPA) and WHO risk-communication guidance. These are not regulations; decisions rest with the competent authorities.", copyWarn: "📋 Copy warning text", warnTxt: "Smog warning for {date} ({city}): AQI up to {a} expected — \"{lvl}\". Worst: {d}.",
+  kNow: "AQI now (district average)", k7: "7-day average AQI", k30: "30-day average AQI", kH: "Hours with PM2.5 > 15 µg/m³ (30 d)", kD: "Days above WHO 24-h guideline (30 d)",
+  rankH: "District ranking (worst first, 30 days)", cD: "District", cNow: "Now", c7: "7 d", c30: "30 d", cH: "Hours > WHO", cT: "Tomorrow max",
+  whoNote: "WHO 2021 guideline for PM2.5: 15 µg/m³ as a 24-hour mean, 5 µg/m³ annual. \"Hours > WHO\" counts hours with PM2.5 above 15 µg/m³ (indicative, since the guideline is a daily mean).",
+  contH: "Heating vs transport contribution (estimate)", contNote: "An ESTIMATE, not a measurement: from the daily NO₂ cycle, NO₂/PM2.5 and PM2.5/PM10 ratios and temperature over 72 hours. Method: see «Traffic & smog».", heat: "Heating", trans: "Transport", how: "How we estimate →",
+  priH: "District priorities for interventions", priSub: "Where action helps most right now — by a transparent formula.",
+  fH: "Formula", fTxt: "Priority P = 100 × (0.5·a + 0.3·b + 0.2·c), where a is the district's 30-day mean PM2.5 divided by the city maximum; b is the share of hours with PM2.5 > 15 µg/m³ over 30 days; c is tomorrow's forecast maximum AQI divided by the city maximum. Measure: \"replace coal\" if the estimated heating share is ≥ 55%; \"buses / transport\" if the transport share is ≥ 50%; \"trees & dust control\" if PM2.5/PM10 < 0.55 (lots of coarse dust).",
+  mHeat: "Replace coal: heat pumps, gas, insulation", mBus: "Buses & clean transport", mTree: "Trees & dust control", mNone: "Not enough data to estimate the source", pts: "pts",
+  cmpH: "Residents' complaints by district", cmpNote: "Honestly: the app has no server, so this shows only complaints sent from this device (sample complaints are excluded). A city-wide picture needs a shared complaint inbox.", cmpNone: "No complaints for this city on this device yet.", cmpAll: "Total",
+  expH: "Open data", expTxt: "CSV/JSON: for each district and day over 30 days — mean and max AQI, mean PM2.5, hours with PM2.5 > 15 µg/m³. Data: Open-Meteo (CC BY 4.0), CAMS model (Copernicus).",
+  repH: "Air quality report", repGen: "Generated {t} · Taza Aba", srcH: "Sources",
+  meas: [["No restrictions needed.", "A good time for outdoor activities."],
+    ["Inform unusually sensitive people (asthma, heart disease).", "No restrictions for schools needed."],
+    ["Schools and kindergartens: shorten long or intense outdoor activities for children with asthma and sensitive children.", "Publish a warning for residents and clinics.", "Encourage public transport; no burning of trash or leaves."],
+    ["Schools: move PE and breaks indoors.", "Postpone outdoor mass events.", "Add public transport runs; patrols against open burning.", "Clinics: prepare for more visits."],
+    ["Cancel children's outdoor activities; everyone should limit time outdoors.", "Keep windows closed when outdoor air is worse; use air purifiers in schools and hospitals where available.", "Broad alerts: media, SMS, Telegram."],
+    ["Hazardous: minimise time outdoors, all activities indoors.", "Broad alerts and protection of vulnerable groups first."]],
+  pTitle: "Evidence-based measures", pSub: "What international studies recommend for Kyrgyz cities. Published sources only, with links.",
+  pTr: "The sources below cover Bishkek and Kyrgyzstan; for Turkish cities treat them as a guide. WHO guidelines apply everywhere.",
+  p1H: "1. Replacing coal heating", p1: "The main winter source of PM2.5 is household coal heating. UNICEF (2023): children in homes with coal stoves breathe on average 17 µg/m³ more PM2.5 in winter; it recommends coal-free zones, window/wall/roof insulation and incentives to switch. World Bank (2023): US$32.3 million in loans for Bishkek households to switch to heat pumps, electric boilers and solar water heating (about 13,000 homes). ADB (2023): gas reduces pollution but costs more long-term and keeps greenhouse-gas emissions; priorities are insulation, heat pumps and expanding district heating.",
+  p2H: "2. Air quality management system", p2: "World Bank (Air Quality Improvement Project, 2023): better air-quality data collection and analysis, stronger inspection and cross-sector coordination. UNICEF: use scientific evidence on health impacts more in policy-making.",
+  p3H: "3. Transport", p3: "UNDP (2023): road transport is the largest NOx source in Bishkek. Modelling study (Air journal, 2024): transport is about 27% of annual PM2.5, up to ~30% in summer. Measures that cut traffic emissions (public transport, exhaust checks) target exactly this source.",
+  p4H: "4. Greening", p4: "World Bank (2023): a pilot green belt designed to reduce air pollution, plus investment in urban irrigation.",
+  p5H: "5. Health protection & early warning", p5: "WHO (2021): PM2.5 guidelines are 15 µg/m³ (24-h) and 5 µg/m³ (annual). WHO (2020): risk communication and personal protection on high-pollution days. UNICEF (2023): 112 deaths and 3,568 DALYs lost in Bishkek from PM2.5 in July 2021 – June 2022; economic loss about 2 billion KGS (US$24.9 million).",
+  pitchH: "How Taza Aba helps the state", pitch: ["Data transparency: AQI, PM2.5 and NO₂ for every district, open CSV/JSON export and a one-click printable report.", "Early warning: tomorrow's smog forecast (CAMS) with ready-made alert text and measures by level; Telegram alerts for residents.", "Citizen engagement: complaints with photo and location, tree planting, a map of places with clean indoor air.", "Free and serverless: open sources, works on a phone, 4 languages (Kyrgyz, Russian, English, Turkish)."],
+  back: "← Decision dashboard" },
+tr: { gridNote: "Önemli: CAMS modelinin çözünürlüğü Avrupa alanında (Türkiye dahil) yaklaşık 11 km, diğer bölgelerde (Kırgızistan dahil) yaklaşık 40 km'dir; bu yüzden komşu semtler çoğu zaman aynı hücreye düşer ve aynı değerleri alır. Burada model {n} semt için {z} bölge ayırt ediyor. «Şimdi» sütunu yakındaki sensörleri içerebilir. Semt düzeyinde kararlar için yer sensörleri gerekir.", title: "Belediye ve devlet için", sub: "{city} için karar paneli: her semt için CAMS modeli verileri (Open-Meteo) — sensör ölçümü değil.",
+  print: "Rapor / PDF", csv: "CSV (30 gün)", json: "JSON", polLink: "Kanıta dayalı önlemler →", loading: "Semt verileri hesaplanıyor…", err: "Open-Meteo verileri yüklenemedi.", retry: "Tekrar dene",
+  tmrH: "Yarın için duman tahmini ({date})", tmrWorst: "En kötü: {d} — AQI {a}'e kadar", tmrCity: "Şehir genelinde günlük azami ortalaması: AQI {a}", tmrSrc: "Open-Meteo üzerinden CAMS (Copernicus) tahmini. Model tahmini yanılabilir.",
+  measH: "Bu seviye için önerilen önlemler", measNote: "AQI etkinlik rehberi (AirNow, ABD EPA) ve DSÖ risk iletişimi önerilerine dayanır. Bunlar mevzuat değildir; kararları yetkili kurumlar verir.", copyWarn: "📋 Uyarı metnini kopyala", warnTxt: "{date} için duman uyarısı ({city}): AQI {a}'e kadar bekleniyor — «{lvl}». En kötü: {d}.",
+  kNow: "Şu anki AQI (semt ortalaması)", k7: "7 günlük ortalama AQI", k30: "30 günlük ortalama AQI", kH: "PM2.5 > 15 µg/m³ olan saatler (30 gün)", kD: "DSÖ günlük sınırını aşan günler (30 gün)",
+  rankH: "Semt sıralaması (en kötüler üstte, 30 gün)", cD: "Semt", cNow: "Şimdi", c7: "7 gün", c30: "30 gün", cH: "Saat > DSÖ", cT: "Yarın azami",
+  whoNote: "DSÖ 2021 PM2.5 sınırı: 24 saatlik ortalama 15 µg/m³, yıllık 5 µg/m³. «Saat > DSÖ», PM2.5'in 15 µg/m³'ü aştığı saatlerdir (gösterge niteliğinde, çünkü sınır günlüktür).",
+  contH: "Isınma ve ulaşımın payı (tahmin)", contNote: "Bu bir TAHMİNDİR, ölçüm değildir: 72 saatlik NO₂ günlük döngüsü, NO₂/PM2.5 ve PM2.5/PM10 oranları ve sıcaklıktan. Yöntem: «Trafik ve duman» bölümü.", heat: "Isınma", trans: "Ulaşım", how: "Nasıl hesaplıyoruz →",
+  priH: "Müdahale için semt öncelikleri", priSub: "Şu an müdahalenin en çok fayda sağlayacağı yerler — açık bir formülle.",
+  fH: "Formül", fTxt: "Öncelik P = 100 × (0,5·a + 0,3·b + 0,2·c); a — semtin 30 günlük ortalama PM2.5 değerinin şehir azamisine oranı; b — 30 günde PM2.5 > 15 µg/m³ olan saatlerin payı; c — yarının tahmini azami AQI değerinin şehir azamisine oranı. Önlem: tahmini ısınma payı ≥ %55 ise «kömürü değiştirme»; ulaşım payı ≥ %50 ise «otobüs / ulaşım»; PM2.5/PM10 < 0,55 ise (çok iri toz) «ağaç ve toz kontrolü».",
+  mHeat: "Kömürü değiştirme: ısı pompası, gaz, yalıtım", mBus: "Otobüs ve temiz ulaşım", mTree: "Ağaç ve toz kontrolü", mNone: "Kaynağı tahmin etmek için veri yok", pts: "puan",
+  cmpH: "Semtlere göre vatandaş şikâyetleri", cmpNote: "Açıkçası: uygulamanın sunucusu yok, bu yüzden burada yalnızca bu cihazdan gönderilen şikâyetler var (örnek şikâyetler sayılmaz). Şehir geneli için ortak bir şikâyet kutusu gerekir.", cmpNone: "Bu cihazda bu şehir için henüz şikâyet yok.", cmpAll: "Toplam",
+  expH: "Açık veri", expTxt: "CSV/JSON: 30 gün boyunca her semt ve gün için ortalama ve azami AQI, ortalama PM2.5, PM2.5 > 15 µg/m³ olan saatler. Veri: Open-Meteo (CC BY 4.0), CAMS modeli (Copernicus).",
+  repH: "Hava kalitesi raporu", repGen: "Oluşturuldu: {t} · Taza Aba", srcH: "Kaynaklar",
+  meas: [["Kısıtlama gerekmez.", "Açık havada etkinlik için iyi bir zaman."],
+    ["Çok hassas kişileri (astım, kalp hastalığı) bilgilendirin.", "Okullar için kısıtlama gerekmez."],
+    ["Okullar ve kreşler: astımlı ve hassas çocuklar için uzun ve yoğun açık hava etkinliklerini kısaltın.", "Vatandaşlar ve sağlık ocakları için uyarı yayımlayın.", "Toplu taşımayı teşvik edin; çöp ve yaprak yakılmasın."],
+    ["Okullar: beden eğitimi ve teneffüsleri içeri alın.", "Açık havadaki kalabalık etkinlikleri erteleyin.", "Toplu taşıma seferlerini artırın; açıkta yakmaya karşı denetim.", "Sağlık ocakları başvuru artışına hazır olsun."],
+    ["Çocukların açık hava etkinliklerini iptal edin; herkes dışarıda kalma süresini sınırlasın.", "Dışarısı daha kötüyse pencereleri kapalı tutun; okul ve hastanelerde varsa hava temizleyicileri kullanın.", "Geniş uyarı: medya, SMS, Telegram."],
+    ["Tehlikeli seviye: dışarıda kalmayı en aza indirin, tüm etkinlikler içeride.", "Geniş uyarı ve öncelikle hassas grupların korunması."]],
+  pTitle: "Kanıta dayalı önlemler", pSub: "Uluslararası çalışmaların Kırgızistan şehirleri için önerileri. Yalnızca yayımlanmış kaynaklar, bağlantılarıyla.",
+  pTr: "Aşağıdaki kaynaklar Bişkek ve Kırgızistan ile ilgilidir; Türkiye şehirleri için yol gösterici olarak kullanılabilir. DSÖ sınırları her yerde geçerlidir.",
+  p1H: "1. Kömürle ısınmanın değiştirilmesi", p1: "Kışın PM2.5'in ana kaynağı evlerde kömürle ısınmadır. UNICEF (2023): kömür sobalı evlerdeki çocuklar kışın ortalama 17 µg/m³ daha fazla PM2.5 soluyor; kömürsüz bölgeler, pencere/duvar/çatı yalıtımı ve geçiş teşvikleri öneriyor. Dünya Bankası (2023): Bişkek'teki hanelerin ısı pompası, elektrikli kazan ve güneş enerjili su ısıtmaya geçişi için 32,3 milyon $ kredi (yaklaşık 13.000 ev). ADB (2023): gaz kirliliği azaltır ama uzun vadede daha pahalıdır ve sera gazı salımını sürdürür; öncelik yalıtım, ısı pompaları ve merkezi ısıtmanın genişletilmesidir.",
+  p2H: "2. Hava kalitesi yönetim sistemi", p2: "Dünya Bankası (Air Quality Improvement Projesi, 2023): hava verisi toplama ve analizini iyileştirme, denetim ve kurumlar arası koordinasyonu güçlendirme. UNICEF: karar alırken sağlık etkilerine dair bilimsel kanıtları daha çok kullanma.",
+  p3H: "3. Ulaşım", p3: "UNDP (2023): Bişkek'te en büyük NOx kaynağı karayolu ulaşımıdır. Modelleme çalışması (Air dergisi, 2024): ulaşım yıllık PM2.5'in yaklaşık %27'si, yazın ~%30'a kadar. Trafik emisyonlarını azaltan önlemler (toplu taşıma, egzoz denetimi) tam olarak bu kaynağı hedefler.",
+  p4H: "4. Yeşillendirme", p4: "Dünya Bankası (2023): hava kirliliğini azaltmak için tasarlanmış pilot «yeşil kuşak» ve kentsel sulamaya yatırım.",
+  p5H: "5. Sağlığın korunması ve erken uyarı", p5: "DSÖ (2021): PM2.5 sınırları 15 µg/m³ (24 saat) ve 5 µg/m³ (yıllık). DSÖ (2020): yüksek kirlilik günlerinde risk iletişimi ve kişisel korunma. UNICEF (2023): Temmuz 2021 – Haziran 2022 döneminde Bişkek'te PM2.5 nedeniyle 112 ölüm ve 3.568 sağlıklı yaşam yılı (DALY) kaybı; ekonomik kayıp yaklaşık 2 milyar som (24,9 milyon $).",
+  pitchH: "Taza Aba devlete nasıl yardımcı olur", pitch: ["Veri şeffaflığı: her semt için AQI, PM2.5 ve NO₂, açık CSV/JSON dışa aktarma ve tek tıkla yazdırılabilir rapor.", "Erken uyarı: yarının duman tahmini (CAMS), hazır uyarı metni ve seviyeye göre önlemler; vatandaşlara Telegram uyarıları.", "Vatandaş katılımı: fotoğraflı ve konumlu şikâyetler, ağaç dikimi, iç mekânı temiz havalı yerler haritası.", "Ücretsiz ve sunucusuz: açık kaynaklar, telefonda çalışır, 4 dil (Kırgızca, Rusça, İngilizce, Türkçe)."],
+  back: "← Karar paneli" },
+};
+const GV = (k, v) => { let s = (GV_S[LANG] || GV_S.ru)[k]; if (s == null) s = GV_S.ru[k]; if (v && typeof s === "string") for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+const GV_SRC = {
+  who21: ["https://www.who.int/publications/i/item/9789240034228", "WHO Global Air Quality Guidelines (2021)"],
+  who20: ["https://www.who.int/publications/i/item/9789240000278", "WHO: Personal interventions and risk communication on air pollution (2020)"],
+  airnow: ["https://www.airnow.gov/aqi/aqi-basics/", "AirNow (US EPA): AQI Basics"],
+  flag: ["https://www.airnow.gov/air-quality-flag-program/", "AirNow (US EPA): Air Quality Flag Program"],
+  unicef: ["https://www.unicef.org/kyrgyzstan/reports/health-and-social-impacts-air-pollution-women-and-children-bishkek-kyrgyzstan", "UNICEF Kyrgyzstan (2023): Health and Social Impacts of Air Pollution on Women and Children in Bishkek"],
+  wbp: ["https://www.worldbank.org/en/news/press-release/2023/11/29/world-bank-supports-air-quality-improvement-in-the-kyrgyz-republic", "World Bank (2023): Kyrgyz Republic Air Quality Improvement Project"],
+  wbh: ["https://documents.worldbank.org/en/publication/documents-reports/documentdetail/164771590727056929", "World Bank (2020): Fueling Kyrgyzstan's Transition to Clean Household Heating Solutions"],
+  wb24: ["https://doi.org/10.1596/41995", "World Bank (2024): Air Quality Analysis for Bishkek — PM2.5 Source Apportionment"],
+  adb: ["https://www.adb.org/sites/default/files/publication/923306/adb-brief-272-tackling-air-pollution-bishkek.pdf", "ADB Brief 272 (2023): Tackling Air Pollution in Bishkek"],
+  undp: ["https://www.undp.org/sites/g/files/zskgke326/files/2023-01/KEY%20MESSAGES_ENG_2.pdf", "UNDP (2023): Key Messages — air pollution in Bishkek"],
+  air24: ["https://doi.org/10.3390/air2040021", "Air (MDPI), 2024: WRF–CAMx source apportionment, Bishkek"],
+  om: ["https://open-meteo.com/en/docs/air-quality-api", "Open-Meteo Air Quality API (CAMS), CC BY 4.0"],
+};
+const gvA = k => `<a href="${GV_SRC[k][0]}" target="_blank" rel="noopener">${esc(GV_SRC[k][1])}</a>`;
+const gvCache = {};
+const gvMean = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+const gvMax = a => { const v = a.filter(x => x != null); return v.length ? Math.max(...v) : null; };
+const gvF = (n, d = 0) => n == null || !isFinite(n) ? "—" : fmt(n, d);
+async function gvLoad() {
+  const c = CITY, hit = gvCache[c]; if (hit && Date.now() - hit.at < 30 * 60e3) return hit;
+  const D = DISTRICTS.slice(), parts = []; for (let i = 0; i < D.length; i += 50) parts.push(D.slice(i, i + 50));
+  const Q = "&hourly=us_aqi,pm2_5,pm10,nitrogen_dioxide&past_days=30&forecast_days=2&timezone=auto";
+  const cc = cityObj().center;
+  const [res, W] = await Promise.all([
+    Promise.all(parts.map(pp => fetchJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${pp.map(d => d.lat).join(",")}&longitude=${pp.map(d => d.lon).join(",")}` + Q, 30000))).then(r => r.flatMap(x => Array.isArray(x) ? x : [x])),
+    fetchJSON(`https://api.open-meteo.com/v1/forecast?latitude=${cc[0]}&longitude=${cc[1]}&hourly=temperature_2m&past_days=3&forecast_days=1&timezone=auto`, 15000).catch(() => null)]);
+  const now = Date.now(), rows = D.map((d, i) => gvDistrict(d, res[i], W, now)).filter(Boolean);
+  if (!rows.length) throw new Error("empty");
+  const out = { at: now, city: c, rows, tmrDate: rows[0].tmrDate };
+  const mx = k => Math.max(1e-9, ...rows.map(r => r[k] || 0));
+  const mA = mx("pm30"), mC = mx("tmrMax");
+  rows.forEach(r => { r.P = Math.round(100 * (0.5 * (r.pm30 || 0) / mA + 0.3 * (r.hShare || 0) + 0.2 * (r.tmrMax || 0) / mC));
+    r.meas = []; const E = r.E;
+    if (E) { if (E.hp >= 55) r.meas.push("mHeat"); if (E.tp >= 50) r.meas.push("mBus"); if (E.pp != null && E.pp < 0.55) r.meas.push("mTree"); }
+    if (!E) r.meas.push("mNone"); });
+  return (gvCache[c] = out);
+}
+function gvDistrict(d, r, W, now) {
+  if (!r || !r.hourly) return null;
+  const off = (r.utc_offset_seconds || 0) * 1000, H = r.hourly;
+  const T = H.time.map(tm => Date.parse(tm + ":00Z") - off);
+  const idx = H.time.map((_, i) => i), past = idx.filter(i => T[i] <= now);
+  const last = (h) => past.filter(i => T[i] > now - h * 3600e3);
+  const aq = i => H.us_aqi[i], p25 = i => H.pm2_5[i];
+  const today = new Date(now + off).toISOString().slice(0, 10), tmrDate = new Date(now + off + 86400e3).toISOString().slice(0, 10);
+  const tm = idx.filter(i => H.time[i].slice(0, 10) === tmrDate);
+  const p30 = last(30 * 24), withPm = p30.filter(i => p25(i) != null);
+  const daily = {}; p30.forEach(i => { const k = H.time[i].slice(0, 10); (daily[k] = daily[k] || []).push(i); });
+  const days = Object.keys(daily).sort().map(k => { const ii = daily[k]; return { date: k, aqiMean: gvMean(ii.map(aq)), aqiMax: gvMax(ii.map(aq)), pmMean: gvMean(ii.map(p25)), hOver: ii.filter(i => p25(i) > 15).length, n: ii.length }; });
+  const curRec = air && air.byDistrict && air.byDistrict[d.id];
+  const lastI = past[past.length - 1];
+  let E = null;
+  if (typeof tfEstimate === "function") { const l72 = last(72);
+    try { E = tfEstimate({ a: { hourly: { time: l72.map(i => H.time[i]), nitrogen_dioxide: l72.map(i => H.nitrogen_dioxide[i]), pm2_5: l72.map(p25), pm10: l72.map(i => H.pm10[i]) } }, b: W }); } catch (e) { E = null; } }
+  return { d, id: d.id, name: dName(d), now: curRec && curRec.aqi != null ? curRec.aqi : (lastI != null ? Math.round(aq(lastI)) : null),
+    a7: gvMean(last(168).map(aq)), a30: gvMean(p30.map(aq)), pm30: gvMean(p30.map(p25)), no2_7: gvMean(last(168).map(i => H.nitrogen_dioxide[i])),
+    hOver: withPm.filter(i => p25(i) > 15).length, hN: withPm.length, hShare: withPm.length ? withPm.filter(i => p25(i) > 15).length / withPm.length : null,
+    dOver: days.filter(x => x.date !== today && x.n >= 20 && x.pmMean > 15).length, dN: days.filter(x => x.date !== today && x.n >= 20).length,
+    tmrMax: gvMax(tm.map(aq)), tmrPm: gvMean(tm.map(p25)), tmrDate, days, E };
+}
+const gvLvlIdx = a => Math.max(0, AQI_LEVELS.findIndex(l => a <= l.max) === -1 ? AQI_LEVELS.length - 1 : AQI_LEVELS.findIndex(l => a <= l.max));
+const gvDate = s => { const [y, m, d] = s.split("-"); return `${d}.${m}.${y}`; };
+function gvBanner(G) {
+  const R = G.rows.filter(r => r.tmrMax != null); if (!R.length) return "";
+  const w = R.reduce((b, r) => r.tmrMax > b.tmrMax ? r : b), cityA = Math.round(gvMean(R.map(r => r.tmrMax)));
+  const a = Math.round(w.tmrMax), L = level(a), li = gvLvlIdx(a), ms = GV("meas")[Math.min(li, 5)];
+  return `<div class="card gv-banner" style="border-left:6px solid ${L.color}">
+    <div class="gv-bh"><span class="aqi-pin gv-pin" style="background:${L.color}">${a}</span><div><h3>⚠️ ${GV("tmrH", { date: gvDate(G.tmrDate) })}</h3>
+    <b>${esc(tr(L.name))}</b> · ${esc(GV("tmrWorst", { d: w.name, a }))}<br><span class="small">${esc(GV("tmrCity", { a: cityA }))}</span></div></div>
+    <h4>${GV("measH")}</h4><ul class="gv-meas">${ms.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <p class="small muted">${GV("measNote")} ${gvA("airnow")} · ${gvA("flag")} · ${gvA("who20")}</p><p class="small muted">${GV("tmrSrc")}</p>
+    <button class="btn ghost gv-noprint" id="gvCopy" type="button">${GV("copyWarn")}</button></div>`;
+}
+function gvWarnText(G) {
+  const R = G.rows.filter(r => r.tmrMax != null); if (!R.length) return "";
+  const w = R.reduce((b, r) => r.tmrMax > b.tmrMax ? r : b), a = Math.round(w.tmrMax), li = gvLvlIdx(a);
+  return GV("warnTxt", { date: gvDate(G.tmrDate), city: tr(cityObj().name), a, lvl: tr(level(a).name), d: w.name }) + "\n" + GV("meas")[Math.min(li, 5)].map(x => "• " + x).join("\n") + "\n" + SITE_URL;
+}
+function gvCmpHTML() {
+  const C = (state.complaints || []).filter(inCity);
+  if (!C.length) return `<p class="small muted">${GV("cmpNone")}</p>`;
+  const cats = ["chimney", "trash", "dump", "car", "factory"], by = {};
+  C.forEach(c => { const d = nearestDistrict(c.lat, c.lon); const b = by[d.id] = by[d.id] || { d, n: 0 }; b.n++; b[c.cat] = (b[c.cat] || 0) + 1; });
+  const rows = Object.values(by).sort((a, b) => b.n - a.n);
+  return `<div class="gv-tw"><table class="gv-t"><thead><tr><th>${GV("cD")}</th>${cats.map(c => `<th title="${esc(t("cat_c_" + c))}">${C_EMOJI[c]}</th>`).join("")}<th>${GV("cmpAll")}</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(dName(r.d))}</td>${cats.map(c => `<td>${r[c] || ""}</td>`).join("")}<td><b>${r.n}</b></td></tr>`).join("")}</tbody></table></div><div id="gvCmpMap" class="gv-map gv-noprint"></div>`;
+}
+function gvExport(G, kind) {
+  const c = cityObj(), meta = { title: "Taza Aba — district air quality, last 30 days", city: CITY, cityName: tr(c.name), generated: new Date(G.at).toISOString(),
+    source: "Open-Meteo Air Quality API (CAMS model, Copernicus), CC BY 4.0 — modelled values, not sensor measurements", units: { aqi: "US AQI", pm2_5: "µg/m³" }, whoGuidelinePm25_24h: 15 };
+  let blob, name = `taza-aba-${CITY}-aqi-30d`;
+  if (kind === "csv") {
+    const q = s => `"${String(s).replace(/"/g, '""')}"`, L = ["date,district_id,district_name,aqi_mean,aqi_max,pm2_5_mean,hours_pm2_5_over_15,hours"];
+    G.rows.forEach(r => r.days.forEach(x => L.push([x.date, r.id, q(r.name), x.aqiMean == null ? "" : x.aqiMean.toFixed(1), x.aqiMax == null ? "" : Math.round(x.aqiMax), x.pmMean == null ? "" : x.pmMean.toFixed(1), x.hOver, x.n].join(","))));
+    blob = new Blob(["\ufeff" + L.join("\n")], { type: "text/csv;charset=utf-8" }); name += ".csv";
+  } else {
+    blob = new Blob([JSON.stringify({ ...meta, districts: G.rows.map(r => ({ id: r.id, name: r.name, lat: r.d.lat, lon: r.d.lon, priority: r.P, days: r.days.map(x => ({ date: x.date, aqi_mean: x.aqiMean == null ? null : +x.aqiMean.toFixed(1), aqi_max: x.aqiMax == null ? null : Math.round(x.aqiMax), pm2_5_mean: x.pmMean == null ? null : +x.pmMean.toFixed(1), hours_pm2_5_over_15: x.hOver, hours: x.n })) })) }, null, 1)], { type: "application/json" }); name += ".json";
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+function gvRender(el, G) {
+  const R = G.rows, by30 = R.slice().sort((a, b) => (b.a30 || 0) - (a.a30 || 0) || (b.now || 0) - (a.now || 0)), byP = R.slice().sort((a, b) => b.P - a.P || (b.now || 0) - (a.now || 0)).slice(0, 10);
+  const pin = a => a == null ? "—" : `<span class="gv-chip" style="background:${level(a).color}">${Math.round(a)}</span>`;
+  const hS = gvMean(R.map(r => r.hOver)), hN = gvMean(R.map(r => r.hN)), dO = gvMean(R.map(r => r.dOver)), dN = gvMean(R.map(r => r.dN));
+  const Es = R.map(r => r.E).filter(Boolean), tp = Es.length ? Math.round(gvMean(Es.map(e => e.tp))) : null;
+  el.innerHTML = `<div class="gv-print-h"><b>Таза Аба · ${esc(GV("repH"))} · ${esc(tr(cityObj().name))}</b><br><span class="small">${esc(GV("repGen", { t: new Date(G.at).toLocaleString(numLocale()) }))} · ${esc(SITE_URL)}</span></div>
+    <h1>${GV("title")}</h1><p class="sub">${esc(GV("sub", { city: tr(cityObj().name) }))}</p>
+    <div class="gv-acts gv-noprint"><button class="btn" id="gvPrint" type="button">🖨️ ${GV("print")}</button><button class="btn ghost" id="gvCsv" type="button">⬇️ ${GV("csv")}</button><button class="btn ghost" id="gvJson" type="button">⬇️ ${GV("json")}</button><a class="btn ghost" href="#govpolicy">${GV("polLink")}</a></div>
+    ${gvBanner(G)}
+    <div class="gv-kpis">
+      <div class="card gv-k"><small>${GV("kNow")}</small>${pin(gvMean(R.map(r => r.now)))}</div>
+      <div class="card gv-k"><small>${GV("k7")}</small>${pin(gvMean(R.map(r => r.a7)))}</div>
+      <div class="card gv-k"><small>${GV("k30")}</small>${pin(gvMean(R.map(r => r.a30)))}</div>
+      <div class="card gv-k"><small>${GV("kH")}</small><b>${gvF(hS)}</b><span class="small muted"> / ${gvF(hN)}</span></div>
+      <div class="card gv-k"><small>${GV("kD")}</small><b>${gvF(dO)}</b><span class="small muted"> / ${gvF(dN)}</span></div></div>
+    <div class="card"><h3>📊 ${GV("rankH")}</h3><div class="gv-tw"><table class="gv-t"><thead><tr><th>#</th><th>${GV("cD")}</th><th>${GV("cNow")}</th><th>${GV("c7")}</th><th>${GV("c30")}</th><th>${GV("cH")}</th><th>${GV("cT")}</th></tr></thead>
+      <tbody>${by30.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.name)}</td><td>${pin(r.now)}</td><td>${pin(r.a7)}</td><td>${pin(r.a30)}</td><td>${r.hOver}<span class="muted">/${r.hN}</span></td><td>${pin(r.tmrMax)}</td></tr>`).join("")}</tbody></table></div>
+      <p class="small muted">${GV("whoNote")} ${gvA("who21")}</p><p class="small gv-grid">${esc(GV("gridNote", { z: new Set(R.map(r => (r.a30 || 0).toFixed(2) + "|" + (r.pm30 || 0).toFixed(2))).size, n: R.length }))}</p></div>
+    <div class="card"><h3>🔥🚗 ${GV("contH")}</h3>${tp == null ? `<p class="small muted">${GV("mNone")}</p>` : `<div class="tf-bar" role="img" aria-label="${GV("trans")} ${tp}% / ${GV("heat")} ${100 - tp}%"><span class="tf-t" style="width:${tp}%">${tp}%</span><span class="tf-h" style="width:${100 - tp}%">${100 - tp}%</span></div>
+      <div class="row between small" style="margin-top:4px"><span>${GV("trans")}</span><span>${GV("heat")}</span></div>`}
+      <p class="small muted"><b>${GV("contNote")}</b> <a href="#traffic" class="gv-noprint">${GV("how")}</a></p><p class="small muted">${gvA("air24")} · ${gvA("wb24")} · ${gvA("undp")}</p></div>
+    <div class="card"><h3>🎯 ${GV("priH")}</h3><p class="small">${GV("priSub")}</p>
+      <ol class="gv-pri">${byP.map(r => `<li><div class="gv-pr"><b>${esc(r.name)}</b><span class="gv-pp">${r.P} ${GV("pts")}</span></div><div class="gv-bar"><i style="width:${Math.max(2, Math.min(100, r.P))}%"></i></div>
+        <div class="gv-ms">${r.meas.map(m => `<span class="gv-m gv-${m}">${esc(GV(m))}</span>`).join("")}${r.E ? `<span class="small muted">${GV("heat")} ${r.E.hp}% · ${GV("trans")} ${r.E.tp}%</span>` : ""}</div></li>`).join("")}</ol>
+      <details class="gv-f" open><summary>${GV("fH")}</summary><p class="small">${GV("fTxt")}</p></details></div>
+    <div class="card"><h3>📸 ${GV("cmpH")}</h3><p class="small muted">${GV("cmpNote")}</p>${gvCmpHTML()}</div>
+    <div class="card"><h3>🗂️ ${GV("expH")}</h3><p class="small">${GV("expTxt")}</p><p class="small">${gvA("om")}</p></div>
+    <div class="foot">${t("footProto")}</div>`;
+  $("#gvPrint").onclick = () => window.print();
+  $("#gvCsv").onclick = () => gvExport(G, "csv"); $("#gvJson").onclick = () => gvExport(G, "json");
+  const cb = $("#gvCopy"); if (cb) cb.onclick = () => copyText(gvWarnText(G));
+  const me = $("#gvCmpMap");
+  if (me) { const C = (state.complaints || []).filter(inCity), by = {};
+    C.forEach(c => { const d = nearestDistrict(c.lat, c.lon); (by[d.id] = by[d.id] || { d, n: 0 }).n++; });
+    const m = mkMap("gvCmpMap", { zoomControl: true }).setView(cityObj().center, cityObj().zoom || 12); map = m; baseTiles(m);
+    Object.values(by).forEach(b => L.circleMarker([b.d.lat, b.d.lon], { radius: 8 + 4 * Math.sqrt(b.n), color: "#c0392b", fillColor: "#e74c3c", fillOpacity: 0.45, weight: 1 }).bindTooltip(`${esc(dName(b.d))}: ${b.n}`).addTo(m));
+    C.forEach(c => L.circleMarker([c.lat, c.lon], { radius: 3, color: "#7b1d12", weight: 1, fillOpacity: 0.9 }).addTo(m));
+    setTimeout(() => { if (m === map && m._mapPane) m.invalidateSize(); }, 60); }
+}
+window.viewGov = function (el) {
+  const c = CITY, hit = gvCache[c];
+  if (hit && Date.now() - hit.at < 30 * 60e3) return gvRender(el, hit);
+  el.innerHTML = `<h1>${GV("title")}</h1><p class="sub">${GV("loading")}</p><div class="skeleton"></div>`;
+  gvLoad().then(G => { if (CITY === c && (location.hash || "").slice(1).split("/")[0] === "gov" && el.isConnected) gvRender(el, G); })
+    .catch(e => { console.warn("gov:", e.message); if ((location.hash || "").slice(1).split("/")[0] !== "gov") return;
+      el.innerHTML = `<h1>${GV("title")}</h1><div class="card nodata"><p>${GV("err")}</p><button class="btn" id="gvRetry" type="button">${GV("retry")}</button></div>`; $("#gvRetry").onclick = () => route(true); });
+};
+window.viewGovPolicy = function (el) {
+  const sec = (h, p, srcs) => `<div class="card gv-pol"><h3>${GV(h)}</h3><p>${esc(GV(p))}</p><p class="small">${srcs.map(gvA).join(" · ")}</p></div>`;
+  el.innerHTML = `<p class="gv-noprint"><a href="#gov">${GV("back")}</a></p><h1>${GV("pTitle")}</h1><p class="sub">${GV("pSub")}</p>
+    ${cityObj().country === "tr" ? `<div class="card small">${GV("pTr")}</div>` : ""}
+    ${sec("p1H", "p1", ["unicef", "wbp", "wbh", "adb"])}${sec("p2H", "p2", ["wbp", "unicef"])}${sec("p3H", "p3", ["undp", "air24", "wb24"])}${sec("p4H", "p4", ["wbp"])}${sec("p5H", "p5", ["who21", "who20", "unicef"])}
+    <div class="card gv-pitch"><h3>🤝 ${GV("pitchH")}</h3><ul>${GV("pitch").map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="foot">${t("footProto")}</div>`;
+};
