@@ -58,3 +58,35 @@ html[data-theme="dark"] .gv-up{color:#ff8a7a}html[data-theme="dark"] .gv-dn{colo
   .gv-svg rect{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .gv-svt{fill:#333!important}
 }
+/* v29: памятка на 1 страницу (#govbrief) */
+.gb-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.gb-head h1{margin:0 0 4px}
+.gb-qr{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--muted,#5b6775);flex:0 0 auto}
+.gb-qr img{width:72px;height:72px;background:#fff;border-radius:8px;padding:3px}
+.gb-s{margin-bottom:10px}
+.gb-s h3{margin:0 0 8px}
+.gb-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:6px}
+.gb-k>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.gb-k small{color:var(--muted,#667);line-height:1.25}
+.gb-k b{font-size:20px}
+.gb-k .gv-chip{align-self:flex-start;font-size:16px;padding:3px 11px}
+.gb-top,.gb-m{padding-left:22px;margin:4px 0 6px}
+.gb-top li,.gb-m li{margin:4px 0;line-height:1.4}
+.gb-data{margin-top:6px}
+@media (max-width:520px){.gb-qr{display:none}}
+@media print{
+  .v-govbrief{font-size:11.5px;line-height:1.3}
+  .v-govbrief h1{font-size:18px;margin:0 0 2px}
+  .v-govbrief .sub{font-size:11px;margin:0 0 6px}
+  .v-govbrief h3{font-size:13px;margin:0 0 4px}
+  .v-govbrief .card{padding:7px 10px!important;margin:0 0 6px!important;border-radius:6px}
+  .v-govbrief .small{font-size:10px}
+  .v-govbrief .gv-meas,.v-govbrief .gb-top,.v-govbrief .gb-m{margin:2px 0 3px}
+  .v-govbrief .gv-meas li,.v-govbrief .gb-top li,.v-govbrief .gb-m li{margin:1px 0}
+  .v-govbrief .gb-k{grid-template-columns:repeat(4,1fr);gap:6px}
+  .v-govbrief .gb-qr{display:flex!important}
+  .v-govbrief .gb-qr img{width:64px;height:64px}
+  .v-govbrief .gv-grid{background:none;padding:0}
+  .v-govbrief .gv-m,.v-govbrief .gb-s{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.gv-acts a.btn{text-decoration:none}

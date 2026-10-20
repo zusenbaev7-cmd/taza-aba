@@ -301,7 +301,7 @@ function gvRender(el, G) {
   const Es = R.map(r => r.E).filter(Boolean), tp = Es.length ? Math.round(gvMean(Es.map(e => e.tp))) : null;
   el.innerHTML = `<div class="gv-print-h"><div><b>Таза Аба · ${esc(GV("repH"))} · ${esc(tr(cityObj().name))}</b><br><span class="small">${esc(GV("repGen", { t: new Date(G.at).toLocaleString(numLocale()) }))} · ${esc(SITE_URL)}</span></div><figure class="gv-qr"><img src="icons/qr-site.svg" alt="QR: https://taza-aba.surge.sh/" width="76" height="76"><figcaption>${GV("qrCap")}<br>taza-aba.surge.sh</figcaption></figure></div>
     <h1>${GV("title")}</h1><p class="sub">${esc(GV("sub", { city: tr(cityObj().name) }))}</p>
-    <div class="gv-acts gv-noprint"><button class="btn" id="gvPrint" type="button">🖨️ ${GV("print")}</button><button class="btn ghost" id="gvCsv" type="button">⬇️ ${GV("csv")}</button><button class="btn ghost" id="gvJson" type="button">⬇️ ${GV("json")}</button><a class="btn ghost" href="#govpolicy">${GV("polLink")}</a></div>
+    <div class="gv-acts gv-noprint"><button class="btn" id="gvPrint" type="button">🖨️ ${GV("print")}</button><button class="btn ghost" id="gvCsv" type="button">⬇️ ${GV("csv")}</button><button class="btn ghost" id="gvJson" type="button">⬇️ ${GV("json")}</button><a class="btn ghost" href="#govbrief">${GV("bLink")}</a><a class="btn ghost" href="#govpolicy">${GV("polLink")}</a></div>
     ${gvBanner(G)}
     <div class="gv-kpis">
       <div class="card gv-k"><small>${GV("kNow")}</small>${pin(gvMean(R.map(r => r.now)))}</div>
@@ -347,9 +347,110 @@ window.viewGov = function (el) {
 };
 window.viewGovPolicy = function (el) {
   const sec = (h, p, srcs) => `<div class="card gv-pol"><h3>${GV(h)}</h3><p>${esc(GV(p))}</p><p class="small">${srcs.map(gvA).join(" · ")}</p></div>`;
-  el.innerHTML = `<p class="gv-noprint"><a href="#gov">${GV("back")}</a></p><h1>${GV("pTitle")}</h1><p class="sub">${GV("pSub")}</p>
+  el.innerHTML = `<p class="gv-noprint"><a href="#gov">${GV("back")}</a> · <a href="#govbrief">${GV("bLink")}</a></p><h1>${GV("pTitle")}</h1><p class="sub">${GV("pSub")}</p>
     ${cityObj().country === "tr" ? `<div class="card small">${GV("pTr")}</div>` : ""}
     ${sec("p1H", "p1", ["unicef", "wbp", "wbh", "adb"])}${sec("p2H", "p2", ["wbp", "unicef"])}${sec("p3H", "p3", ["undp", "air24", "wb24"])}${sec("p4H", "p4", ["wbp"])}${sec("p5H", "p5", ["who21", "who20", "unicef"])}
     <div class="card gv-pitch"><h3>🤝 ${GV("pitchH")}</h3><ul>${GV("pitch").map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
     <div class="foot">${t("footProto")}</div>`;
+};
+/* v29: «Памятка на 1 страницу» (#govbrief) — короткий лист для акимата / мэрии: ситуация, мера на завтра, где в первую очередь, меры на сезон.
+ * Только данные, уже посчитанные в панели (gvLoad / gvWinLoad), и источники со страницы «Меры с доказанной пользой». */
+Object.assign(GV_S.ru, { bPri: "приоритет {p}/100", bZones: "Модель CAMS различает здесь {z} зон(ы) на {n} районов: районы одной зоны получают одинаковые значения. Приоритет — по формуле из полной панели.", bLink: "📄 Памятка на 1 страницу", bTitle: "Памятка по смогу для акимата / мэрии", bSub: "{city} · {date}. Коротко: ситуация, что сделать завтра, где в первую очередь и меры на сезон. Помещается на один лист A4.",
+  bPrint: "🖨️ Печать / PDF", bCopy: "📋 Скопировать текст", bS1: "1. Ситуация сейчас", bNow: "AQI сейчас", b30: "Средний AQI за 30 дней", bDw: "Дней выше нормы ВОЗ за 30 дней", bTmr: "Прогноз на завтра (макс.)",
+  bWin: "Прошлая зима ({w}, модель CAMS, центр города): средний PM2.5 {pm} мкг/м³, суток выше нормы ВОЗ — {dw} из {n}{ch}.", bWinCh: "; к зиме до этого {c}", bWinNone: "Архив зим сейчас недоступен — см. полную панель позже.",
+  bS2: "2. Завтра: AQI до {a} — «{lvl}»", bS3: "3. Где в первую очередь", bOne: "Модель CAMS (~40 км) не различает районы города {city} — данные одинаковы для всех районов, поэтому меры здесь — для всего города. Для адресных мер нужны наземные датчики.",
+  bS4: "4. Меры на отопительный сезон", bM: [["Отопление — главный зимний источник: утепление домов, переход с угля на тепловые насосы и электроотопление, зоны без угля.", ["unicef", "adb", "wbp"]],
+    ["Раннее предупреждение: публиковать прогноз смога, в дни смога — меры для школ и поликлиник (раздел 2).", ["who20", "airnow"]],
+    ["Транспорт: общественный транспорт и контроль выхлопа.", ["undp", "air24"]],
+    ["Озеленение и полив против пыли.", ["wbp"]],
+    ["Данные: собирать и анализировать данные о воздухе, проверки, координация ведомств.", ["wbp"]]],
+  bSrcNote: "Источники мер — по Бишкеку и Кыргызстану; для малых городов это ориентир, а не норматив.", bTr: "Источники мер — по Бишкеку и Кыргызстану; для городов Турции это ориентир, а не норматив.",
+  bData: "Данные: модель CAMS (Copernicus) через Open-Meteo, CC BY 4.0 — модельные значения, а не измерения датчиков. Вклад отопления и транспорта — оценка. Подробно: раздел «Для мэрии и государства».", bFull: "← Полная панель", bCopied: "Текст памятки скопирован" });
+Object.assign(GV_S.ky, { bPri: "артыкчылык {p}/100", bZones: "CAMS модели бул жерде {n} районго {z} зонаны айырмалайт: бир зонадагы райондор бирдей маани алат. Артыкчылык — толук панелдеги формула боюнча.", bLink: "📄 1 барактык эскертме", bTitle: "Акимчилик / мэрия үчүн түтүн боюнча эскертме", bSub: "{city} · {date}. Кыскача: абал, эртең эмне кылуу керек, биринчи кезекте кайда жана сезондук чаралар. Бир A4 баракка батат.",
+  bPrint: "🖨️ Басып чыгаруу / PDF", bCopy: "📋 Текстти көчүрүү", bS1: "1. Азыркы абал", bNow: "Азыркы AQI", b30: "30 күндүк орточо AQI", bDw: "30 күндө ДССУ ченеминен ашкан күндөр", bTmr: "Эртеңки божомол (макс.)",
+  bWin: "Өткөн кыш ({w}, CAMS модели, шаардын борбору): орточо PM2.5 {pm} мкг/м³, ДССУ ченеминен ашкан сутка — {n} ичинен {dw}{ch}.", bWinCh: "; андан мурунку кышка карата {c}", bWinNone: "Кыштардын архиви азыр жеткиликсиз — толук панелди кийинчерээк караңыз.",
+  bS2: "2. Эртең: AQI {a} чейин — «{lvl}»", bS3: "3. Биринчи кезекте кайда", bOne: "CAMS модели (~40 км) {city} шаарынын райондорун айырмалабайт — маалымат бардык райондо бирдей, ошондуктан бул жердеги чаралар бүт шаар үчүн. Даректүү чаралар үчүн жердеги датчиктер керек.",
+  bS4: "4. Жылытуу мезгилиндеги чаралар", bM: [["Жылытуу — кышкы башкы булак: үйлөрдү жылуулоо, көмүрдөн жылуулук насосторуна жана электр жылытууга өтүү, көмүрсүз зоналар.", ["unicef", "adb", "wbp"]],
+    ["Алдын ала эскертүү: түтүн божомолун жарыялоо, түтүн күндөрү мектептер жана емканалар үчүн чаралар (2-бөлүм).", ["who20", "airnow"]],
+    ["Транспорт: коомдук транспорт жана түтүндү текшерүү.", ["undp", "air24"]],
+    ["Чаңга каршы жашылдандыруу жана сугат.", ["wbp"]],
+    ["Маалымат: аба тууралуу маалыматты чогултуу жана талдоо, текшерүүлөр, ведомстволордун координациясы.", ["wbp"]]],
+  bSrcNote: "Чаралардын булактары Бишкек жана Кыргызстан боюнча; чакан шаарлар үчүн бул ченем эмес, багыт.", bTr: "Чаралардын булактары Бишкек жана Кыргызстан боюнча; Түркиянын шаарлары үчүн бул ченем эмес, багыт.",
+  bData: "Маалымат: Open-Meteo аркылуу CAMS (Copernicus) модели, CC BY 4.0 — моделдик маанилер, датчиктердин өлчөөлөрү эмес. Жылытуу менен транспорттун үлүшү — баалоо. Толугу: «Мэрия жана мамлекет үчүн» бөлүмү.", bFull: "← Толук панель", bCopied: "Эскертменин тексти көчүрүлдү" });
+Object.assign(GV_S.en, { bPri: "priority {p}/100", bZones: "Here the CAMS model distinguishes {z} zone(s) across {n} districts: districts in the same zone get identical values. Priority uses the formula from the full dashboard.", bLink: "📄 One-page brief", bTitle: "Smog brief for the akimat / city hall", bSub: "{city} · {date}. In short: the situation, what to do tomorrow, where to act first and measures for the season. Fits on one A4 page.",
+  bPrint: "🖨️ Print / PDF", bCopy: "📋 Copy text", bS1: "1. Situation now", bNow: "AQI now", b30: "30-day average AQI", bDw: "Days above WHO guideline (30 d)", bTmr: "Tomorrow's forecast (max)",
+  bWin: "Last winter ({w}, CAMS model, city centre): mean PM2.5 {pm} µg/m³, days above the WHO guideline — {dw} of {n}{ch}.", bWinCh: "; vs the winter before {c}", bWinNone: "The winter archive is unavailable right now — check the full dashboard later.",
+  bS2: "2. Tomorrow: AQI up to {a} — \"{lvl}\"", bS3: "3. Where to act first", bOne: "The CAMS model (~40 km) does not distinguish districts of {city} — values are the same for all districts, so the measures here apply citywide. Targeted measures need ground sensors.",
+  bS4: "4. Measures for the heating season", bM: [["Heating is the main winter source: insulate homes, switch from coal to heat pumps and electric heating, coal-free zones.", ["unicef", "adb", "wbp"]],
+    ["Early warning: publish the smog forecast; on smog days apply the school and clinic measures (section 2).", ["who20", "airnow"]],
+    ["Transport: public transport and exhaust checks.", ["undp", "air24"]],
+    ["Greening and irrigation against dust.", ["wbp"]],
+    ["Data: collect and analyse air-quality data, inspections, cross-agency coordination.", ["wbp"]]],
+  bSrcNote: "Sources for the measures cover Bishkek and Kyrgyzstan; for small towns they are a guide, not a regulation.", bTr: "Sources for the measures cover Bishkek and Kyrgyzstan; for Turkish cities they are a guide, not a regulation.",
+  bData: "Data: CAMS model (Copernicus) via Open-Meteo, CC BY 4.0 — modelled values, not sensor measurements. Heating/transport shares are estimates. Details: «For city hall & government».", bFull: "← Full dashboard", bCopied: "Brief text copied" });
+Object.assign(GV_S.tr, { bPri: "öncelik {p}/100", bZones: "CAMS modeli burada {n} semt için {z} bölge ayırt ediyor: aynı bölgedeki semtler aynı değerleri alır. Öncelik, tam paneldeki formülle hesaplanır.", bLink: "📄 Tek sayfalık özet", bTitle: "Belediye / akimlik için duman özeti", bSub: "{city} · {date}. Kısaca: durum, yarın ne yapılmalı, önce nereye odaklanmalı ve sezon önlemleri. Tek bir A4 sayfasına sığar.",
+  bPrint: "🖨️ Yazdır / PDF", bCopy: "📋 Metni kopyala", bS1: "1. Şu anki durum", bNow: "Şu anki AQI", b30: "30 günlük ortalama AQI", bDw: "DSÖ sınırını aşan günler (30 gün)", bTmr: "Yarın tahmini (azami)",
+  bWin: "Geçen kış ({w}, CAMS modeli, şehir merkezi): ortalama PM2.5 {pm} µg/m³, DSÖ sınırını aşan gün: {dw}/{n}{ch}.", bWinCh: "; bir önceki kışa göre {c}", bWinNone: "Kış arşivi şu anda kullanılamıyor — daha sonra tam panele bakın.",
+  bS2: "2. Yarın: AQI en fazla {a} — «{lvl}»", bS3: "3. Önce nereye", bOne: "CAMS modeli (~40 km) {city} semtlerini ayırt etmiyor — değerler tüm semtlerde aynı, bu yüzden buradaki önlemler şehrin tamamı için. Hedefli önlemler için yer sensörleri gerekir.",
+  bS4: "4. Isınma sezonu önlemleri", bM: [["Isınma kışın ana kaynaktır: evlerin yalıtımı, kömürden ısı pompası ve elektrikli ısıtmaya geçiş, kömürsüz bölgeler.", ["unicef", "adb", "wbp"]],
+    ["Erken uyarı: duman tahminini yayımlamak; dumanlı günlerde okul ve sağlık ocakları için önlemler (bölüm 2).", ["who20", "airnow"]],
+    ["Ulaşım: toplu taşıma ve egzoz denetimi.", ["undp", "air24"]],
+    ["Toza karşı yeşillendirme ve sulama.", ["wbp"]],
+    ["Veri: hava verisini toplamak ve analiz etmek, denetimler, kurumlar arası koordinasyon.", ["wbp"]]],
+  bSrcNote: "Önlem kaynakları Bişkek ve Kırgızistan ile ilgilidir; küçük şehirler için mevzuat değil, yol göstericidir.", bTr: "Önlem kaynakları Bişkek ve Kırgızistan ile ilgilidir; Türkiye şehirleri için mevzuat değil, yol göstericidir.",
+  bData: "Veri: Open-Meteo üzerinden CAMS (Copernicus) modeli, CC BY 4.0 — model değerleri, sensör ölçümü değil. Isınma/ulaşım payları tahmindir. Ayrıntılar: «Belediye ve devlet için».", bFull: "← Tam panel", bCopied: "Özet metni kopyalandı" });
+const GV_SHORT = { unicef: "UNICEF 2023", adb: "ADB 2023", wbp: "World Bank 2023", who20: "WHO 2020", who21: "WHO 2021", airnow: "AirNow (US EPA)", undp: "UNDP 2023", air24: "Air 2024", om: "Open-Meteo" };
+const gvAs = k => `<a href="${GV_SRC[k][0]}" target="_blank" rel="noopener" title="${esc(GV_SRC[k][1])}">${esc(GV_SHORT[k] || GV_SRC[k][1])}</a>`;
+function gvBriefData(G) {
+  const R = G.rows, zones = new Set(R.map(r => (r.a30 || 0).toFixed(2) + "|" + (r.pm30 || 0).toFixed(2))).size;
+  const Rt = R.filter(r => r.tmrMax != null), w = Rt.length ? Rt.reduce((b, r) => r.tmrMax > b.tmrMax ? r : b) : null;
+  const top = R.slice().sort((a, b) => b.P - a.P || (b.now || 0) - (a.now || 0)).slice(0, 3);
+  return { now: gvMean(R.map(r => r.now)), a30: gvMean(R.map(r => r.a30)), dO: gvMean(R.map(r => r.dOver)), dN: gvMean(R.map(r => r.dN)),
+    tmr: w ? Math.round(w.tmrMax) : null, worst: w, zones, top: zones > 1 && R.length > 1 ? top : [] };
+}
+function gvBriefWin(W) {
+  const ws = (W && W.winters || []).filter(x => !x.part); if (!ws.length) return null;
+  const l = ws[ws.length - 1], p = ws[ws.length - 2], ch = p ? Math.round((l.pm / p.pm - 1) * 100) : null;
+  return GV("bWin", { w: `${l.y}/${String(l.y + 1).slice(2)}`, pm: fmt(l.pm, 1), dw: l.dw, n: l.n, ch: ch == null ? "" : GV("bWinCh", { c: (ch > 0 ? "+" : ch < 0 ? "−" : "") + Math.abs(ch) + "%" }) });
+}
+function gvBriefText(G, B, winLine) {
+  const c = tr(cityObj().name), L = [GV("bTitle") + " — " + c + ", " + new Date(G.at).toLocaleDateString(numLocale()), "",
+    GV("bS1") + ": " + GV("bNow") + " " + gvF(B.now) + "; " + GV("b30") + " " + gvF(B.a30) + "; " + GV("bDw") + " " + gvF(B.dO) + "/" + gvF(B.dN) + "."];
+  if (winLine) L.push(winLine);
+  if (B.tmr != null) { const li = gvLvlIdx(B.tmr); L.push("", GV("bS2", { a: B.tmr, lvl: tr(level(B.tmr).name) }), ...GV("meas")[Math.min(li, 5)].map(x => "• " + x)); }
+  L.push("", GV("bS3") + ":"); if (B.top.length) B.top.forEach((r, i) => L.push(`${i + 1}) ${r.name} (${GV("bPri", { p: r.P })}) — ${r.meas.map(m => GV(m)).join("; ")}`)); else L.push(GV("bOne", { city: c }));
+  L.push("", GV("bS4") + ":", ...GV("bM").map(m => "• " + m[0] + " (" + m[1].map(k => GV_SHORT[k]).join(", ") + ")"), "", GV("bData"), SITE_URL);
+  return L.join("\n");
+}
+function gvBriefRender(el, G) {
+  const c = tr(cityObj().name), B = gvBriefData(G), pin = a => a == null ? "—" : `<span class="gv-chip" style="background:${level(a).color}">${Math.round(a)}</span>`;
+  const cached = (() => { try { return JSON.parse(localStorage.getItem("tazaAba.gvWin2." + CITY) || "null"); } catch (e) { return null; } })();
+  let winLine = gvBriefWin(cached);
+  const li = B.tmr != null ? gvLvlIdx(B.tmr) : 0, L = B.tmr != null ? level(B.tmr) : null;
+  el.innerHTML = `<div class="gb-sheet">
+    <div class="gb-head"><div><p class="gv-noprint small"><a href="#gov">${GV("bFull")}</a></p><h1>${GV("bTitle")}</h1><p class="sub">${esc(GV("bSub", { city: c, date: new Date(G.at).toLocaleDateString(numLocale()) }))}</p></div>
+      <figure class="gb-qr"><img src="icons/qr-site.svg" alt="QR: https://taza-aba.surge.sh/" width="72" height="72"><figcaption>taza-aba.surge.sh</figcaption></figure></div>
+    <div class="gv-acts gv-noprint"><button class="btn" id="gbPrint" type="button">${GV("bPrint")}</button><button class="btn ghost" id="gbCopy" type="button">${GV("bCopy")}</button></div>
+    <section class="card gb-s"><h3>${GV("bS1")}</h3><div class="gb-k">
+      <div><small>${GV("bNow")}</small>${pin(B.now)}</div><div><small>${GV("b30")}</small>${pin(B.a30)}</div>
+      <div><small>${GV("bDw")}</small><span><b>${gvF(B.dO)}</b><span class="small muted"> / ${gvF(B.dN)}</span></span></div><div><small>${GV("bTmr")}</small>${pin(B.tmr)}</div></div>
+      <p class="small" id="gbWin">❄️ ${esc(winLine || GV("winLoad"))}</p></section>
+    ${L ? `<section class="card gb-s" style="border-left:6px solid ${L.color}"><h3>${esc(GV("bS2", { a: B.tmr, lvl: tr(L.name) }))}</h3><ul class="gv-meas">${GV("meas")[Math.min(li, 5)].map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      <p class="small muted">${GV("tmrSrc")} ${gvAs("airnow")} · ${gvAs("who20")}</p></section>` : ""}
+    <section class="card gb-s"><h3>${GV("bS3")}</h3>${B.top.length ? `<ol class="gb-top">${B.top.map(r => `<li><b>${esc(r.name)}</b> <span class="small muted">(${esc(GV("bPri", { p: r.P }))})</span> — ${r.meas.map(m => `<span class="gv-m gv-${m}">${esc(GV(m))}</span>`).join(" ")}</li>`).join("")}</ol>
+      <p class="small muted">${esc(GV("bZones", { z: B.zones, n: G.rows.length }))}</p>` : `<p class="small gv-grid">${esc(GV("bOne", { city: c }))}</p>`}</section>
+    <section class="card gb-s"><h3>${GV("bS4")}</h3><ol class="gb-m">${GV("bM").map(m => `<li>${esc(m[0])} <span class="small muted">${m[1].map(gvAs).join(", ")}</span></li>`).join("")}</ol>
+      <p class="small muted">${GV(cityObj().country === "tr" ? "bTr" : "bSrcNote")}</p></section>
+    <p class="small muted gb-data">${GV("bData")} ${gvAs("om")}</p></div>`;
+  $("#gbPrint").onclick = () => window.print();
+  $("#gbCopy").onclick = () => copyText(gvBriefText(G, B, winLine));
+  if (!winLine) { const wc = CITY; gvWinLoad().then(W => { winLine = gvBriefWin(W); const p = $("#gbWin"); if (p && CITY === wc) p.textContent = "❄️ " + (winLine || GV("bWinNone")); }).catch(e => { console.warn("brief winters:", e.message); const p = $("#gbWin"); if (p) p.textContent = "❄️ " + GV("bWinNone"); }); }
+}
+window.viewGovBrief = function (el) {
+  const c = CITY, hit = gvCache[c];
+  if (hit && Date.now() - hit.at < 30 * 60e3) return gvBriefRender(el, hit);
+  el.innerHTML = `<h1>${GV("bTitle")}</h1><p class="sub">${GV("loading")}</p><div class="skeleton"></div>`;
+  gvLoad().then(G => { if (CITY === c && (location.hash || "").slice(1).split("/")[0] === "govbrief" && el.isConnected) gvBriefRender(el, G); })
+    .catch(e => { console.warn("brief:", e.message); if ((location.hash || "").slice(1).split("/")[0] !== "govbrief") return;
+      el.innerHTML = `<h1>${GV("bTitle")}</h1><div class="card nodata"><p>${GV("err")}</p><button class="btn" id="gvRetry" type="button">${GV("retry")}</button></div>`; $("#gvRetry").onclick = () => route(true); });
 };
