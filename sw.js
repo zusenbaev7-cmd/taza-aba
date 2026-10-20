@@ -1,8 +1,8 @@
 /* Таза Аба — service worker: офлайн-оболочка приложения.
  * Файлы приложения: сначала сеть, при отсутствии сети — кэш (обновления приходят сразу).
  * Данные о воздухе, погода, новости и тайлы карты НЕ кэшируются — всегда живые, без подмены цифр. */
-const CACHE = "taza-aba-v27";
-const SHELL = ["./", "index.html", "styles.css", "theme.css", "ethno.css", "dark.css", "i18n.js", "data.js", "kg-places.js", "extra.js", "i18n_tr.js", "quick.js", "quick.css", "config.js", "sources.js", "app.js", "maarif.js", "maarif-world.js", "maarif.css", "layout.css", "mobile.css", "icons-nav.js", "search.js", "features.js", "traffic2.js", "counter.js", "accounts.js", "accounts.css", "blue.css", "gov-boot.js", "gov.js", "gov.css", "features.css", "data/clean-places.json", "history.js", "history.css", "icons/maarif-emblem.png", "icons/maarif-logo.png",
+const CACHE = "taza-aba-v28";
+const SHELL = ["./", "index.html", "styles.css", "theme.css", "ethno.css", "dark.css", "i18n.js", "data.js", "kg-places.js", "extra.js", "i18n_tr.js", "quick.js", "quick.css", "config.js", "sources.js", "app.js", "maarif.js", "maarif-world.js", "maarif.css", "layout.css", "mobile.css", "icons-nav.js", "search.js", "features.js", "traffic2.js", "counter.js", "accounts.js", "accounts.css", "blue.css", "gov-boot.js", "gov.js", "gov.css", "icons/qr-site.svg", "features.css", "data/clean-places.json", "history.js", "history.css", "icons/maarif-emblem.png", "icons/maarif-logo.png",
   "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

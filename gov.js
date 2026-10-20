@@ -120,6 +120,31 @@ tr: { gridNote: "Önemli: CAMS modelinin çözünürlüğü Avrupa alanında (T�
   pitchH: "Taza Aba devlete nasıl yardımcı olur", pitch: ["Veri şeffaflığı: her semt için AQI, PM2.5 ve NO₂, açık CSV/JSON dışa aktarma ve tek tıkla yazdırılabilir rapor.", "Erken uyarı: yarının duman tahmini (CAMS), hazır uyarı metni ve seviyeye göre önlemler; vatandaşlara Telegram uyarıları.", "Vatandaş katılımı: fotoğraflı ve konumlu şikâyetler, ağaç dikimi, iç mekânı temiz havalı yerler haritası.", "Ücretsiz ve sunucusuz: açık kaynaklar, telefonda çalışır, 4 dil (Kırgızca, Rusça, İngilizce, Türkçe)."],
   back: "← Karar paneli" },
 };
+/* v28: тренд 30 дней, зимы по годам, сравнение с прошлым годом, QR в отчёте */
+Object.assign(GV_S.ru, { trendMax: "Максимум: AQI {a} ({d}).", trendH: "30 дней по городу: средний AQI за сутки", trendNote: "Среднее по всем районам, модель CAMS (Open-Meteo). Цвет столбика — уровень AQI; пунктир — AQI 100.",
+  winH: "Зимы по годам (декабрь–февраль)", winSub: "Сравнение зим помогает видеть, меняется ли ситуация после мер. Центр города, модель CAMS.",
+  cW: "Зима", cPm: "Средний PM2.5", cDw: "Дней > ВОЗ", cMx: "Худшие сутки", cCh: "К прошлой зиме", unit: "мкг/м³",
+  yoyH: "Последние 30 дней и тот же период год назад", yoy: "Средний PM2.5 сейчас — {a} мкг/м³, год назад — {b} мкг/м³ ({c}). Дней выше нормы ВОЗ: {da} против {db}.",
+  winNote: "Модельные значения (CAMS, разрешение ~11–40 км), а не измерения датчиков: модель может заметно отличаться от наземных измерений, особенно при зимних инверсиях, поэтому сравнивайте годы между собой, а не с нормами. Архив модели — с зимы 2022/23. На разницу влияют погода и обновления модели, поэтому она сама по себе не доказывает эффект конкретной меры.",
+  winLoad: "Загружаю архив зим…", winErr: "Не удалось загрузить архив Open-Meteo.", winPart: "идёт сейчас", qrCap: "Открыть приложение" });
+Object.assign(GV_S.ky, { trendMax: "Эң жогорку: AQI {a} ({d}).", trendH: "Шаар боюнча 30 күн: суткалык орточо AQI", trendNote: "Бардык райондордун орточосу, CAMS модели (Open-Meteo). Мамычанын түсү — AQI деңгээли; пунктир — AQI 100.",
+  winH: "Жылдар боюнча кыштар (декабрь–февраль)", winSub: "Кыштарды салыштыруу чаралардан кийин абал өзгөрдүбү, көрүүгө жардам берет. Шаардын борбору, CAMS модели.",
+  cW: "Кыш", cPm: "Орточо PM2.5", cDw: "ДССУдан ашкан күн", cMx: "Эң начар сутка", cCh: "Өткөн кышка карата", unit: "мкг/м³",
+  yoyH: "Акыркы 30 күн жана былтыркы ушул мезгил", yoy: "Азыркы орточо PM2.5 — {a} мкг/м³, былтыр — {b} мкг/м³ ({c}). ДССУ ченеминен ашкан күндөр: {da} / {db}.",
+  winNote: "Булар моделдик маанилер (CAMS, ~11–40 км), датчиктердин өлчөөлөрү эмес: модель жердеги өлчөөлөрдөн, айрыкча кышкы инверсияда, бир топ айырмаланышы мүмкүн, ошондуктан жылдарды ченемдер менен эмес, бири-бири менен салыштырыңыз. Моделдин архиви 2022/23-кыштан бери. Айырмага аба ырайы жана моделдин жаңыланышы да таасир этет, ошондуктан ал өзүнчө бир чаранын натыйжасын далилдебейт.",
+  winLoad: "Кыштардын архиви жүктөлүүдө…", winErr: "Open-Meteo архивин жүктөө мүмкүн болгон жок.", winPart: "азыр жүрүп жатат", qrCap: "Тиркемени ачуу" });
+Object.assign(GV_S.en, { trendMax: "Peak: AQI {a} ({d}).", trendH: "30 days citywide: daily mean AQI", trendNote: "Average over all districts, CAMS model (Open-Meteo). Bar colour is the AQI level; dashed line is AQI 100.",
+  winH: "Winters year by year (December–February)", winSub: "Comparing winters shows whether things change after measures are taken. City centre, CAMS model.",
+  cW: "Winter", cPm: "Mean PM2.5", cDw: "Days > WHO", cMx: "Worst day", cCh: "vs previous winter", unit: "µg/m³",
+  yoyH: "Last 30 days vs the same period a year ago", yoy: "Mean PM2.5 now is {a} µg/m³, a year ago {b} µg/m³ ({c}). Days above the WHO guideline: {da} vs {db}.",
+  winNote: "Modelled values (CAMS, ~11–40 km resolution), not sensor measurements: the model can differ substantially from ground measurements, especially during winter inversions, so compare years with each other rather than with guidelines. The model archive starts in winter 2022/23. Weather and model updates also affect the difference, so on its own it does not prove the effect of a specific measure.",
+  winLoad: "Loading the winter archive…", winErr: "Couldn't load the Open-Meteo archive.", winPart: "in progress", qrCap: "Open the app" });
+Object.assign(GV_S.tr, { trendMax: "En yüksek: AQI {a} ({d}).", trendH: "Şehir genelinde 30 gün: günlük ortalama AQI", trendNote: "Tüm semtlerin ortalaması, CAMS modeli (Open-Meteo). Çubuk rengi AQI seviyesidir; kesikli çizgi AQI 100.",
+  winH: "Yıllara göre kışlar (Aralık–Şubat)", winSub: "Kışları karşılaştırmak, önlemlerden sonra durumun değişip değişmediğini gösterir. Şehir merkezi, CAMS modeli.",
+  cW: "Kış", cPm: "Ortalama PM2.5", cDw: "DSÖ üstü gün", cMx: "En kötü gün", cCh: "Önceki kışa göre", unit: "µg/m³",
+  yoyH: "Son 30 gün ve geçen yılın aynı dönemi", yoy: "Şu anki ortalama PM2.5 {a} µg/m³, bir yıl önce {b} µg/m³ ({c}). DSÖ sınırının üstündeki günler: {da} / {db}.",
+  winNote: "Model değerleridir (CAMS, ~11–40 km çözünürlük), sensör ölçümü değildir: model, özellikle kış inversiyonlarında yer ölçümlerinden belirgin biçimde farklı olabilir; bu yüzden yılları sınır değerlerle değil birbiriyle karşılaştırın. Model arşivi 2022/23 kışından başlar. Fark hava durumundan ve model güncellemelerinden de etkilenir, tek başına belirli bir önlemin etkisini kanıtlamaz.",
+  winLoad: "Kış arşivi yükleniyor…", winErr: "Open-Meteo arşivi yüklenemedi.", winPart: "devam ediyor", qrCap: "Uygulamayı aç" });
 const GV = (k, v) => { let s = (GV_S[LANG] || GV_S.ru)[k]; if (s == null) s = GV_S.ru[k]; if (v && typeof s === "string") for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
 const GV_SRC = {
   who21: ["https://www.who.int/publications/i/item/9789240034228", "WHO Global Air Quality Guidelines (2021)"],
@@ -222,12 +247,59 @@ function gvExport(G, kind) {
   }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
+const gvYmd = d => d.toISOString().slice(0, 10);
+function gvDaily(r) { const H = r && r.hourly; if (!H) return []; const by = {};
+  H.time.forEach((t, i) => { const p = H.pm2_5[i]; if (p == null) return; (by[t.slice(0, 10)] = by[t.slice(0, 10)] || []).push(p); });
+  return Object.keys(by).sort().filter(k => by[k].length >= 18).map(k => gvMean(by[k])); }
+async function gvWinLoad() {
+  const c = CITY, key = "tazaAba.gvWin2." + c;
+  try { const h = JSON.parse(localStorage.getItem(key) || "null"); if (h && Date.now() - h.at < 20 * 3600e3) return h; } catch (e) {}
+  const [lat, lon] = cityObj().center, now = new Date(), base = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=pm2_5&timezone=auto`;
+  const lastY = now.getUTCMonth() >= 11 ? now.getUTCFullYear() : now.getUTCFullYear() - 1, W = [];
+  for (let y = 2022; y <= lastY; y++) { const end = new Date(Date.UTC(y + 1, 2, 0)), part = end > now; W.push({ y, part, s: `${y}-12-01`, e: gvYmd(part ? new Date(now - 86400e3) : end) }); }
+  const yE = new Date(now - 86400e3), yS = new Date(now - 30 * 86400e3), ago = d => { const x = new Date(d); x.setUTCFullYear(x.getUTCFullYear() - 1); return x; };
+  const q = (s, e) => fetchJSON(`${base}&start_date=${s}&end_date=${e}`, 30000).then(gvDaily);
+  const [ws, nowD, agoD] = await Promise.all([Promise.all(W.map(w => w.s <= w.e ? q(w.s, w.e) : Promise.resolve([]))), q(gvYmd(yS), gvYmd(yE)), q(gvYmd(ago(yS)), gvYmd(ago(yE)))]);
+  const st = d => d.length ? { pm: gvMean(d), dw: d.filter(x => x > 15).length, mx: gvMax(d), n: d.length } : null;
+  const out = { at: Date.now(), winters: W.map((w, i) => ({ y: w.y, part: w.part, ...st(ws[i]) })).filter(w => w.n), now: st(nowD), ago: st(agoD) };
+  if (!out.winters.length && !out.now) throw new Error("empty");
+  try { localStorage.setItem(key, JSON.stringify(out)); } catch (e) {}
+  return out;
+}
+function gvWinHTML(R) {
+  const ws = R.winters, mx = Math.max(16, ...ws.map(w => w.pm)) * 1.12, Wd = 320, Hd = 150, bw = Math.min(56, (Wd - 40) / Math.max(1, ws.length) - 14);
+  const y = v => Hd - 18 - (v / mx) * (Hd - 34), step = (Wd - 40) / Math.max(1, ws.length);
+  const bars = ws.map((w, i) => { const x = 34 + i * step + (step - bw) / 2, col = w.pm > 15 ? "#e05a2b" : "#2f9e6e";
+    return `<rect x="${x.toFixed(1)}" y="${y(w.pm).toFixed(1)}" width="${bw.toFixed(1)}" height="${(Hd - 18 - y(w.pm)).toFixed(1)}" rx="4" fill="${col}"${w.part ? ' fill-opacity=".55"' : ""}/>
+      <text x="${(x + bw / 2).toFixed(1)}" y="${(y(w.pm) - 4).toFixed(1)}" text-anchor="middle" class="gv-svt">${fmt(w.pm, 1)}</text>
+      <text x="${(x + bw / 2).toFixed(1)}" y="${Hd - 4}" text-anchor="middle" class="gv-svt">${w.y}/${String(w.y + 1).slice(2)}${w.part ? "*" : ""}</text>`; }).join("");
+  const svg = `<svg class="gv-svg" viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${esc(GV("winH"))}"><line x1="30" x2="${Wd - 4}" y1="${y(15).toFixed(1)}" y2="${y(15).toFixed(1)}" stroke="#7a8796" stroke-dasharray="4 3"/>
+    <text x="28" y="${(y(15) + 4).toFixed(1)}" text-anchor="end" class="gv-svt">15</text>${bars}</svg>`;
+  const rows = ws.map((w, i) => { const p = ws[i - 1], ch = p && !w.part ? Math.round((w.pm / p.pm - 1) * 100) : null;
+    return `<tr><td>${w.y}/${w.y + 1}${w.part ? ` <span class="small muted">(${GV("winPart")})</span>` : ""}</td><td>${fmt(w.pm, 1)}</td><td>${w.dw}<span class="muted">/${w.n}</span></td><td>${fmt(w.mx, 0)}</td><td>${ch == null ? "—" : `<b class="${ch > 0 ? "gv-up" : "gv-dn"}">${ch > 0 ? "+" : ""}${ch}%</b>`}</td></tr>`; }).join("");
+  let yoy = "";
+  if (R.now && R.ago) { const ch = Math.round((R.now.pm / R.ago.pm - 1) * 100);
+    yoy = `<h4>${GV("yoyH")}</h4><p class="small">${esc(GV("yoy", { a: fmt(R.now.pm, 1), b: fmt(R.ago.pm, 1), c: (ch > 0 ? "+" : "") + ch + "%", da: R.now.dw, db: R.ago.dw }))}</p>`; }
+  return `${ws.length ? `${svg}<div class="gv-tw"><table class="gv-t gv-wt"><thead><tr><th>${GV("cW")}</th><th>${GV("cPm")}, ${GV("unit")}</th><th>${GV("cDw")}</th><th>${GV("cMx")}, ${GV("unit")}</th><th>${GV("cCh")}</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
+    ${yoy}<p class="small muted">${GV("winNote")} ${gvA("om")}</p>`;
+}
+function gvTrendHTML(G) {
+  const by = {}; G.rows.forEach(r => r.days.forEach(x => { if (x.aqiMean != null && x.n >= 18) (by[x.date] = by[x.date] || []).push(x.aqiMean); }));
+  const ds = Object.keys(by).sort().slice(-30).map(k => ({ k, a: gvMean(by[k]) })); if (ds.length < 3) return "";
+  const Wd = 360, Hd = 120, mx = Math.max(110, ...ds.map(d => d.a)) * 1.08, bw = (Wd - 8) / ds.length, y = v => Hd - 16 - (v / mx) * (Hd - 24);
+  const bars = ds.map((d, i) => `<rect x="${(4 + i * bw + 0.6).toFixed(1)}" y="${y(d.a).toFixed(1)}" width="${Math.max(1, bw - 1.2).toFixed(1)}" height="${(Hd - 16 - y(d.a)).toFixed(1)}" rx="1.5" fill="${level(d.a).color}"><title>${gvDate(d.k)}: AQI ${Math.round(d.a)}</title></rect>`).join("");
+  const worst = ds.reduce((b, d) => d.a > b.a ? d : b);
+  return `<div class="card gv-trend"><h3>📈 ${GV("trendH")}</h3><svg class="gv-svg" viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${esc(GV("trendH"))}: max ${Math.round(worst.a)} (${gvDate(worst.k)})">
+    <line x1="2" x2="${Wd - 2}" y1="${y(100).toFixed(1)}" y2="${y(100).toFixed(1)}" stroke="#7a8796" stroke-dasharray="4 3"/>${bars}
+    <text x="4" y="${Hd - 3}" class="gv-svt">${gvDate(ds[0].k).slice(0, 5)}</text><text x="${Wd - 4}" y="${Hd - 3}" text-anchor="end" class="gv-svt">${gvDate(ds[ds.length - 1].k).slice(0, 5)}</text></svg>
+    <p class="small muted">${GV("trendNote")} ${esc(GV("trendMax", { a: Math.round(worst.a), d: gvDate(worst.k) }))}</p></div>`;
+}
 function gvRender(el, G) {
   const R = G.rows, by30 = R.slice().sort((a, b) => (b.a30 || 0) - (a.a30 || 0) || (b.now || 0) - (a.now || 0)), byP = R.slice().sort((a, b) => b.P - a.P || (b.now || 0) - (a.now || 0)).slice(0, 10);
   const pin = a => a == null ? "—" : `<span class="gv-chip" style="background:${level(a).color}">${Math.round(a)}</span>`;
   const hS = gvMean(R.map(r => r.hOver)), hN = gvMean(R.map(r => r.hN)), dO = gvMean(R.map(r => r.dOver)), dN = gvMean(R.map(r => r.dN));
   const Es = R.map(r => r.E).filter(Boolean), tp = Es.length ? Math.round(gvMean(Es.map(e => e.tp))) : null;
-  el.innerHTML = `<div class="gv-print-h"><b>Таза Аба · ${esc(GV("repH"))} · ${esc(tr(cityObj().name))}</b><br><span class="small">${esc(GV("repGen", { t: new Date(G.at).toLocaleString(numLocale()) }))} · ${esc(SITE_URL)}</span></div>
+  el.innerHTML = `<div class="gv-print-h"><div><b>Таза Аба · ${esc(GV("repH"))} · ${esc(tr(cityObj().name))}</b><br><span class="small">${esc(GV("repGen", { t: new Date(G.at).toLocaleString(numLocale()) }))} · ${esc(SITE_URL)}</span></div><figure class="gv-qr"><img src="icons/qr-site.svg" alt="QR: https://taza-aba.surge.sh/" width="76" height="76"><figcaption>${GV("qrCap")}<br>taza-aba.surge.sh</figcaption></figure></div>
     <h1>${GV("title")}</h1><p class="sub">${esc(GV("sub", { city: tr(cityObj().name) }))}</p>
     <div class="gv-acts gv-noprint"><button class="btn" id="gvPrint" type="button">🖨️ ${GV("print")}</button><button class="btn ghost" id="gvCsv" type="button">⬇️ ${GV("csv")}</button><button class="btn ghost" id="gvJson" type="button">⬇️ ${GV("json")}</button><a class="btn ghost" href="#govpolicy">${GV("polLink")}</a></div>
     ${gvBanner(G)}
@@ -237,9 +309,11 @@ function gvRender(el, G) {
       <div class="card gv-k"><small>${GV("k30")}</small>${pin(gvMean(R.map(r => r.a30)))}</div>
       <div class="card gv-k"><small>${GV("kH")}</small><b>${gvF(hS)}</b><span class="small muted"> / ${gvF(hN)}</span></div>
       <div class="card gv-k"><small>${GV("kD")}</small><b>${gvF(dO)}</b><span class="small muted"> / ${gvF(dN)}</span></div></div>
+    ${gvTrendHTML(G)}
     <div class="card"><h3>📊 ${GV("rankH")}</h3><div class="gv-tw"><table class="gv-t"><thead><tr><th>#</th><th>${GV("cD")}</th><th>${GV("cNow")}</th><th>${GV("c7")}</th><th>${GV("c30")}</th><th>${GV("cH")}</th><th>${GV("cT")}</th></tr></thead>
       <tbody>${by30.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.name)}</td><td>${pin(r.now)}</td><td>${pin(r.a7)}</td><td>${pin(r.a30)}</td><td>${r.hOver}<span class="muted">/${r.hN}</span></td><td>${pin(r.tmrMax)}</td></tr>`).join("")}</tbody></table></div>
       <p class="small muted">${GV("whoNote")} ${gvA("who21")}</p><p class="small gv-grid">${esc(GV("gridNote", { z: new Set(R.map(r => (r.a30 || 0).toFixed(2) + "|" + (r.pm30 || 0).toFixed(2))).size, n: R.length }))}</p></div>
+    <div class="card gv-win"><h3>❄️ ${GV("winH")}</h3><p class="small">${GV("winSub")}</p><div id="gvWin"><p class="small muted">${GV("winLoad")}</p></div></div>
     <div class="card"><h3>🔥🚗 ${GV("contH")}</h3>${tp == null ? `<p class="small muted">${GV("mNone")}</p>` : `<div class="tf-bar" role="img" aria-label="${GV("trans")} ${tp}% / ${GV("heat")} ${100 - tp}%"><span class="tf-t" style="width:${tp}%">${tp}%</span><span class="tf-h" style="width:${100 - tp}%">${100 - tp}%</span></div>
       <div class="row between small" style="margin-top:4px"><span>${GV("trans")}</span><span>${GV("heat")}</span></div>`}
       <p class="small muted"><b>${GV("contNote")}</b> <a href="#traffic" class="gv-noprint">${GV("how")}</a></p><p class="small muted">${gvA("air24")} · ${gvA("wb24")} · ${gvA("undp")}</p></div>
@@ -253,6 +327,8 @@ function gvRender(el, G) {
   $("#gvPrint").onclick = () => window.print();
   $("#gvCsv").onclick = () => gvExport(G, "csv"); $("#gvJson").onclick = () => gvExport(G, "json");
   const cb = $("#gvCopy"); if (cb) cb.onclick = () => copyText(gvWarnText(G));
+  const wc = CITY; gvWinLoad().then(R => { const w = $("#gvWin"); if (w && CITY === wc) w.innerHTML = gvWinHTML(R); })
+    .catch(e => { console.warn("gov winters:", e.message); const w = $("#gvWin"); if (w) w.innerHTML = `<p class="small muted">${GV("winErr")}</p>`; });
   const me = $("#gvCmpMap");
   if (me) { const C = (state.complaints || []).filter(inCity), by = {};
     C.forEach(c => { const d = nearestDistrict(c.lat, c.lon); (by[d.id] = by[d.id] || { d, n: 0 }).n++; });

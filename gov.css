@@ -42,4 +42,19 @@ html[data-theme="dark"] .gv-t th,html[data-theme="dark"] .gv-t td{border-color:r
   .gv-chip,.gv-pin,.gv-bar i,.tf-bar span{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   a{color:#000}
 }
-.gv-grid{background:rgba(230,184,0,.12);border-radius:10px;padding:8px 10px}
+.gv-grid{background:rgba(56,189,248,.13);border-radius:10px;padding:8px 10px}
+.card svg.gv-svg,svg.gv-svg{width:100%!important;max-width:560px!important;height:auto!important;display:block;margin:6px 0}
+.gv-svt{font-size:10px;fill:var(--muted,#5b6775)}
+html[data-theme="dark"] .gv-svt{fill:#aab6c3}
+.gv-up{color:#c0392b}.gv-dn{color:#1e8a5a}
+html[data-theme="dark"] .gv-up{color:#ff8a7a}html[data-theme="dark"] .gv-dn{color:#6fe0a8}
+.gv-wt td:nth-child(2){min-width:0}
+.gv-win h4{margin:12px 0 4px}
+.gv-qr{display:none}
+@media print{
+  .gv-print-h{display:flex!important;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .gv-qr{display:flex;align-items:center;gap:8px;margin:0;font-size:11px}
+  .gv-qr img{width:76px;height:76px}
+  .gv-svg rect{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .gv-svt{fill:#333!important}
+}
