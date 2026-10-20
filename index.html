@@ -23,9 +23,12 @@
 <script>/* тема до отрисовки, без вспышки */(function(){var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var ac=localStorage.getItem("tazaAba.accent")==="blue";document.documentElement.dataset.accent=ac?"blue":"green";document.querySelector('meta[name="theme-color"]').content=d?(ac?"#0D1722":"#0E1A14"):(ac?"#E9F1F6":"#EEF1DF");})();</script>
 <script>/* полифиллы для старых Firefox/Safari + класс ff (в Firefox backdrop-filter очень тормозит прокрутку) */(function(){var w=window,h=document.documentElement;if(/Firefox\//.test(navigator.userAgent))h.classList.add("ff");if(!w.structuredClone)w.structuredClone=function(o){return o===undefined?o:JSON.parse(JSON.stringify(o))};if(!w.requestIdleCallback){w.requestIdleCallback=function(f,o){var t=Date.now();return setTimeout(function(){f({didTimeout:false,timeRemaining:function(){return Math.max(0,50-(Date.now()-t))}})},1)};w.cancelIdleCallback=clearTimeout}if(w.AbortSignal&&!AbortSignal.timeout)AbortSignal.timeout=function(ms){var c=new AbortController();setTimeout(function(){c.abort()},ms);return c.signal};})();</script>
 <title>Таза Аба — чистый воздух Бишкека</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd166'/><path d='M20 44c0-14 10-22 26-24-2 16-10 26-24 26' fill='%232e9e5b'/></svg>">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="icons/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="icons/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet">

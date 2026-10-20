@@ -162,3 +162,10 @@ select:focus,input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(15,1
 .lv-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
 .lv-sw{flex:0 0 64px;text-align:center;color:#fff;font-weight:800;font-size:12px;border-radius:10px;padding:5px 0;text-shadow:0 1px 1px rgba(0,0,0,.3)}
 @media (max-width:420px){.pol-row{grid-template-columns:1.2fr .9fr 1.2fr}.pol-bar{display:none}}
+/* AQI-кольцо: отступ от правого края, пунктирной рамки и угловых орнаментов (все ширины, обе темы) */
+.hero .gauge{margin:6px clamp(10px,2.4vw,24px) 0 0}
+@media (max-width:639px){.hero .gauge{margin:4px 10px 0 0}.hero-top>div:first-child{max-width:calc(100% - 128px)}}
+/* узкая карточка (≈1024 с боковым меню, планшеты): кольцо меньше, заголовок не заходит под него */
+.hero{container-type:inline-size}
+@container (min-width:420px) and (max-width:470px){.hero .gauge{width:124px;height:124px;flex-basis:124px;margin-right:14px}}
+@container (max-width:419.98px){.hero .gauge{width:112px;height:112px;flex-basis:112px;margin:4px 12px 0 0}.hero .g-val b{font-size:30px}.hero .level{font-size:clamp(20px,8cqi,28px);overflow-wrap:anywhere}}
