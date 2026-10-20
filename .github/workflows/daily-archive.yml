@@ -1,0 +1,38 @@
+# Открытый архив качества воздуха: каждую ночь дописывает суточные значения (Open-Meteo / CAMS, центр города) в archive/<город>.csv.
+# Без секретов и ключей. Уже записанные дни не меняются.
+name: Daily air archive
+on:
+  schedule:
+    - cron: "40 22 * * *"   # 22:40 UTC = 04:40 Бишкек, 01:40 Стамбул: прошлые местные сутки уже закончились
+  workflow_dispatch:
+    inputs:
+      past_days:
+        description: "Сколько прошлых дней проверить (1–92)"
+        required: false
+        default: "3"
+permissions:
+  contents: write
+concurrency:
+  group: archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Append yesterday
+        env:
+          PAST_DAYS: ${{ github.event.inputs.past_days || '3' }}
+        run: node bot/archive_daily.js
+      - name: Commit archive
+        run: |
+          git config user.name "taza-aba-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add archive
+          if git diff --staged --quiet; then echo "no new rows"; exit 0; fi
+          git commit -m "archive: daily air-quality rows $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 10; done
+          exit 1

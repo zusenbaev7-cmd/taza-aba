@@ -25,6 +25,8 @@ window.TAZA_CONFIG = Object.assign({
   GOATCOUNTER: "",
   /* Серверные аккаунты (Supabase). Пусто = только локальные зашифрованные аккаунты на устройстве.
      Заполняется скриптом backend/setup.sh. Anon key публичный по замыслу: доступ ограничен RLS. */
+  /* ARCHIVE_REPO — публичный репозиторий GitHub с открытым архивом по дням (archive/<город>.csv, пишет workflow daily-archive.yml). */
+  ARCHIVE_REPO: "zusenbaev7-cmd/taza-aba",
   SUPABASE_URL: "",
   SUPABASE_ANON_KEY: "",
 }, window.TAZA_CONFIG || {});

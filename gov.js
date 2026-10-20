@@ -454,3 +454,113 @@ window.viewGovBrief = function (el) {
     .catch(e => { console.warn("brief:", e.message); if ((location.hash || "").slice(1).split("/")[0] !== "govbrief") return;
       el.innerHTML = `<h1>${GV("bTitle")}</h1><div class="card nodata"><p>${GV("err")}</p><button class="btn" id="gvRetry" type="button">${GV("retry")}</button></div>`; $("#gvRetry").onclick = () => route(true); });
 };
+/* v30: открытый архив по дням (GitHub Actions → archive/<city>.csv в публичном репозитории) и газетный вариант памятки на кыргызском (A5). */
+Object.assign(GV_S.ru, { arH: "Открытый архив по дням", arSub: "Каждую ночь (около 04:40 по Бишкеку) GitHub Actions сохраняет суточные значения по {n} городам (центр города, модель CAMS) в открытый репозиторий. Уже записанные дни не меняются — архив можно цитировать и проверять.",
+  arLoad: "Загружаю архив…", arErr: "Архив сейчас недоступен (GitHub). Попробуйте позже.", arNone: "Для этого города в архиве пока нет данных.",
+  arStat: "{city}: {d} суток, с {a} по {b}. Суток со средним PM2.5 выше нормы ВОЗ (15 мкг/м³): {w} ({p} %).", arUpd: "Обновлено: {t}.", arChart: "Суточный средний PM2.5 за весь архив, мкг/м³; тонкая линия — сутки, толстая — среднее за 15 дней; пунктир — норма ВОЗ 15",
+  arCsv: "CSV: {city}", arAll: "Все города (index.json)", arGh: "Папка на GitHub ↗", arColsH: "Столбцы CSV",
+  arCols: "date — дата (местное время); aqi_mean / aqi_max — средний и максимальный US AQI за сутки; pm2_5_mean / pm2_5_max, pm10_mean, no2_mean — мкг/м³; hours_pm2_5_over_15 — часов с PM2.5 > 15; hours — часов с данными (сутки с < 20 часами не пишутся).",
+  arNote: "Модельные значения CAMS (Copernicus) через Open-Meteo, CC BY 4.0 — не измерения датчиков. Модель может заметно отличаться от наземных измерений, особенно при зимних инверсиях: сравнивайте дни и годы между собой, а не с нормами и не города между собой. История до {s} догружена один раз из архива Open-Meteo (с {f}).",
+  gzLink: "🗞️ Кыргызча, A5 — для районной газеты", gzBack: "← Памятка A4", gzPrint: "🖨️ Печать A5 / PDF", gzCopy: "📋 Скопировать текст (кыргызча)", gzHint: "Лист A5 на кыргызском для районной газеты или доски объявлений: цифры за 30 дней, шкала AQI с советами жителям и QR на живой прогноз. Текст всегда на кыргызском, независимо от языка приложения." });
+Object.assign(GV_S.ky, { arH: "Күн сайынкы ачык архив", arSub: "Күн сайын түнкүсүн (Бишкек убактысы менен болжол менен 04:40) GitHub Actions {n} шаар боюнча суткалык маанилерди (шаардын борбору, CAMS модели) ачык репозиторийге сактайт. Жазылган күндөр өзгөрбөйт — архивге шилтеме берип, текшерсе болот.",
+  arLoad: "Архив жүктөлүүдө…", arErr: "Архив азыр жеткиликсиз (GitHub). Кийинчерээк аракет кылыңыз.", arNone: "Бул шаар боюнча архивде азырынча маалымат жок.",
+  arStat: "{city}: {d} сутка, {a} – {b}. Орточо PM2.5 ДССУ ченеминен (15 мкг/м³) ашкан сутка: {w} ({p} %).", arUpd: "Жаңыланды: {t}.", arChart: "Бүт архив боюнча суткалык орточо PM2.5, мкг/м³; ичке сызык — сутка, жоон сызык — 15 күндүк орточо; пунктир — ДССУ ченеми 15",
+  arCsv: "CSV: {city}", arAll: "Бардык шаарлар (index.json)", arGh: "GitHub'дагы папка ↗", arColsH: "CSV мамычалары",
+  arCols: "date — күнү (жергиликтүү убакыт); aqi_mean / aqi_max — сутканын орточо жана эң жогорку US AQI; pm2_5_mean / pm2_5_max, pm10_mean, no2_mean — мкг/м³; hours_pm2_5_over_15 — PM2.5 > 15 болгон сааттар; hours — маалыматы бар сааттар (20 сааттан аз сутка жазылбайт).",
+  arNote: "Open-Meteo аркылуу CAMS (Copernicus) моделинин маанилери, CC BY 4.0 — датчиктердин өлчөөсү эмес. Модель жердеги өлчөөлөрдөн, айрыкча кышкы инверсияда, бир топ айырмаланышы мүмкүн: күндөрдү жана жылдарды ченемдер же башка шаарлар менен эмес, өз ара салыштырыңыз. {s} чейинки тарых Open-Meteo архивинен бир жолу жүктөлгөн ({f} баштап).",
+  gzLink: "🗞️ Кыргызча, A5 — райондук гезит үчүн", gzBack: "← A4 эскертме", gzPrint: "🖨️ A5 басып чыгаруу / PDF", gzCopy: "📋 Текстти көчүрүү (кыргызча)", gzHint: "Райондук гезит же кулактандыруу тактасы үчүн кыргызча A5 барак: 30 күндүк сандар, тургундар үчүн кеңештери менен AQI шкаласы жана жандуу божомолго QR." });
+Object.assign(GV_S.en, { arH: "Open daily archive", arSub: "Every night (around 04:40 Bishkek time) GitHub Actions saves daily values for {n} cities (city centre, CAMS model) to a public repository. Days already written never change, so the archive can be cited and checked.",
+  arLoad: "Loading the archive…", arErr: "The archive is unavailable right now (GitHub). Try again later.", arNone: "No archive data for this city yet.",
+  arStat: "{city}: {d} days, {a} to {b}. Days with mean PM2.5 above the WHO guideline (15 µg/m³): {w} ({p}%).", arUpd: "Updated: {t}.", arChart: "Daily mean PM2.5 over the whole archive, µg/m³; thin line — daily, thick line — 15-day mean; dashed line — WHO guideline 15",
+  arCsv: "CSV: {city}", arAll: "All cities (index.json)", arGh: "Folder on GitHub ↗", arColsH: "CSV columns",
+  arCols: "date — local date; aqi_mean / aqi_max — daily mean and max US AQI; pm2_5_mean / pm2_5_max, pm10_mean, no2_mean — µg/m³; hours_pm2_5_over_15 — hours with PM2.5 > 15; hours — hours with data (days with < 20 hours are not written).",
+  arNote: "Modelled CAMS (Copernicus) values via Open-Meteo, CC BY 4.0 — not sensor measurements. The model can differ substantially from ground measurements, especially during winter inversions: compare days and years with each other, not with guidelines or other cities. History before {s} was loaded once from the Open-Meteo archive (from {f}).",
+  gzLink: "🗞️ Kyrgyz A5 — for district newspapers", gzBack: "← A4 brief", gzPrint: "🖨️ Print A5 / PDF", gzCopy: "📋 Copy text (Kyrgyz)", gzHint: "An A5 sheet in Kyrgyz for a district newspaper or notice board: 30-day figures, the AQI scale with advice for residents and a QR to the live forecast. The text is always in Kyrgyz, whatever the app language." });
+Object.assign(GV_S.tr, { arH: "Günlük açık arşiv", arSub: "GitHub Actions her gece (Bişkek saatiyle yaklaşık 04:40) {n} şehir için günlük değerleri (şehir merkezi, CAMS modeli) herkese açık bir depoya kaydeder. Yazılmış günler değişmez; arşive atıf yapılabilir ve doğrulanabilir.",
+  arLoad: "Arşiv yükleniyor…", arErr: "Arşive şu anda ulaşılamıyor (GitHub). Daha sonra deneyin.", arNone: "Bu şehir için arşivde henüz veri yok.",
+  arStat: "{city}: {d} gün, {a} – {b}. Ortalama PM2.5'in DSÖ sınırını (15 µg/m³) aştığı gün: {w} (%{p}).", arUpd: "Güncellendi: {t}.", arChart: "Tüm arşiv boyunca günlük ortalama PM2.5, µg/m³; ince çizgi günlük, kalın çizgi 15 günlük ortalama; kesikli çizgi DSÖ sınırı 15",
+  arCsv: "CSV: {city}", arAll: "Tüm şehirler (index.json)", arGh: "GitHub'daki klasör ↗", arColsH: "CSV sütunları",
+  arCols: "date — yerel tarih; aqi_mean / aqi_max — günlük ortalama ve azami US AQI; pm2_5_mean / pm2_5_max, pm10_mean, no2_mean — µg/m³; hours_pm2_5_over_15 — PM2.5 > 15 olan saatler; hours — verili saatler (20 saatten az veri olan günler yazılmaz).",
+  arNote: "Open-Meteo üzerinden CAMS (Copernicus) model değerleri, CC BY 4.0 — sensör ölçümü değildir. Model, özellikle kış inversiyonlarında yer ölçümlerinden belirgin biçimde farklı olabilir: günleri ve yılları sınır değerlerle veya başka şehirlerle değil, birbiriyle karşılaştırın. {s} öncesi geçmiş, Open-Meteo arşivinden bir kez yüklendi ({f} itibarıyla).",
+  gzLink: "🗞️ Kırgızca A5 — ilçe gazeteleri için", gzBack: "← A4 özet", gzPrint: "🖨️ A5 yazdır / PDF", gzCopy: "📋 Metni kopyala (Kırgızca)", gzHint: "İlçe gazetesi veya ilan panosu için Kırgızca A5 sayfa: 30 günlük rakamlar, sakinlere önerilerle AQI ölçeği ve canlı tahmine QR. Metin, uygulama dili ne olursa olsun Kırgızcadır." });
+const GV_AR_REPO = (window.TAZA_CONFIG || {}).ARCHIVE_REPO || "zusenbaev7-cmd/taza-aba";
+const GV_AR_RAW = `https://raw.githubusercontent.com/${GV_AR_REPO}/main/archive/`, GV_AR_GH = `https://github.com/${GV_AR_REPO}/tree/main/archive`;
+const gvArCache = {};
+async function gvTxt(url, ms = 20000) { const r = await fetch(url, { cache: "no-cache", signal: AbortSignal.timeout(ms) }); if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }
+async function gvArLoad(city) {
+  const hit = gvArCache[city]; if (hit && Date.now() - hit.at < 3600e3) return hit;
+  const [idxT, csv] = await Promise.all([gvTxt(GV_AR_RAW + "index.json"), gvTxt(GV_AR_RAW + encodeURIComponent(city) + ".csv").catch(e => /404/.test(e.message) ? "" : Promise.reject(e))]);
+  const idx = JSON.parse(idxT), L = csv.split("\n").filter(Boolean), H = (L.shift() || "").split(","), ci = k => H.indexOf(k);
+  const rows = L.map(l => l.split(",")).map(c => ({ d: c[ci("date")], pm: c[ci("pm2_5_mean")] === "" ? null : +c[ci("pm2_5_mean")] })).filter(r => r.d);
+  return (gvArCache[city] = { at: Date.now(), idx, csv, rows });
+}
+function gvArHTML(A) {
+  const c = tr(cityObj().name), R = A.rows.filter(r => r.pm != null), n = Object.keys(A.idx.cities || {}).length;
+  const bf = A.idx.backfill, note = bf ? GV("arNote", { s: gvDate(A.idx.started || ""), f: gvDate(bf.from) }) : GV("arNote").replace(/\s*(История|History|\{s\}).*$/, "");
+  const links = `<div class="gv-acts gv-noprint"><button class="btn ghost" id="gvArCsv" type="button"${A.csv ? "" : " disabled"}>⬇️ ${esc(GV("arCsv", { city: c }))}</button><a class="btn ghost" href="${GV_AR_RAW}index.json" target="_blank" rel="noopener">${GV("arAll")}</a><a class="btn ghost" href="${GV_AR_GH}" target="_blank" rel="noopener">${GV("arGh")}</a></div>`;
+  if (!R.length) return `<p class="small">${esc(GV("arSub", { n }))}</p><p class="small muted">${GV("arNone")}</p>${links}`;
+  const w = R.filter(r => r.pm > 15).length, Wd = 360, Hd = 140, mx = Math.max(20, ...R.map(r => r.pm)) * 1.06;
+  const t0 = Date.parse(R[0].d), t1 = Math.max(t0 + 86400e3, Date.parse(R[R.length - 1].d)), x = d => 4 + (Date.parse(d) - t0) / (t1 - t0) * (Wd - 8), y = v => Hd - 16 - (v / mx) * (Hd - 24);
+  const pts = R.map(r => `${x(r.d).toFixed(1)},${y(r.pm).toFixed(1)}`).join(" ");
+  const sm = R.map((r, i) => { const a = R.slice(Math.max(0, i - 7), i + 8); return `${x(r.d).toFixed(1)},${y(a.reduce((s, q) => s + q.pm, 0) / a.length).toFixed(1)}`; }).join(" ");
+  const yrs = []; for (let yy = new Date(t0).getUTCFullYear() + 1; Date.UTC(yy, 0, 1) <= t1; yy++) yrs.push(yy);
+  const ticks = yrs.map(yy => { const xx = x(`${yy}-01-01`).toFixed(1); return `<line x1="${xx}" x2="${xx}" y1="4" y2="${Hd - 16}" stroke="#7a8796" stroke-opacity=".3"/><text x="${xx}" y="${Hd - 3}" text-anchor="middle" class="gv-svt">${yy}</text>`; }).join("");
+  const svg = `<svg class="gv-svg" viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${esc(GV("arChart"))}">${ticks}<line x1="2" x2="${Wd - 2}" y1="${y(15).toFixed(1)}" y2="${y(15).toFixed(1)}" stroke="#e05a2b" stroke-dasharray="4 3"/>
+    <polyline points="${pts}" fill="none" stroke="#38BDF8" stroke-opacity=".55" stroke-width=".8" stroke-linejoin="round" class="gv-arl"/><polyline points="${sm}" fill="none" stroke="#0369a1" stroke-width="1.8" stroke-linejoin="round" class="gv-ars"/>
+    <text x="4" y="12" class="gv-svt">${fmt(mx / 1.06, 0)} ${GV("unit")}</text><text x="${Wd - 4}" y="${(y(15) - 3).toFixed(1)}" text-anchor="end" class="gv-svt">15</text></svg>`;
+  return `<p class="small">${esc(GV("arSub", { n }))}</p>
+    <p><b>${esc(GV("arStat", { city: c, d: R.length, a: gvDate(R[0].d), b: gvDate(R[R.length - 1].d), w, p: Math.round(100 * w / R.length) }))}</b></p>
+    ${svg}<p class="small muted">${GV("arChart")}. ${esc(GV("arUpd", { t: new Date(A.idx.updated).toLocaleString(numLocale()) }))}</p>${links}
+    <details class="gv-f"><summary>${GV("arColsH")}</summary><p class="small">${esc(GV("arCols"))}</p></details><p class="small muted">${esc(note)} ${gvA("om")}</p>`;
+}
+function gvArMount() {
+  const box = $("#gvAr"); if (!box) return; const c = CITY;
+  gvArLoad(c).then(A => { const b = $("#gvAr"); if (!b || CITY !== c) return; b.innerHTML = gvArHTML(A);
+    const btn = $("#gvArCsv"); if (btn && A.csv) btn.onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + A.csv], { type: "text/csv;charset=utf-8" })); a.download = `taza-aba-archive-${c}.csv`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }; })
+    .catch(e => { console.warn("archive:", e.message); const b = $("#gvAr"); if (b && CITY === c) b.innerHTML = `<p class="small muted">${GV("arErr")}</p><p class="small"><a href="${GV_AR_GH}" target="_blank" rel="noopener">${GV("arGh")}</a></p>`; });
+}
+(function () { const _r = gvRender;
+  gvRender = function (el, G) { _r(el, G); const w = el.querySelector(".gv-win"); if (!w) return;
+    w.insertAdjacentHTML("afterend", `<div class="card gv-ar" id="gvArCard"><h3>🗄️ ${GV("arH")}</h3><div id="gvAr"><p class="small muted">${GV("arLoad")}</p></div></div>`); gvArMount(); };
+})();
+/* Газетный вариант памятки: всегда на кыргызском, лист A5. Только тексты, уже существующие в приложении (шкала AQI и советы из data.js,
+ * формулировки памятки), и числа из панели. */
+const GZ_KY = { title: "Шаарыбыздын абасы: түтүн боюнча кыскача", sub: "{city} · {date} · «Таза Аба» тиркемесинин маалыматы", s1: "Акыркы 30 күн", s2: "AQI шкаласы: эмне кылуу керек", s3: "Түтүндүү күндөрү", s4: "Абаны таза сактоого ар ким салым кошо алат",
+  r: ["Таштанды, жалбырак жана пластикти өрттөбөңүз.", "Мүмкүн болсо коомдук транспортту колдонуңуз.", "Үйүңүздү жылуулаңыз: терезе, дубал жана чатыр — жылуулук сакталып, отун азыраак кетет."],
+  live: "Эртеңки божомол жана жандуу маалымат:", data: "Маалымат: CAMS (Copernicus) модели, Open-Meteo аркылуу, CC BY 4.0 — моделдик маанилер, датчиктердин өлчөөсү эмес. Кеңештер — AQI шкаласы (AirNow, АКШ EPA) жана ДССУ боюнча." };
+const gvWithLang = (lg, f) => { const o = LANG; LANG = lg; try { return f(); } finally { LANG = o; } };
+function gvGzParts(G, winLine) {
+  const c = tr(cityObj().name), B = gvBriefData(G), lo = [0, 51, 101, 151, 201, 301];
+  const lv = AQI_LEVELS.map((L, i) => ({ c: L.color, r: i < 5 ? `${lo[i]}–${L.max}` : "301+", n: tr(L.name), t: tr(L.text) }));
+  const tips = [...tr(AQI_LEVELS[2].tips), ...tr(AQI_LEVELS[3].tips).slice(1)];
+  return { c, B, lv, tips, date: new Date(G.at).toLocaleDateString("ru-RU"), winLine };
+}
+function gvGzText(P) { const B = P.B;
+  return [GZ_KY.title + " — " + P.c + ", " + P.date, "", GZ_KY.s1 + ": " + GV("b30") + " " + gvF(B.a30) + "; " + GV("bDw") + " " + gvF(B.dO) + "/" + gvF(B.dN) + ".", ...(P.winLine ? [P.winLine] : []),
+    "", GZ_KY.s2 + ":", ...P.lv.map(l => `• ${l.r} — ${l.n}: ${l.t}`), "", GZ_KY.s3 + ":", ...P.tips.map(x => "• " + x), "", GZ_KY.s4 + ":", ...GZ_KY.r.map(x => "• " + x), "", GZ_KY.live + " " + SITE_URL, GZ_KY.data].join("\n"); }
+function gvGzRender(el, G) {
+  const cached = (() => { try { return JSON.parse(localStorage.getItem("tazaAba.gvWin2." + CITY) || "null"); } catch (e) { return null; } })();
+  let P = gvWithLang("ky", () => gvGzParts(G, gvBriefWin(cached)));
+  const pin = a => a == null ? "—" : `<span class="gv-chip" style="background:${level(a).color}">${Math.round(a)}</span>`;
+  const sheet = () => gvWithLang("ky", () => `<article class="gz-sheet" lang="ky">
+    <header class="gz-head"><div><h1>${esc(GZ_KY.title)}</h1><p class="sub">${esc(GZ_KY.sub.replace("{city}", P.c).replace("{date}", P.date))}</p></div>
+      <figure class="gb-qr gz-qr"><img src="icons/qr-site.svg" alt="QR: https://taza-aba.surge.sh/" width="64" height="64"><figcaption>taza-aba.surge.sh</figcaption></figure></header>
+    <section class="gz-s"><h3>${GZ_KY.s1}</h3><div class="gz-k"><div><small>${GV("b30")}</small>${pin(P.B.a30)}</div><div><small>${GV("bDw")}</small><b>${gvF(P.B.dO)}<span class="small muted"> / ${gvF(P.B.dN)}</span></b></div></div>
+      <p class="small" id="gzWin">${P.winLine ? "❄️ " + esc(P.winLine) : ""}</p></section>
+    <section class="gz-s"><h3>${GZ_KY.s2}</h3><table class="gz-t"><tbody>${P.lv.map(l => `<tr><td><span class="gz-sw" style="background:${l.c}"></span>${l.r}</td><td><b>${esc(l.n)}</b> — ${esc(l.t)}</td></tr>`).join("")}</tbody></table></section>
+    <section class="gz-s gz-two"><div><h3>${GZ_KY.s3}</h3><ul>${P.tips.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div><div><h3>${GZ_KY.s4}</h3><ul>${GZ_KY.r.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div></section>
+    <footer class="gz-f"><p><b>${GZ_KY.live}</b> taza-aba.surge.sh</p><p class="small muted">${esc(GZ_KY.data)} ${gvAs("airnow")}, ${gvAs("who20")}, ${gvAs("unicef")}, ${gvAs("om")}</p></footer></article>`);
+  el.innerHTML = `<p class="gv-noprint small"><a href="#govbrief">${GV("gzBack")}</a> · <a href="#gov">${GV("bFull")}</a></p>
+    <p class="gv-noprint small muted gz-hint">${esc(GV("gzHint"))}</p>
+    <div class="gv-acts gv-noprint"><button class="btn" id="gzPrint" type="button">${GV("gzPrint")}</button><button class="btn ghost" id="gzCopy" type="button">${GV("gzCopy")}</button></div>
+    <div id="gzBox">${sheet()}</div>`;
+  $("#gzPrint").onclick = () => window.print();
+  $("#gzCopy").onclick = () => copyText(gvGzText(P));
+  if (!P.winLine) { const wc = CITY; gvWinLoad().then(W => { if (CITY !== wc) return; P.winLine = gvWithLang("ky", () => gvBriefWin(W)); const p = $("#gzWin"); if (p && P.winLine) p.textContent = "❄️ " + P.winLine; }).catch(e => console.warn("gazeta winters:", e.message)); }
+}
+(function () { const _b = gvBriefRender;
+  gvBriefRender = function (el, G) {
+    if ((location.hash || "").slice(1).split("/")[1] === "gazeta") { el.classList.add("v-gazeta"); return gvGzRender(el, G); }
+    el.classList.remove("v-gazeta"); _b(el, G);
+    const acts = el.querySelector(".gb-sheet .gv-acts"); if (acts && cityObj().country !== "tr") acts.insertAdjacentHTML("beforeend", `<a class="btn ghost" href="#govbrief/gazeta">${GV("gzLink")}</a>`); };
+})();

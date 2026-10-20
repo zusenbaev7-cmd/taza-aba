@@ -1,0 +1,903 @@
+{
+ "title": "Taza Aba — open daily air-quality archive (city centres)",
+ "source": "Open-Meteo Air Quality API — CAMS model (Copernicus Atmosphere Monitoring Service)",
+ "license": "CC BY 4.0 (Open-Meteo); contains modified Copernicus Atmosphere Monitoring Service information",
+ "note": "Modelled values at the city centre point, not ground sensor measurements. Rows already written are never changed. Grid ~11 km (Europe/Türkiye), ~40 km (Kyrgyzstan).",
+ "units": {
+  "aqi": "US AQI (Open-Meteo)",
+  "pm2_5": "µg/m³",
+  "pm10": "µg/m³",
+  "no2": "µg/m³"
+ },
+ "whoGuidelinePm25_24h": 15,
+ "columns": [
+  "date",
+  "aqi_mean",
+  "aqi_max",
+  "pm2_5_mean",
+  "pm2_5_max",
+  "pm10_mean",
+  "no2_mean",
+  "hours_pm2_5_over_15",
+  "hours"
+ ],
+ "started": "2026-10-20",
+ "updated": "2026-10-20T12:31:21.862Z",
+ "cities": {
+  "bishkek": {
+   "name": {
+    "ru": "Бишкек",
+    "ky": "Бишкек",
+    "en": "Bishkek",
+    "tr": "Bişkek"
+   },
+   "country": "kg",
+   "lat": 42.8746,
+   "lon": 74.5698,
+   "file": "bishkek.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "naryn": {
+   "name": {
+    "ru": "Нарын",
+    "ky": "Нарын",
+    "en": "Naryn",
+    "tr": "Narin"
+   },
+   "country": "kg",
+   "lat": 41.4287,
+   "lon": 75.9911,
+   "file": "naryn.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "osh": {
+   "name": {
+    "ru": "Ош",
+    "ky": "Ош",
+    "en": "Osh",
+    "tr": "Oş"
+   },
+   "country": "kg",
+   "lat": 40.53,
+   "lon": 72.8,
+   "file": "osh.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "jalal": {
+   "name": {
+    "ru": "Джалал-Абад",
+    "ky": "Жалал-Абад",
+    "en": "Jalal-Abad",
+    "tr": "Celalabad"
+   },
+   "country": "kg",
+   "lat": 40.933,
+   "lon": 73,
+   "file": "jalal.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "karakol": {
+   "name": {
+    "ru": "Каракол",
+    "ky": "Каракол",
+    "en": "Karakol",
+    "tr": "Karakol"
+   },
+   "country": "kg",
+   "lat": 42.49,
+   "lon": 78.39,
+   "file": "karakol.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "talas": {
+   "name": {
+    "ru": "Талас",
+    "ky": "Талас",
+    "en": "Talas",
+    "tr": "Talas"
+   },
+   "country": "kg",
+   "lat": 42.52,
+   "lon": 72.24,
+   "file": "talas.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "batken": {
+   "name": {
+    "ru": "Баткен",
+    "ky": "Баткен",
+    "en": "Batken",
+    "tr": "Batken"
+   },
+   "country": "kg",
+   "lat": 40.06,
+   "lon": 70.82,
+   "file": "batken.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "tokmok": {
+   "name": {
+    "ru": "Токмок",
+    "ky": "Токмок",
+    "en": "Tokmok",
+    "tr": "Tokmok"
+   },
+   "country": "kg",
+   "lat": 42.84,
+   "lon": 75.29,
+   "file": "tokmok.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "istanbul": {
+   "name": {
+    "ru": "Стамбул",
+    "ky": "Стамбул",
+    "en": "Istanbul",
+    "tr": "İstanbul"
+   },
+   "country": "tr",
+   "lat": 41.0082,
+   "lon": 28.9784,
+   "file": "istanbul.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "ankara": {
+   "name": {
+    "ru": "Анкара",
+    "ky": "Анкара",
+    "en": "Ankara",
+    "tr": "Ankara"
+   },
+   "country": "tr",
+   "lat": 39.9334,
+   "lon": 32.8597,
+   "file": "ankara.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "izmir": {
+   "name": {
+    "ru": "Измир",
+    "ky": "Измир",
+    "en": "Izmir",
+    "tr": "İzmir"
+   },
+   "country": "tr",
+   "lat": 38.4237,
+   "lon": 27.1428,
+   "file": "izmir.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "bursa": {
+   "name": {
+    "ru": "Бурса",
+    "ky": "Бурса",
+    "en": "Bursa",
+    "tr": "Bursa"
+   },
+   "country": "tr",
+   "lat": 40.1885,
+   "lon": 29.061,
+   "file": "bursa.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "antalya": {
+   "name": {
+    "ru": "Анталья",
+    "ky": "Анталия",
+    "en": "Antalya",
+    "tr": "Antalya"
+   },
+   "country": "tr",
+   "lat": 36.8969,
+   "lon": 30.7133,
+   "file": "antalya.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "konya": {
+   "name": {
+    "ru": "Конья",
+    "ky": "Коня",
+    "en": "Konya",
+    "tr": "Konya"
+   },
+   "country": "tr",
+   "lat": 37.8746,
+   "lon": 32.4932,
+   "file": "konya.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "gaziantep": {
+   "name": {
+    "ru": "Газиантеп",
+    "ky": "Газиантеп",
+    "en": "Gaziantep",
+    "tr": "Gaziantep"
+   },
+   "country": "tr",
+   "lat": 37.0662,
+   "lon": 37.3833,
+   "file": "gaziantep.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "erzurum": {
+   "name": {
+    "ru": "Эрзурум",
+    "ky": "Эрзурум",
+    "en": "Erzurum",
+    "tr": "Erzurum"
+   },
+   "country": "tr",
+   "lat": 39.9055,
+   "lon": 41.2658,
+   "file": "erzurum.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "trabzon": {
+   "name": {
+    "ru": "Трабзон",
+    "ky": "Трабзон",
+    "en": "Trabzon",
+    "tr": "Trabzon"
+   },
+   "country": "tr",
+   "lat": 41.0027,
+   "lon": 39.7168,
+   "file": "trabzon.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "adana": {
+   "name": {
+    "ru": "Адана",
+    "ky": "Адана",
+    "en": "Adana",
+    "tr": "Adana"
+   },
+   "country": "tr",
+   "lat": 37,
+   "lon": 35.3213,
+   "file": "adana.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kayseri": {
+   "name": {
+    "ru": "Кайсери",
+    "ky": "Кайсери",
+    "en": "Kayseri",
+    "tr": "Kayseri"
+   },
+   "country": "tr",
+   "lat": 38.7205,
+   "lon": 35.4826,
+   "file": "kayseri.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "samsun": {
+   "name": {
+    "ru": "Самсун",
+    "ky": "Самсун",
+    "en": "Samsun",
+    "tr": "Samsun"
+   },
+   "country": "tr",
+   "lat": 41.2867,
+   "lon": 36.33,
+   "file": "samsun.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "diyarbakir": {
+   "name": {
+    "ru": "Диярбакыр",
+    "ky": "Диярбакыр",
+    "en": "Diyarbakır",
+    "tr": "Diyarbakır"
+   },
+   "country": "tr",
+   "lat": 37.9144,
+   "lon": 40.2306,
+   "file": "diyarbakir.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "eskisehir": {
+   "name": {
+    "ru": "Эскишехир",
+    "ky": "Эскишехир",
+    "en": "Eskişehir",
+    "tr": "Eskişehir"
+   },
+   "country": "tr",
+   "lat": 39.7767,
+   "lon": 30.5206,
+   "file": "eskisehir.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "mersin": {
+   "name": {
+    "ru": "Мерсин",
+    "ky": "Мерсин",
+    "en": "Mersin",
+    "tr": "Mersin"
+   },
+   "country": "tr",
+   "lat": 36.8121,
+   "lon": 34.6415,
+   "file": "mersin.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "denizli": {
+   "name": {
+    "ru": "Денизли",
+    "ky": "Денизли",
+    "en": "Denizli",
+    "tr": "Denizli"
+   },
+   "country": "tr",
+   "lat": 37.7765,
+   "lon": 29.0864,
+   "file": "denizli.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "sanliurfa": {
+   "name": {
+    "ru": "Шанлыурфа",
+    "ky": "Шанлыурфа",
+    "en": "Şanlıurfa",
+    "tr": "Şanlıurfa"
+   },
+   "country": "tr",
+   "lat": 37.1591,
+   "lon": 38.7969,
+   "file": "sanliurfa.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "malatya": {
+   "name": {
+    "ru": "Малатья",
+    "ky": "Малатия",
+    "en": "Malatya",
+    "tr": "Malatya"
+   },
+   "country": "tr",
+   "lat": 38.3552,
+   "lon": 38.3095,
+   "file": "malatya.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "van": {
+   "name": {
+    "ru": "Ван",
+    "ky": "Ван",
+    "en": "Van",
+    "tr": "Van"
+   },
+   "country": "tr",
+   "lat": 38.5012,
+   "lon": 43.3729,
+   "file": "van.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kocaeli": {
+   "name": {
+    "ru": "Коджаэли (Измит)",
+    "ky": "Кожаэли (Измит)",
+    "en": "Kocaeli (İzmit)",
+    "tr": "Kocaeli (İzmit)"
+   },
+   "country": "tr",
+   "lat": 40.7654,
+   "lon": 29.9408,
+   "file": "kocaeli.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "balykchy": {
+   "name": {
+    "ru": "Балыкчы",
+    "ky": "Балыкчы",
+    "en": "Balykchy",
+    "tr": "Balıkçı"
+   },
+   "country": "kg",
+   "lat": 42.4571,
+   "lon": 76.1963,
+   "file": "balykchy.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "cholponata": {
+   "name": {
+    "ru": "Чолпон-Ата",
+    "ky": "Чолпон-Ата",
+    "en": "Cholpon-Ata",
+    "tr": "Çolpon-Ata"
+   },
+   "country": "kg",
+   "lat": 42.6417,
+   "lon": 77.0665,
+   "file": "cholponata.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "uchkun_naryn": {
+   "name": {
+    "ru": "Учкун (Нарынская обл.)",
+    "ky": "Учкун (Нарын обл.)",
+    "en": "Uchkun (Naryn Region)",
+    "tr": "Uçkun (Narın bölgesi)"
+   },
+   "country": "kg",
+   "lat": 41.3813,
+   "lon": 75.3594,
+   "file": "uchkun_naryn.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kemin": {
+   "name": {
+    "ru": "Кемин",
+    "ky": "Кемин",
+    "en": "Kemin",
+    "tr": "Kemin"
+   },
+   "country": "kg",
+   "lat": 42.7822,
+   "lon": 75.6895,
+   "file": "kemin.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kajisay": {
+   "name": {
+    "ru": "Каджи-Сай",
+    "ky": "Кажы-Сай",
+    "en": "Kaji-Say",
+    "tr": "Kaji-Say"
+   },
+   "country": "kg",
+   "lat": 42.1379,
+   "lon": 77.1829,
+   "file": "kajisay.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "toktogul": {
+   "name": {
+    "ru": "Токтогул",
+    "ky": "Токтогул",
+    "en": "Toktogul",
+    "tr": "Toktogul"
+   },
+   "country": "kg",
+   "lat": 41.8719,
+   "lon": 72.9378,
+   "file": "toktogul.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "uzgen": {
+   "name": {
+    "ru": "Узген",
+    "ky": "Өзгөн",
+    "en": "Uzgen",
+    "tr": "Özgön"
+   },
+   "country": "kg",
+   "lat": 40.7688,
+   "lon": 73.2987,
+   "file": "uzgen.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kyzylkiya": {
+   "name": {
+    "ru": "Кызыл-Кия",
+    "ky": "Кызыл-Кыя",
+    "en": "Kyzyl-Kyya",
+    "tr": "Kyzyl-Kyya"
+   },
+   "country": "kg",
+   "lat": 40.26,
+   "lon": 72.1312,
+   "file": "kyzylkiya.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "razzakov": {
+   "name": {
+    "ru": "Раззаков",
+    "ky": "Раззаков",
+    "en": "Razzakov",
+    "tr": "Razzakov"
+   },
+   "country": "kg",
+   "lat": 39.8361,
+   "lon": 69.5312,
+   "file": "razzakov.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "sulukta": {
+   "name": {
+    "ru": "Сулюкта",
+    "ky": "Сүлүктү",
+    "en": "Sulyukta",
+    "tr": "Sülüklü"
+   },
+   "country": "kg",
+   "lat": 39.9407,
+   "lon": 69.5712,
+   "file": "sulukta.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kadamjay": {
+   "name": {
+    "ru": "Кадамжай",
+    "ky": "Кадамжай",
+    "en": "Kadamjay",
+    "tr": "Kadamcay"
+   },
+   "country": "kg",
+   "lat": 40.1302,
+   "lon": 71.7288,
+   "file": "kadamjay.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "aidarken": {
+   "name": {
+    "ru": "Айдаркен",
+    "ky": "Айдаркен",
+    "en": "Aydarken",
+    "tr": "Aydarken"
+   },
+   "country": "kg",
+   "lat": 39.9464,
+   "lon": 71.3424,
+   "file": "aidarken.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "bazarkorgon": {
+   "name": {
+    "ru": "Базар-Коргон",
+    "ky": "Базар-Коргон",
+    "en": "Bazar-Korgon",
+    "tr": "Pazar-Korgan"
+   },
+   "country": "kg",
+   "lat": 41.0349,
+   "lon": 72.7429,
+   "file": "bazarkorgon.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kerben": {
+   "name": {
+    "ru": "Кербен",
+    "ky": "Кербен",
+    "en": "Kerben",
+    "tr": "Kerben"
+   },
+   "country": "kg",
+   "lat": 41.4896,
+   "lon": 71.7546,
+   "file": "kerben.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "karakul": {
+   "name": {
+    "ru": "Кара-Куль",
+    "ky": "Кара-Көл",
+    "en": "Kara-Kul",
+    "tr": "Karaköl"
+   },
+   "country": "kg",
+   "lat": 41.6316,
+   "lon": 72.6718,
+   "file": "karakul.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "mailuusuu": {
+   "name": {
+    "ru": "Майлуу-Суу",
+    "ky": "Майлуу-Суу",
+    "en": "Mailuu-Suu",
+    "tr": "Mailuu-Suu"
+   },
+   "country": "kg",
+   "lat": 41.2457,
+   "lon": 72.4508,
+   "file": "mailuusuu.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "tashkumyr": {
+   "name": {
+    "ru": "Таш-Кумыр",
+    "ky": "Таш-Көмүр",
+    "en": "Tash-Kumyr",
+    "tr": "Taş-Kömür"
+   },
+   "country": "kg",
+   "lat": 41.3453,
+   "lon": 72.2215,
+   "file": "tashkumyr.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kochkorata": {
+   "name": {
+    "ru": "Кочкор-Ата",
+    "ky": "Кочкор-Ата",
+    "en": "Kochkor-Ata",
+    "tr": "Koçkor-Ata"
+   },
+   "country": "kg",
+   "lat": 41.0354,
+   "lon": 72.4834,
+   "file": "kochkorata.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kokjangak": {
+   "name": {
+    "ru": "Кок-Жангак",
+    "ky": "Көк-Жаңгак",
+    "en": "Kok-Zhangak",
+    "tr": "Kökcangak"
+   },
+   "country": "kg",
+   "lat": 41.0309,
+   "lon": 73.1979,
+   "file": "kokjangak.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "shamaldysay": {
+   "name": {
+    "ru": "Шамалды-Сай",
+    "ky": "Шамалды-Сай",
+    "en": "Shamaldy-Say",
+    "tr": "Shamaldy-Say"
+   },
+   "country": "kg",
+   "lat": 41.1987,
+   "lon": 72.1802,
+   "file": "shamaldysay.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "karasuu": {
+   "name": {
+    "ru": "Кара-Суу",
+    "ky": "Кара-Суу",
+    "en": "Kara-Suu",
+    "tr": "Kara-Su"
+   },
+   "country": "kg",
+   "lat": 40.7069,
+   "lon": 72.8799,
+   "file": "karasuu.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "nookat": {
+   "name": {
+    "ru": "Ноокат",
+    "ky": "Ноокат",
+    "en": "Nookat",
+    "tr": "Nookat"
+   },
+   "country": "kg",
+   "lat": 40.2657,
+   "lon": 72.6178,
+   "file": "nookat.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "gulcha": {
+   "name": {
+    "ru": "Гульча",
+    "ky": "Гүлчө",
+    "en": "Gulcha",
+    "tr": "Gulcha"
+   },
+   "country": "kg",
+   "lat": 40.3118,
+   "lon": 73.4438,
+   "file": "gulcha.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "karabalta": {
+   "name": {
+    "ru": "Кара-Балта",
+    "ky": "Кара-Балта",
+    "en": "Kara-Balta",
+    "tr": "Kara-Balta"
+   },
+   "country": "kg",
+   "lat": 42.8011,
+   "lon": 73.8523,
+   "file": "karabalta.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kant": {
+   "name": {
+    "ru": "Кант",
+    "ky": "Кант",
+    "en": "Kant",
+    "tr": "Kant"
+   },
+   "country": "kg",
+   "lat": 42.8888,
+   "lon": 74.8501,
+   "file": "kant.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "kaindy": {
+   "name": {
+    "ru": "Каинды",
+    "ky": "Кайыңды",
+    "en": "Kaindy",
+    "tr": "Kayıngdı"
+   },
+   "country": "kg",
+   "lat": 42.8271,
+   "lon": 73.6784,
+   "file": "kaindy.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "belovodskoe": {
+   "name": {
+    "ru": "Беловодское",
+    "ky": "Беловодск",
+    "en": "Belovodskoe",
+    "tr": "Belovodskoe"
+   },
+   "country": "kg",
+   "lat": 42.8319,
+   "lon": 74.0969,
+   "file": "belovodskoe.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "sokuluk": {
+   "name": {
+    "ru": "Сокулук (село)",
+    "ky": "Сокулук (айыл)",
+    "en": "Sokuluk (village)",
+    "tr": "Sokuluk (köy)"
+   },
+   "country": "kg",
+   "lat": 42.8565,
+   "lon": 74.2983,
+   "file": "sokuluk.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "aravan": {
+   "name": {
+    "ru": "Араван (село)",
+    "ky": "Араван (айыл)",
+    "en": "Aravan (village)",
+    "tr": "Aravan (köy)"
+   },
+   "country": "kg",
+   "lat": 40.5115,
+   "lon": 72.4998,
+   "file": "aravan.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  },
+  "shopokov": {
+   "name": {
+    "ru": "Шопоков",
+    "ky": "Шопоков",
+    "en": "Shopokov",
+    "tr": "Shopokov"
+   },
+   "country": "kg",
+   "lat": 42.8575,
+   "lon": 74.342,
+   "file": "shopokov.csv",
+   "days": 1419,
+   "first": "2022-12-01",
+   "last": "2026-10-19"
+  }
+ },
+ "backfill": {
+  "from": "2022-12-01",
+  "at": "2026-10-20",
+  "note": "History before the archive start was loaded once from the Open-Meteo CAMS archive."
+ }
+}
