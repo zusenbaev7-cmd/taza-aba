@@ -23,7 +23,7 @@ const QD = {
     evBefore: "Проветрите сейчас и гуляйте до {x}; после 18:00 держите окна закрытыми.", evNow: "Держите окна закрытыми до утра, прогулки перенесите.",
     evF: "18–23 ч: AQI до {a}", evWind: "ветер {w} м/с", evInv: "инверсия", evNoInv: "без инверсии", evSrc: "прогноз Open-Meteo (CAMS + погода)", evTomorrow: "на завтра",
     mWeather: "Погода", mWeatherSub: "Прогноз и ветер на 7 дней", mHouse: "Расчёт перехода с угля", mGroup: "Совместные закупки",
-    cmpMake: "Сформировать обращение", cmpMade: "Обращение готово — выберите, как отправить", cmpDraft: "Черновик", cmpSentYou: "Отправлено вами", cmpVia: "через {v}, {t}",
+    cmpMake: "Сформировать обращение", lsFull: "Память браузера для сайта переполнена — последние изменения могут не сохраниться. Удалите старые жалобы с фото или лишние данные.", cmpQuota: "Обращение создано, но память браузера переполнена — после перезагрузки оно пропадёт. Удалите старые жалобы с фото.", cmpMade: "Обращение готово — выберите, как отправить", cmpDraft: "Черновик", cmpSentYou: "Отправлено вами", cmpVia: "через {v}, {t}",
     cmpHead: "Обращение о загрязнении воздуха", cmpType: "Тип", cmpDesc: "Описание", cmpPlace: "Район", cmpCoords: "Координаты", cmpTime: "Время", cmpAqi: "Текущий AQI в районе", cmpPhoto: "Фото: есть, прилагаю отдельно",
     cmpSubj: "Жалоба: {c} — {d}", cmpCopy: "Копировать", cmpMark: "Отметить как отправленное", cmpPhotoNote: "📎 Фото не прикрепляется автоматически: добавьте его в письмо/чат вручную.",
     cmpTo: "Куда обращаться (официальные источники)", cmpNoTo: "Официальные контакты для этого города не проверены — получатель не указан, впишите его сами.", cmpSrc: "источник",
@@ -46,7 +46,7 @@ const QD = {
     evBefore: "Азыр желдетиңиз, {x} чейин сейилдеңиз; 18:00дөн кийин терезелерди жабык кармаңыз.", evNow: "Эртеңге чейин терезелерди жабык кармаңыз, сейилдөөнү кийинкиге калтырыңыз.",
     evF: "18–23: AQI {a} чейин", evWind: "шамал {w} м/с", evInv: "инверсия", evNoInv: "инверсия жок", evSrc: "Open-Meteo божомолу (CAMS + аба ырайы)", evTomorrow: "эртеңге",
     mWeather: "Аба ырайы", mWeatherSub: "7 күнгө божомол жана шамал", mHouse: "Көмүрдөн өтүү эсеби", mGroup: "Биргелешкен сатып алуу",
-    cmpMake: "Арызды түзүү", cmpMade: "Арыз даяр — кантип жөнөтүүнү тандаңыз", cmpDraft: "Долбоор", cmpSentYou: "Сиз жөнөттүңүз", cmpVia: "{v} аркылуу, {t}",
+    cmpMake: "Арызды түзүү", lsFull: "Браузердин сайт үчүн эси толду — акыркы өзгөрүүлөр сакталбашы мүмкүн. Сүрөттүү эски арыздарды өчүрүңүз.", cmpQuota: "Арыз түзүлдү, бирок браузердин эси толду — кайра жүктөгөндө жоголот. Сүрөттүү эски арыздарды өчүрүңүз.", cmpMade: "Арыз даяр — кантип жөнөтүүнү тандаңыз", cmpDraft: "Долбоор", cmpSentYou: "Сиз жөнөттүңүз", cmpVia: "{v} аркылуу, {t}",
     cmpHead: "Абанын булганышы тууралуу арыз", cmpType: "Түрү", cmpDesc: "Сүрөттөмө", cmpPlace: "Аймак", cmpCoords: "Координаттар", cmpTime: "Убакыт", cmpAqi: "Аймактагы учурдагы AQI", cmpPhoto: "Сүрөт: бар, өзүнчө тиркейм",
     cmpSubj: "Арыз: {c} — {d}", cmpCopy: "Көчүрүү", cmpMark: "Жөнөтүлдү деп белгилөө", cmpPhotoNote: "📎 Сүрөт автоматтык түрдө тиркелбейт: аны катка/чатка өзүңүз кошуңуз.",
     cmpTo: "Кайда кайрылуу (расмий булактар)", cmpNoTo: "Бул шаар үчүн расмий байланыштар текшерилген эмес — алуучуну өзүңүз жазыңыз.", cmpSrc: "булак",
@@ -69,7 +69,7 @@ const QD = {
     evBefore: "Air out now and walk before {x}; keep windows closed after 18:00.", evNow: "Keep windows closed until morning and postpone walks.",
     evF: "18–23h: AQI up to {a}", evWind: "wind {w} m/s", evInv: "inversion", evNoInv: "no inversion", evSrc: "Open-Meteo forecast (CAMS + weather)", evTomorrow: "for tomorrow",
     mWeather: "Weather", mWeatherSub: "7-day forecast and wind", mHouse: "Coal switch calculator", mGroup: "Group buying",
-    cmpMake: "Prepare complaint", cmpMade: "Complaint ready — choose how to send it", cmpDraft: "Draft", cmpSentYou: "Sent by you", cmpVia: "via {v}, {t}",
+    cmpMake: "Prepare complaint", lsFull: "Browser storage for this site is full — recent changes may not be saved. Delete old complaints with photos.", cmpQuota: "Complaint created, but browser storage is full — it will be lost after reload. Delete old complaints with photos.", cmpMade: "Complaint ready — choose how to send it", cmpDraft: "Draft", cmpSentYou: "Sent by you", cmpVia: "via {v}, {t}",
     cmpHead: "Air pollution complaint", cmpType: "Type", cmpDesc: "Description", cmpPlace: "District", cmpCoords: "Coordinates", cmpTime: "Time", cmpAqi: "Current AQI in the district", cmpPhoto: "Photo: available, attached separately",
     cmpSubj: "Complaint: {c} — {d}", cmpCopy: "Copy", cmpMark: "Mark as sent", cmpPhotoNote: "📎 The photo isn't attached automatically: add it to the email/chat yourself.",
     cmpTo: "Where to report (official sources)", cmpNoTo: "Official contacts for this city aren't verified — no recipient filled in, add it yourself.", cmpSrc: "source",
@@ -92,7 +92,7 @@ const QD = {
     evBefore: "Şimdi havalandırın, {x} saatinden önce yürüyün; 18:00'den sonra pencereleri kapalı tutun.", evNow: "Sabaha kadar pencereleri kapalı tutun, yürüyüşü erteleyin.",
     evF: "18–23: AQI en çok {a}", evWind: "rüzgâr {w} m/s", evInv: "inversiyon", evNoInv: "inversiyon yok", evSrc: "Open-Meteo tahmini (CAMS + hava)", evTomorrow: "yarın için",
     mWeather: "Hava durumu", mWeatherSub: "7 günlük tahmin ve rüzgâr", mHouse: "Kömürden geçiş hesabı", mGroup: "Ortak alım",
-    cmpMake: "Şikâyeti hazırla", cmpMade: "Şikâyet hazır — nasıl göndereceğinizi seçin", cmpDraft: "Taslak", cmpSentYou: "Sizin tarafınızdan gönderildi", cmpVia: "{v} ile, {t}",
+    cmpMake: "Şikâyeti hazırla", lsFull: "Bu site için tarayıcı belleği dolu — son değişiklikler kaydedilmeyebilir. Fotoğraflı eski şikâyetleri silin.", cmpQuota: "Şikâyet oluşturuldu ancak tarayıcı belleği dolu — yeniden yüklemede kaybolur. Fotoğraflı eski şikâyetleri silin.", cmpMade: "Şikâyet hazır — nasıl göndereceğinizi seçin", cmpDraft: "Taslak", cmpSentYou: "Sizin tarafınızdan gönderildi", cmpVia: "{v} ile, {t}",
     cmpHead: "Hava kirliliği şikâyeti", cmpType: "Tür", cmpDesc: "Açıklama", cmpPlace: "Semt", cmpCoords: "Koordinatlar", cmpTime: "Zaman", cmpAqi: "Semtteki güncel AQI", cmpPhoto: "Fotoğraf: var, ayrıca ekliyorum",
     cmpSubj: "Şikâyet: {c} — {d}", cmpCopy: "Kopyala", cmpMark: "Gönderildi olarak işaretle", cmpPhotoNote: "📎 Fotoğraf otomatik eklenmez: e-postaya/sohbete kendiniz ekleyin.",
     cmpTo: "Nereye başvurulur (resmî kaynaklar)", cmpNoTo: "Bu şehir için resmî iletişim bilgileri doğrulanmadı — alıcı boş, kendiniz yazın.", cmpSrc: "kaynak",
@@ -214,7 +214,7 @@ function maybeOnboard() { if (!localStorage.getItem(OB_KEY)) openOnboard(); }
 
 /* ---------- 3. Поделиться воздухом ---------- */
 function shareText() {
-  const d = byId(state.district), a = air.byDistrict[d.id]; if (!a) return "";
+  const d = byId(state.district), a = air.byDistrict[d.id]; if (!a || a.aqi == null) return "";
   const i = Math.max(0, AQI_LEVELS.indexOf(level(a.aqi)));
   let s = Q("shareTxt", { In: cap1(dLoc(d)), aqi: a.aqi, adv: Q("shAdv" + Math.min(i, 5)) });
   if (air.status === "offline") s = s.replace(/\.$/, Q("shareOff", { t: fmtAt(air.offlineAt) }) + ".");
@@ -317,8 +317,8 @@ function complaintText(c) {
   const osm = `https://www.openstreetmap.org/?mlat=${c.lat.toFixed(5)}&mlon=${c.lon.toFixed(5)}#map=17/${c.lat.toFixed(5)}/${c.lon.toFixed(5)}`;
   return [Q("cmpHead"), `${Q("cmpType")}: ${t("cat_c_" + c.cat)}`, `${Q("cmpDesc")}: ${c.text || "—"}`, `${Q("cmpPlace")}: ${dName(d)}, ${tr(cityObj().name)}`,
     `${Q("cmpCoords")}: ${c.lat.toFixed(5)}, ${c.lon.toFixed(5)} — ${osm}`, `${Q("cmpTime")}: ${when}`,
-    a ? `${Q("cmpAqi")}: US AQI ${a.aqi}${air.status === "offline" ? Q("shareOff", { t: fmtAt(air.offlineAt) }) : ""} (${a.src === "station" ? (a.stEmb ? ST("emb") + " / " : "") + SRC_NAME[a.stKind] : "Open-Meteo" + (a.src === "sensors" ? " / Sensor.Community" : "")})` : "",
-    c.photo ? Q("cmpPhoto") : ""].filter(Boolean).join("\n");
+    a && a.aqi != null ? `${Q("cmpAqi")}: US AQI ${a.aqi}${air.status === "offline" ? Q("shareOff", { t: fmtAt(air.offlineAt) }) : ""} (${a.src === "station" ? (a.stEmb ? ST("emb") + " / " : "") + SRC_NAME[a.stKind] : "Open-Meteo" + (a.src === "sensors" ? " / Sensor.Community" : "")})` : "",
+    hasPhoto(c) ? Q("cmpPhoto") : ""].filter(Boolean).join("\n");
 }
 function sendLinks(c) {
   const e = encodeURIComponent, txt = complaintText(c), d = nearestDistrict(c.lat, c.lon), subj = Q("cmpSubj", { c: t("cat_c_" + c.cat), d: dName(d) });
@@ -329,7 +329,7 @@ function sendLinks(c) {
     <button type="button" class="sh-a" data-copy="${c.id}">📋 ${Q("cmpCopy")}</button>
     ${!c.status ? `<button type="button" class="sh-a ghost" data-mark="${c.id}">✓ ${Q("cmpMark")}</button>` : ""}</div>
     ${!c.status ? `<div class="small sent-hint"${c.lastVia ? "" : " hidden"}>💡 ${Q("sentHint")}${c.lastVia ? ` <span class="muted">(${Q("lastVia", { v: c.lastVia })})</span>` : ""}</div>` : ""}
-    ${c.photo ? `<div class="small muted ph-note">${Q("cmpPhotoNote")}</div>` : ""}`;
+    ${hasPhoto(c) ? `<div class="small muted ph-note">${Q("cmpPhotoNote")}</div>` : ""}`;
 }
 function contactsHTML() {
   const cs = cityContacts();
@@ -348,7 +348,7 @@ function viewComplaints2(el) {
       <input type="file" id="cFile" accept="image/*" capture="environment" hidden>
       <label>${t("cCategory")}</label>
       <div class="cat-chips">${cats.map(c => `<button class="${draft.cat === c ? "on" : ""}" data-cat="${c}">${C_EMOJI[c]} ${t("cat_c_" + c)}</button>`).join("")}</div>
-      <label>${t("cDesc")}</label><input id="cText" value="${esc(draft.text)}" placeholder="${t("cDescPh")}">
+      <label for="cText">${t("cDesc")}</label><input id="cText" value="${esc(draft.text)}" placeholder="${t("cDescPh")}">
       <label>${t("cPlace")}</label><div id="cMap" class="mini-map"></div>
       <button class="btn ghost block" id="cGeo" style="margin-top:8px">${t("cGeo")}</button>
       <button class="btn block" id="cSend" style="margin-top:10px">📝 ${Q("cmpMake")}</button>
@@ -356,12 +356,12 @@ function viewComplaints2(el) {
     ${contactsHTML()}
     <h2>${t("cList")}</h2>
     ${allComplaints().map(c => `<div class="card c-item ${c.id === lastMade ? "just" : ""}" id="c-${c.id}">
-      <div class="c-thumb">${c.photo ? `<img src="${c.photo}" alt="">` : (C_EMOJI[c.cat] || "⚠️")}</div>
+      <div class="c-thumb">${hasPhoto(c) ? phImg(c, 'alt=""') : (C_EMOJI[c.cat] || "⚠️")}</div>
       <div style="flex:1;min-width:0"><b>${t("cat_c_" + c.cat)}</b>${c.mine ? ` <span class="chip">${t("cMine")}</span>` : ` <span class="chip demo">${t("demoChip")}</span>`}
         <div class="small" style="font-weight:600;margin:2px 0">${esc(tr(c.text)) || "—"}</div>
         ${c.mine ? `<div class="steps"><span class="on">${Q("cmpDraft")}</span><span class="${c.status ? "on" : ""}">${Q("cmpSentYou")}${c.status && c.via ? " " + Q("cmpVia", { v: c.via, t: hhmm(c.sentAt) }) : ""}</span></div>${sendLinks(c)}`
           : `<div class="steps">${stDemo.map((s, i) => `<span class="${i <= (c.status || 0) ? "on" : ""}">${s}</span>`).join("")}</div>`}
-        <div class="small muted" style="font-weight:700;margin-top:4px">📍 ${esc(dName(nearestDistrict(c.lat, c.lon)))} · ${c.date}${c.mine ? ` · <a href="#" data-del="${c.id}" style="color:#c9303a">${t("cDelete")}</a>` : ""}</div>
+        <div class="small muted" style="font-weight:700;margin-top:4px">📍 ${esc(dName(nearestDistrict(c.lat, c.lon)))} · ${esc(fmtDay(c.date))}${c.mine ? ` · <a href="#" data-del="${c.id}" style="color:#c9303a">${t("cDelete")}</a>` : ""}</div>
       </div></div>`).join("")}
     <div class="foot">${Q("cmpFoot")}</div>`;
   map = mkMap("cMap", { zoomControl: false }).setView(cityObj().center, cityObj().zoom || 13);
@@ -382,13 +382,15 @@ function viewComplaints2(el) {
     if (!navigator.geolocation) return toast(t("cGeoErr"));
     navigator.geolocation.getCurrentPosition(p => setPin(p.coords.latitude, p.coords.longitude, true), () => toast(t("cGeoErr")), { timeout: 8000 });
   };
-  $("#cSend").onclick = () => {
+  $("#cSend").onclick = async () => {
     if (draft.lat == null) return toast(t("cNoPoint"));
-    const now = new Date();
-    const c = { id: "u" + now.getTime(), city: CITY, mine: true, lat: draft.lat, lon: draft.lon, cat: draft.cat, photo: draft.photo, text: $("#cText").value.trim(), status: 0, ts: now.getTime(), date: now.toISOString().slice(0, 10) };
-    state.complaints.unshift(c); save(); lastMade = c.id;
+    const now = new Date(), txt = $("#cText").value.trim();
+    let photoId = null; if (draft.photo) { try { photoId = await phPut(draft.photo); } catch (e) { console.warn("photo → IndexedDB:", e && e.message); } }
+    const c = { id: "u" + now.getTime(), city: CITY, mine: true, lat: draft.lat, lon: draft.lon, cat: draft.cat, text: txt, status: 0, ts: now.getTime(), date: now.toISOString().slice(0, 10) };
+    if (photoId) c.photoId = photoId; else if (draft.photo) c.photo = draft.photo;
+    state.complaints.unshift(c); const ok = save(); lastMade = c.id;
     draft = { cat: "chimney", photo: null, lat: null, lon: null, text: "" };
-    toast(Q("cmpMade")); viewComplaints2(el);
+    toast(ok ? Q("cmpMade") : Q("cmpQuota")); if (!ok) saveWarnAt = Date.now(); viewComplaints2(el);
     const it = document.getElementById("c-" + c.id); if (it) it.scrollIntoView({ block: "center" });
   };
   const mark = (id, via) => { const s = state.complaints.find(x => x.id === id); if (!s) return; s.status = 1; s.via = via; s.sentAt = Date.now(); save(); setTimeout(() => { if (location.hash === "#complaints") rerender(); }, 300); };
@@ -398,5 +400,5 @@ function viewComplaints2(el) {
     if (h) { h.hidden = false; h.innerHTML = `💡 ${Q("sentHint")} <span class="muted">(${Q("lastVia", { v: s.lastVia })})</span>`; } }));
   el.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const c = state.complaints.find(x => x.id === b.dataset.copy); if (c) copyText(complaintText(c)); });
   el.querySelectorAll("[data-mark]").forEach(b => b.onclick = () => { const s = state.complaints.find(x => x.id === b.dataset.mark); mark(b.dataset.mark, (s && s.lastVia) || ""); });
-  el.querySelectorAll("[data-del]").forEach(a => a.onclick = e => { e.preventDefault(); state.complaints = state.complaints.filter(x => x.id !== a.dataset.del); save(); viewComplaints2(el); });
+  el.querySelectorAll("[data-del]").forEach(a => a.onclick = e => { e.preventDefault(); { const g = state.complaints.find(x => x.id === a.dataset.del); if (g) phDel(g.photoId); } state.complaints = state.complaints.filter(x => x.id !== a.dataset.del); save(); viewComplaints2(el); });
 }

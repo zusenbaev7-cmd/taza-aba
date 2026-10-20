@@ -10,10 +10,21 @@ const numLocale = () => (LANG === "en" ? "en-US" : LANG === "tr" ? "tr-TR" : "ru
 const fmt = (n, d = 0) => Number(n).toLocaleString(numLocale(), { maximumFractionDigits: d, minimumFractionDigits: d });
 const som = n => fmt(Math.round(n)) + " " + t("som");
 const years = n => t("yearsN", { n: fmt(n, 1) });
+/* ISO-дата «2026-10-20» → по локали интерфейса; всё остальное (демо-тексты) — как есть */
+const fmtDay = d => { if (!/^\d{4}-\d{2}-\d{2}$/.test(d || "")) return d || ""; const x = new Date(d + "T12:00:00"); return isNaN(x) ? d : x.toLocaleDateString(numLocale(), { day: "numeric", month: "short", year: "numeric" }); };
 const byId = id => DISTRICTS.find(d => d.id === id) || DISTRICTS[0];
 const dName = d => tr(d.name);
 const dLoc = d => tr(d.loc);
-const level = aqi => AQI_LEVELS.find(l => aqi <= l.max);
+/* AQI: null/NaN — «нет данных», а не 0/«Хорошо» (Math.round(null) === 0, а null <= 50 — true) */
+const aqiOf = v => (v == null || !Number.isFinite(+v)) ? null : Math.round(+v);
+const aqiTxt = v => (v == null ? "—" : v);
+const byAqiDesc = (x, y) => (y == null ? -1 : y) - (x == null ? -1 : x);
+const NO_LEVEL = { max: Infinity, nodata: true, color: "#8f99a3", grad: "linear-gradient(135deg,#a3adb7,#7d8893 60%,#98a2ac)", emoji: "📡",
+  name: { ru: "Нет данных", ky: "Маалымат жок", en: "No data", tr: "Veri yok" }, short: { ru: "Нет данных", ky: "Маалымат жок", en: "No data", tr: "Veri yok" },
+  title: { ru: "Нет данных о воздухе", ky: "Аба тууралуу маалымат жок", en: "No air data right now", tr: "Şu an hava verisi yok" },
+  text: { ru: "Модель не вернула значение для этой точки. Это не значит, что воздух чистый — обновите позже.", ky: "Модель бул чекит үчүн маани берген жок. Бул аба таза дегенди билдирбейт — кийинчерээк жаңылаңыз.", en: "The model returned no value for this point. That does not mean the air is clean — try again later.", tr: "Model bu nokta için değer döndürmedi. Bu, havanın temiz olduğu anlamına gelmez — daha sonra yenileyin." },
+  tips: { ru: [], ky: [], en: [], tr: [] } };
+const level = aqi => (aqi == null || !Number.isFinite(+aqi)) ? NO_LEVEL : AQI_LEVELS.find(l => aqi <= l.max);
 
 /* ---------------- Город (Бишкек / Нарын) ---------------- */
 const CITY_STORE = "tazaAba.city";
@@ -21,7 +32,7 @@ let CITY = CITIES[localStorage.getItem(CITY_STORE)] ? localStorage.getItem(CITY_
 let DISTRICTS, DEMO_HOMES, DEMO_GROUPS, DEMO_LEADERBOARD, DEMO_AQI, DEMO_COMPLAINTS, ECO_ROUTES;
 const cityObj = () => CITIES[CITY];
 /* Подставляется в каждый t(): {city}, {cityGen} (род. падеж), {cityPrep} (предл. падеж / местный). */
-function CITY_VARS() { const c = CITIES[CITY]; return { city: tr(c.name), cityGen: tr(c.gen), cityPrep: tr(c.prep) }; }
+function CITY_VARS() { const c = CITIES[CITY]; let pvY = "1 350"; try { pvY = fmt(K.pvYield); } catch (e) { } return { city: tr(c.name), cityGen: tr(c.gen), cityPrep: tr(c.prep), pvY }; }
 const inCity = x => (x.city || "bishkek") === CITY;
 
 /* ---------------- Состояние (localStorage) ---------------- */
@@ -46,10 +57,40 @@ function load() {
     return s;
   } catch { return structuredClone(defaultState); }
 }
+/* save() → true/false. При переполнении (QuotaExceededError) — понятный тост, а не тихая потеря данных */
+let saveWarnAt = 0;
 function save() {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-  catch (e) { console.warn("localStorage full", e); }
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); return true; }
+  catch (e) {
+    console.warn("localStorage:", e && e.name, e && e.message);
+    if (Date.now() - saveWarnAt > 30e3 && typeof toast === "function" && typeof Q === "function") { saveWarnAt = Date.now(); setTimeout(() => toast(Q("lsFull")), 0); }
+    return false;
+  }
 }
+
+/* Фото жалоб — в IndexedDB (tazaAba-media/ph), в state только photoId; localStorage больше не забивается base64.
+ * Если IndexedDB недоступна — фото остаётся в state, как раньше. */
+let phDbP = null;
+const phDb = () => phDbP || (phDbP = new Promise((res, rej) => {
+  if (typeof indexedDB === "undefined" || !indexedDB) return rej(new Error("no indexedDB"));
+  const r = indexedDB.open("tazaAba-media", 1); r.onupgradeneeded = () => r.result.createObjectStore("ph"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+}));
+const phTx = (mode, fn) => phDb().then(db => new Promise((res, rej) => { const tx = db.transaction("ph", mode), q = fn(tx.objectStore("ph")); tx.oncomplete = () => res(q && q.result); tx.onerror = tx.onabort = () => rej(tx.error); }));
+const PH_MEM = {};
+async function phPut(data) { const id = "ph" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); await phTx("readwrite", st => st.put(data, id)); PH_MEM[id] = data; return id; }
+const phGet = id => PH_MEM[id] ? Promise.resolve(PH_MEM[id]) : phTx("readonly", st => st.get(id)).then(v => { if (v) PH_MEM[id] = v; return v; });
+const phDel = id => { if (!id) return; delete PH_MEM[id]; phTx("readwrite", st => st.delete(id)).catch(() => { }); };
+const hasPhoto = c => !!(c && (c.photo || c.photoId));
+const phImg = (c, attrs = "") => c.photo ? `<img src="${c.photo}" ${attrs}>` : c.photoId ? `<img data-ph="${esc(c.photoId)}" ${attrs}>` : "";
+const phFill = im => { if (im.getAttribute("src")) return; phGet(im.dataset.ph).then(v => { if (v) im.src = v; else im.remove(); }).catch(() => im.remove()); };
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) { if (n.nodeType !== 1) continue; if (n.matches("img[data-ph]")) phFill(n); else n.querySelectorAll("img[data-ph]").forEach(phFill); } })
+  .observe(document.documentElement, { childList: true, subtree: true });
+async function phMigrate() {   // старые жалобы: base64 из localStorage → IndexedDB
+  const list = (state.complaints || []).filter(c => typeof c.photo === "string" && c.photo.startsWith("data:"));
+  if (!list.length) return;
+  try { for (const c of list) { c.photoId = await phPut(c.photo); delete c.photo; } save(); } catch (e) { console.warn("photos → IndexedDB:", e && e.message); }
+}
+setTimeout(() => phMigrate().catch(() => { }), 1500);
 
 /* ---------------- Данные о воздухе ---------------- */
 const air = { status: "loading", live: false, updated: null, byDistrict: {}, weather: null };
@@ -64,8 +105,8 @@ async function fetchJSON(url, ms = 9000) {
   } finally { clearTimeout(tm); }
 }
 
-/* Один запрос на все районы (списки координат через запятую).
- * К модельному значению CAMS применяем районный коэффициент `factor` из data.js. */
+/* Один запрос на все районы (списки координат через запятую). Значение — модель CAMS в точке района, БЕЗ поправок
+ * (`factor` из data.js используется только в демо-данных). Сетка CAMS ~0,1° (~10 км): районы в одной ячейке получают одинаковый AQI. */
 /* одна загрузка «в полёте» на город: повторные вызовы (online, таймер, кнопка) ждут тот же промис */
 let airInflight = null, airRetryT = null, airRetryN = 0;
 function loadAir() {
@@ -88,12 +129,15 @@ async function fetchAirPts(pts, chunk = 60) {
   return res.flatMap(r => Array.isArray(r) ? r : [r]);
 }
 function mkAirRec(r) {
+  /* текущее значение; если модель его не отдала — тот же час из почасового ряда (это то же модельное значение), иначе null = «нет данных» */
+  const hi = r.hourly && r.hourly.time ? r.hourly.time.indexOf((r.current.time || "").slice(0, 13) + ":00") : -1;
+  const a0 = aqiOf(r.current.us_aqi) ?? (hi >= 0 ? aqiOf(r.hourly.us_aqi[hi]) : null);
   return {
-    aqi: Math.round(r.current.us_aqi), pm25: r.current.pm2_5, pm10: r.current.pm10, no2: r.current.nitrogen_dioxide,
+    aqi: a0, pm25: r.current.pm2_5, pm10: r.current.pm10, no2: r.current.nitrogen_dioxide,
     pol: { pm25: [r.current.pm2_5, r.current.us_aqi_pm2_5, "model"], pm10: [r.current.pm10, r.current.us_aqi_pm10, "model"], no2: [r.current.nitrogen_dioxide, r.current.us_aqi_nitrogen_dioxide, "model"],
       so2: [r.current.sulphur_dioxide, r.current.us_aqi_sulphur_dioxide, "model"], o3: [r.current.ozone, r.current.us_aqi_ozone, "model"], co: [r.current.carbon_monoxide, r.current.us_aqi_carbon_monoxide, "model"] },
     time: r.hourly.time, hourly: r.hourly.us_aqi.map(v => v == null ? null : Math.round(v)), currentTime: r.current.time,
-    src: "model", model: { aqi: Math.round(r.current.us_aqi), pm25: r.current.pm2_5 },
+    src: "model", model: { aqi: a0, pm25: r.current.pm2_5 },
   };
 }
 function measuredRec(rec, d, sensors, stations) {
@@ -131,7 +175,7 @@ async function loadAirImpl() {
       (typeof loadStations === "function" ? loadStations(cc) : Promise.resolve([])).catch(() => [])]), 20000);
     if (CITY !== reqCity) return;
     DISTRICTS.forEach((d, i) => { air.byDistrict[d.id] = measuredRec(mkAirRec(arr[i]), d, sensors, stations); });
-    air.byRoute = {}; farR.forEach((r, j) => { const x = arr[DISTRICTS.length + j]; if (x && x.current) air.byRoute[r.id] = Math.round(x.current.us_aqi); });
+    air.byRoute = {}; farR.forEach((r, j) => { const x = arr[DISTRICTS.length + j]; if (x && x.current) air.byRoute[r.id] = aqiOf(x.current.us_aqi); });
     air.weather = w && w.current ? w.current : null; air.wxH = w && w.hourly ? w.hourly : null;
     air.sensors = sensors || []; air.stations = stations || [];
     air.live = true; air.status = "ok"; air.updated = arr[0].current.time; air.offlineAt = null; air.archive = null; air.errKind = null; airRetryN = 0; clearTimeout(airRetryT);
@@ -189,6 +233,7 @@ function renderChrome() {
   const ks = $("#ctrySel"); if (ks) { ks.innerHTML = ["kg", "tr"].map(k => `<option value="${k}" ${k === cityObj().country ? "selected" : ""}>${k === "kg" ? "🇰🇬" : "🇹🇷"} ${ctryName(k)}</option>`).join(""); ks.setAttribute("aria-label", ctryName("lbl")); }
   document.title = ((LANG === "en" || LANG === "tr") ? "Taza Aba — " : "Таза Аба — ") + t("brandSub");
   document.documentElement.lang = LANG;
+  const tb = $("#tabbar"); if (tb) tb.setAttribute("aria-label", { ru: "Навигация", ky: "Навигация", en: "Navigation", tr: "Gezinme" }[LANG] || "Навигация");
   renderBanner();
 }
 document.querySelectorAll("#langSw button").forEach(x => x.onclick = () => { setLang(x.dataset.lang); renderChrome(); route(true); });
@@ -213,6 +258,8 @@ function applyCity(id) {
   CITY_ORDER.splice(0, CITY_ORDER.length, ...(c.country === "tr" ? TR_ORDER : KG_ORDER));
   if (typeof countryAir !== "undefined" && countryAir.ctry !== c.country) { countryAir.status = "idle"; countryAir.byCity = {}; countryAir.ctry = c.country; }
   Object.assign(K, K_BASE, c.k);   // поправки калькулятора (например, COP насоса в морозном Нарыне)
+  const D_ALIAS = { bk_chon_aryk_village_lenins: "bk_chon_aryk_village_leninsx" };   // дубль одного села (OSM Q878489) убран
+  if (D_ALIAS[state.district]) state.district = D_ALIAS[state.district];
   if (!DISTRICTS.some(d => d.id === state.district)) state.district = c.defaultDistrict;
   if (!DISTRICTS.some(d => d.id === state.alerts.district)) { state.alerts.district = c.alertDistrict; state.alerts.sent = {}; }
 }
@@ -351,7 +398,7 @@ function viewHome(el) {
   const d = byId(state.district);
   const a = air.byDistrict[d.id];
   const Lv = level(a.aqi);
-  const pin = Math.min(a.aqi, 300) / 300 * 100;
+  const pin = Math.min(a.aqi || 0, 300) / 300 * 100;
   const days = dailyForecast(a);
   const today = days[0]?.date;
   const next = days.slice(1, 4);
@@ -360,7 +407,7 @@ function viewHome(el) {
   const maxBar = Math.max(60, ...todayIdx.map(([, i]) => a.hourly[i] || 0));
   const worst = todayIdx.reduce((m, [tm, i]) => (a.hourly[i] > (m.v ?? -1) ? { tm, v: a.hourly[i] } : m), {});
   const best = todayIdx.filter(([tm]) => +tm.slice(11, 13) >= 7 && +tm.slice(11, 13) <= 21)
-    .reduce((m, [tm, i]) => (a.hourly[i] < (m.v ?? 1e9) ? { tm, v: a.hourly[i] } : m), {});
+    .reduce((m, [tm, i]) => (a.hourly[i] != null && a.hourly[i] < (m.v ?? 1e9) ? { tm, v: a.hourly[i] } : m), {});
   const w = air.weather;
   const days7 = t("days");
 
@@ -373,9 +420,9 @@ function viewHome(el) {
           <div class="level">${tr(Lv.name)}</div>
           <div class="hero-title">${tr(Lv.title)}</div>
         </div>
-        <div class="gauge" role="img" aria-label="US AQI ${a.aqi}"><svg class="g-frame" viewBox="0 0 120 120" aria-hidden="true"><g class="g-rays"><line x1="116.0" y1="60.0" x2="121.0" y2="60.0"/><line x1="115.1" y1="69.7" x2="120.1" y2="70.6"/><line x1="112.6" y1="79.2" x2="117.3" y2="80.9"/><line x1="108.5" y1="88.0" x2="112.8" y2="90.5"/><line x1="102.9" y1="96.0" x2="106.7" y2="99.2"/><line x1="96.0" y1="102.9" x2="99.2" y2="106.7"/><line x1="88.0" y1="108.5" x2="90.5" y2="112.8"/><line x1="79.2" y1="112.6" x2="80.9" y2="117.3"/><line x1="69.7" y1="115.1" x2="70.6" y2="120.1"/><line x1="60.0" y1="116.0" x2="60.0" y2="121.0"/><line x1="50.3" y1="115.1" x2="49.4" y2="120.1"/><line x1="40.8" y1="112.6" x2="39.1" y2="117.3"/><line x1="32.0" y1="108.5" x2="29.5" y2="112.8"/><line x1="24.0" y1="102.9" x2="20.8" y2="106.7"/><line x1="17.1" y1="96.0" x2="13.3" y2="99.2"/><line x1="11.5" y1="88.0" x2="7.2" y2="90.5"/><line x1="7.4" y1="79.2" x2="2.7" y2="80.9"/><line x1="4.9" y1="69.7" x2="-0.1" y2="70.6"/><line x1="4.0" y1="60.0" x2="-1.0" y2="60.0"/><line x1="4.9" y1="50.3" x2="-0.1" y2="49.4"/><line x1="7.4" y1="40.8" x2="2.7" y2="39.1"/><line x1="11.5" y1="32.0" x2="7.2" y2="29.5"/><line x1="17.1" y1="24.0" x2="13.3" y2="20.8"/><line x1="24.0" y1="17.1" x2="20.8" y2="13.3"/><line x1="32.0" y1="11.5" x2="29.5" y2="7.2"/><line x1="40.8" y1="7.4" x2="39.1" y2="2.7"/><line x1="50.3" y1="4.9" x2="49.4" y2="-0.1"/><line x1="60.0" y1="4.0" x2="60.0" y2="-1.0"/><line x1="69.7" y1="4.9" x2="70.6" y2="-0.1"/><line x1="79.2" y1="7.4" x2="80.9" y2="2.7"/><line x1="88.0" y1="11.5" x2="90.5" y2="7.2"/><line x1="96.0" y1="17.1" x2="99.2" y2="13.3"/><line x1="102.9" y1="24.0" x2="106.7" y2="20.8"/><line x1="108.5" y1="32.0" x2="112.8" y2="29.5"/><line x1="112.6" y1="40.8" x2="117.3" y2="39.1"/><line x1="115.1" y1="50.3" x2="120.1" y2="49.4"/></g><circle cx="60" cy="60" r="41" class="g-ring"/><path class="g-cross" d="M30 50q30-14 60 0M30 70q30 14 60 0M50 30q-14 30 0 60M70 30q14 30 0 60"/></svg>
-          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="g-bg"/><circle cx="60" cy="60" r="50" class="g-fg" style="stroke-dasharray:${(Math.min(a.aqi, 300) / 300 * 314).toFixed(1)} 314"/></svg>
-          <div class="g-val"><b>${a.aqi}</b><span>US AQI</span></div>
+        <div class="gauge" role="img" aria-label="US AQI ${aqiTxt(a.aqi)}"><svg class="g-frame" viewBox="0 0 120 120" aria-hidden="true"><g class="g-rays"><line x1="116.0" y1="60.0" x2="121.0" y2="60.0"/><line x1="115.1" y1="69.7" x2="120.1" y2="70.6"/><line x1="112.6" y1="79.2" x2="117.3" y2="80.9"/><line x1="108.5" y1="88.0" x2="112.8" y2="90.5"/><line x1="102.9" y1="96.0" x2="106.7" y2="99.2"/><line x1="96.0" y1="102.9" x2="99.2" y2="106.7"/><line x1="88.0" y1="108.5" x2="90.5" y2="112.8"/><line x1="79.2" y1="112.6" x2="80.9" y2="117.3"/><line x1="69.7" y1="115.1" x2="70.6" y2="120.1"/><line x1="60.0" y1="116.0" x2="60.0" y2="121.0"/><line x1="50.3" y1="115.1" x2="49.4" y2="120.1"/><line x1="40.8" y1="112.6" x2="39.1" y2="117.3"/><line x1="32.0" y1="108.5" x2="29.5" y2="112.8"/><line x1="24.0" y1="102.9" x2="20.8" y2="106.7"/><line x1="17.1" y1="96.0" x2="13.3" y2="99.2"/><line x1="11.5" y1="88.0" x2="7.2" y2="90.5"/><line x1="7.4" y1="79.2" x2="2.7" y2="80.9"/><line x1="4.9" y1="69.7" x2="-0.1" y2="70.6"/><line x1="4.0" y1="60.0" x2="-1.0" y2="60.0"/><line x1="4.9" y1="50.3" x2="-0.1" y2="49.4"/><line x1="7.4" y1="40.8" x2="2.7" y2="39.1"/><line x1="11.5" y1="32.0" x2="7.2" y2="29.5"/><line x1="17.1" y1="24.0" x2="13.3" y2="20.8"/><line x1="24.0" y1="17.1" x2="20.8" y2="13.3"/><line x1="32.0" y1="11.5" x2="29.5" y2="7.2"/><line x1="40.8" y1="7.4" x2="39.1" y2="2.7"/><line x1="50.3" y1="4.9" x2="49.4" y2="-0.1"/><line x1="60.0" y1="4.0" x2="60.0" y2="-1.0"/><line x1="69.7" y1="4.9" x2="70.6" y2="-0.1"/><line x1="79.2" y1="7.4" x2="80.9" y2="2.7"/><line x1="88.0" y1="11.5" x2="90.5" y2="7.2"/><line x1="96.0" y1="17.1" x2="99.2" y2="13.3"/><line x1="102.9" y1="24.0" x2="106.7" y2="20.8"/><line x1="108.5" y1="32.0" x2="112.8" y2="29.5"/><line x1="112.6" y1="40.8" x2="117.3" y2="39.1"/><line x1="115.1" y1="50.3" x2="120.1" y2="49.4"/></g><circle cx="60" cy="60" r="41" class="g-ring"/><path class="g-cross" d="M30 50q30-14 60 0M30 70q30 14 60 0M50 30q-14 30 0 60M70 30q14 30 0 60"/></svg>
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="g-bg"/><circle cx="60" cy="60" r="50" class="g-fg" style="stroke-dasharray:${(Math.min(a.aqi || 0, 300) / 300 * 314).toFixed(1)} 314"/></svg>
+          <div class="g-val"><b>${aqiTxt(a.aqi)}</b><span>US AQI</span></div>
         </div>
       </div>
       <div class="meta">
@@ -435,8 +482,8 @@ function viewHome(el) {
     <h2>⏱️ ${t("todayHourly")}</h2>
     <div class="card">
       <div class="bars">${todayIdx.map(([tm, i]) => {
-        const v = a.hourly[i] || 0;
-        return `<div title="${tm.slice(11, 16)} — AQI ${v}" class="${tm.startsWith(nowHour) ? "now" : ""}" style="height:${Math.max(6, v / maxBar * 100)}%;background:${level(v).color}"></div>`;
+        const v0 = a.hourly[i], v = v0 || 0;
+        return `<div title="${tm.slice(11, 16)} — AQI ${aqiTxt(v0)}" class="${tm.startsWith(nowHour) ? "now" : ""}" style="height:${Math.max(6, v / maxBar * 100)}%;background:${level(v0).color}"></div>`;
       }).join("")}</div>
       <div class="bars-x"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>
       <div class="stat-grid" style="margin-top:12px">
@@ -474,7 +521,7 @@ const C_EMOJI = { chimney: "🏭", trash: "🔥", dump: "🗑️", car: "🚌", 
 function complaintPopup(c) {
   const st = [t("cStatusSent"), t("cStatusFwd"), t("cStatusDone")][c.status || 0];
   return `<b>${C_EMOJI[c.cat] || "⚠️"} ${t("cat_c_" + c.cat)}</b>${c.mine ? ` · <i>${t("cMine")}</i>` : ""}<br>${esc(tr(c.text))}<br>
-    ${c.photo ? `<img src="${c.photo}" style="width:100%;border-radius:10px;margin-top:6px">` : ""}<span style="color:#1f7a4d">● ${st}</span> · ${c.date}`;
+    ${phImg(c, 'style="width:100%;border-radius:10px;margin-top:6px" alt=""')}<span style="color:#1f7a4d">● ${st}</span> · ${esc(fmtDay(c.date))}`;
 }
 const complaintIcon = c => L.divIcon({ className: "", html: `<div class="c-pin">${C_EMOJI[c.cat] || "⚠️"}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
 
@@ -488,7 +535,7 @@ async function loadCountryAir() {
   try {
     const res = await fetchJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi,pm2_5&timezone=auto`);
     const arr = Array.isArray(res) ? res : [res];
-    ids.forEach((id, i) => { countryAir.byCity[id] = { aqi: Math.round(arr[i].current.us_aqi), pm25: arr[i].current.pm2_5 }; });
+    ids.forEach((id, i) => { countryAir.byCity[id] = { aqi: aqiOf(arr[i] && arr[i].current && arr[i].current.us_aqi), pm25: arr[i] && arr[i].current ? arr[i].current.pm2_5 : null }; });
     countryAir.live = true; countryAir.status = "ok";
   } catch (e) {
     console.warn("Open-Meteo (страна) недоступен — без выдуманных значений:", e.message);
@@ -508,7 +555,7 @@ function viewCountry(el) {
     $("#backCity").onclick = () => { mapMode = "city"; route(true); };
     return;
   }
-  const list = CITY_ORDER.map(id => ({ id, c: CITIES[id], a: countryAir.byCity[id].aqi })).sort((x, y) => y.a - x.a);
+  const list = CITY_ORDER.map(id => ({ id, c: CITIES[id], a: countryAir.byCity[id].aqi })).sort((x, y) => byAqiDesc(x.a, y.a));
   el.innerHTML = `
     <div class="row between" style="align-items:flex-end"><div><h1>${ctryT("countryTitle")}</h1><p class="sub" style="margin-bottom:10px">${t("countrySub")}</p></div></div>
     <div class="map-grid"><div class="map-col">
@@ -519,7 +566,7 @@ function viewCountry(el) {
     <h2>${t("citiesList")}</h2>
     <div class="card dlist">
       ${list.map(({ id, c, a }) => { const Lv = level(a);
-        return `<div class="item" data-city="${id}" style="cursor:pointer"><div class="badge" style="background:${Lv.color}">${a}</div>
+        return `<div class="item" data-city="${id}" style="cursor:pointer"><div class="badge" style="background:${Lv.color}">${aqiTxt(a)}</div>
           <div style="flex:1"><div class="name">${c.emoji} ${tr(c.name)}</div><div class="small muted" style="font-weight:700">${tr(Lv.name)}</div></div>
           <span class="chip">${t("openCity")} →</span></div>`; }).join("")}
     </div></div></div>
@@ -534,9 +581,9 @@ function viewCountry(el) {
    * объединяются в старший (бейдж «+n», по нажатию — список городов); подписи, которые пересекаются, скрываются до приближения. */
   const sz = () => (M.getSize().x < 560 ? 26 : 32);
   const cps = CITY_ORDER.map((id, i) => { const c = CITIES[id], a = countryAir.byCity[id].aqi, Lv = level(a), nm = tr(c.short || c.name);
-    const mk = L.marker(c.center, { icon: L.divIcon({ className: "", html: `<div class="city-pin ${id === CITY ? "cur" : ""}"><div class="aqi-pin" style="background:${Lv.color}">${a}</div><span>${esc(nm)}</span><b class="cp-n" hidden></b></div>`, iconSize: [sz(), sz()], iconAnchor: [sz() / 2, sz() / 2] }), title: `${tr(c.name)} · AQI ${a}`, riseOnHover: true });
+    const mk = L.marker(c.center, { icon: L.divIcon({ className: "", html: `<div class="city-pin ${id === CITY ? "cur" : ""}"><div class="aqi-pin" style="background:${Lv.color}">${aqiTxt(a)}</div><span>${esc(nm)}</span><b class="cp-n" hidden></b></div>`, iconSize: [sz(), sz()], iconAnchor: [sz() / 2, sz() / 2] }), title: `${tr(c.name)} · AQI ${a}`, riseOnHover: true });
     const o = { id, mk, pr: id === CITY ? -1 : i, nm, grp: [] };
-    mk.on("click", () => { if (o.grp.length) { L.popup({ className: "cp-pop" }).setLatLng(c.center).setContent([o, ...o.grp].map(x => `<a href="#" data-c="${x.id}">${CITIES[x.id].emoji} ${esc(tr(CITIES[x.id].name))} — ${countryAir.byCity[x.id].aqi}</a>`).join("")).openOn(M); } else openCityFromCountry(id); });
+    mk.on("click", () => { if (o.grp.length) { L.popup({ className: "cp-pop" }).setLatLng(c.center).setContent([o, ...o.grp].map(x => `<a href="#" data-c="${x.id}">${CITIES[x.id].emoji} ${esc(tr(CITIES[x.id].name))} — ${aqiTxt(countryAir.byCity[x.id].aqi)}</a>`).join("")).openOn(M); } else openCityFromCountry(id); });
     mk.addTo(M); return o; }).sort((x, y) => x.pr - y.pr);
   M.on("popupopen", e => e.popup.getElement()?.querySelectorAll("[data-c]").forEach(a => a.onclick = ev => { ev.preventDefault(); M.closePopup(); openCityFromCountry(a.dataset.c); }));
   const tw = s => s.length * 6.4 + 14, hit = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
@@ -562,9 +609,9 @@ function openCityFromCountry(id) {
 }
 
 function distListHTML(arr) {
-  const r = DISTRICTS.map(d => ({ d, a: air.byDistrict[d.id].aqi })).sort((x, y) => y.a - x.a).map(({ d, a }) => {
+  const r = DISTRICTS.map(d => ({ d, a: air.byDistrict[d.id].aqi })).sort((x, y) => byAqiDesc(x.a, y.a)).map(({ d, a }) => {
     const Lv = level(a);
-    return `<div class="item"><div class="badge" style="background:${Lv.color}">${a}</div>
+    return `<div class="item"><div class="badge" style="background:${Lv.color}">${aqiTxt(a)}</div>
       <div style="flex:1"><div class="name">${esc(dName(d))}</div><div class="small muted" style="font-weight:700">${tr(Lv.name)} · ${tr(DTYPE[d.type])}</div></div>
       <div class="small muted" style="font-weight:800">🔥 ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}</div></div>`;
   });
@@ -602,7 +649,7 @@ function viewMap(el) {
   const R0 = cityObj().radius || 900, M = map;
   const nn = d => { let m = 1e9; for (const x of DISTRICTS) if (x !== d) m = Math.min(m, kmDist(d, x) * 1000); return m; };
   const pinIcon = (txt, c, sz, cl) => L.divIcon({ className: "", html: `<div class="aqi-pin${cl ? " aqi-cl" : ""}" style="width:${sz}px;height:${sz}px;background:${c}">${txt}</div>`, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
-  const popD = d => { const a = air.byDistrict[d.id], Lv = level(a.aqi); return `<b>${esc(dName(d))}</b>${d.grp && typeof GRP_NAME !== "undefined" ? `<br><small>${esc(tr(GRP_NAME[d.grp]))}</small>` : ""}<br>US AQI: <b style="color:${Lv.color}">${a.aqi}</b> — ${tr(Lv.name)}<br>PM2.5: ${fmt(a.pm25, 1)}<br>${t("popupCoal")}: ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}`; };
+  const popD = d => { const a = air.byDistrict[d.id], Lv = level(a.aqi); return `<b>${esc(dName(d))}</b>${d.grp && typeof GRP_NAME !== "undefined" ? `<br><small>${esc(tr(GRP_NAME[d.grp]))}</small>` : ""}<br>US AQI: <b style="color:${Lv.color}">${aqiTxt(a.aqi)}</b> — ${tr(Lv.name)}<br>PM2.5: ${fmt(a.pm25, 1)}<br>${t("popupCoal")}: ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}`; };
   const circ = new Map(), pins = new Map(), pinG = L.layerGroup().addTo(layers.smog);
   let sat = baseMode() !== "osm";
   const cStyle = d => { const c = level(air.byDistrict[d.id].aqi).color; return { color: sat ? "#fff" : c, weight: sat ? 1.5 : 1, fillColor: c, fillOpacity: sat ? 0.38 : 0.3 }; };
@@ -613,17 +660,17 @@ function viewMap(el) {
   const drawPins = () => {
     if (M !== map || !M._loaded) return;
     const many = DISTRICTS.length > 24, z = M.getZoom(), R = many && z < 15 ? 40 : 0, cls = [], vb = M.getBounds().pad(0.2);
-    DISTRICTS.filter(d => vb.contains([d.lat, d.lon])).map(d => ({ d, p: M.latLngToLayerPoint([d.lat, d.lon]) })).sort((x, y) => air.byDistrict[y.d.id].aqi - air.byDistrict[x.d.id].aqi).forEach(o => {
+    DISTRICTS.filter(d => vb.contains([d.lat, d.lon])).map(d => ({ d, p: M.latLngToLayerPoint([d.lat, d.lon]) })).sort((x, y) => byAqiDesc(air.byDistrict[x.d.id].aqi, air.byDistrict[y.d.id].aqi)).forEach(o => {
       const c = R && cls.find(c => c.p.distanceTo(o.p) < R); if (c) c.m.push(o.d); else cls.push({ p: o.p, m: [o.d] }); });
     const want = new Set();
     cls.forEach(c => {
       if (c.m.length === 1) { const d = c.m[0], a = air.byDistrict[d.id].aqi, k = "d:" + d.id; want.add(k);
-        let mk = pins.get(k); if (mk && mk._aqi !== a) { mk.setIcon(pinIcon(a, level(a).color, 38)); mk._aqi = a; }
-        if (!mk) { mk = L.marker([d.lat, d.lon], { icon: pinIcon(a, level(a).color, 38) }).bindPopup(() => popD(d)); mk._aqi = a; mk._did = d.id; pins.set(k, mk); }
+        let mk = pins.get(k); if (mk && mk._aqi !== a) { mk.setIcon(pinIcon(aqiTxt(a), level(a).color, 38)); mk._aqi = a; }
+        if (!mk) { mk = L.marker([d.lat, d.lon], { icon: pinIcon(aqiTxt(a), level(a).color, 38) }).bindPopup(() => popD(d)); mk._aqi = a; mk._did = d.id; pins.set(k, mk); }
         if (!pinG.hasLayer(mk)) mk.addTo(pinG); return; }
-      const v = c.m.map(d => air.byDistrict[d.id].aqi), mx = Math.max(...v), Lv = level(mx), ll = L.latLngBounds(c.m.map(d => [d.lat, d.lon])), k = "c:" + mx + ":" + c.m.map(d => d.id).join(","); want.add(k);
-      if (!pins.has(k)) pins.set(k, L.marker(ll.getCenter(), { icon: pinIcon(`${mx}<small>×${c.m.length}</small>`, Lv.color, 44, 1), title: c.m.map(dName).join(", ") })
-        .bindPopup(() => `<b>${c.m.length} · max AQI ${mx}</b><br>${c.m.slice(0, 12).map(d => `${esc(dName(d))}: ${air.byDistrict[d.id].aqi}`).join("<br>")}${c.m.length > 12 ? "<br>…" : ""}<br><a href="#" class="cl-zoom">🔍 +</a>`)
+      const v = c.m.map(d => air.byDistrict[d.id].aqi).filter(x => x != null), mx = v.length ? Math.max(...v) : null, Lv = level(mx), ll = L.latLngBounds(c.m.map(d => [d.lat, d.lon])), k = "c:" + mx + ":" + c.m.map(d => d.id).join(","); want.add(k);
+      if (!pins.has(k)) pins.set(k, L.marker(ll.getCenter(), { icon: pinIcon(`${aqiTxt(mx)}<small>×${c.m.length}</small>`, Lv.color, 44, 1), title: c.m.map(dName).join(", ") })
+        .bindPopup(() => `<b>${c.m.length} · max AQI ${aqiTxt(mx)}</b><br>${c.m.slice(0, 12).map(d => `${esc(dName(d))}: ${aqiTxt(air.byDistrict[d.id].aqi)}`).join("<br>")}${c.m.length > 12 ? "<br>…" : ""}<br><a href="#" class="cl-zoom">🔍 +</a>`)
         .on("popupopen", e => { const z = e.popup.getElement()?.querySelector(".cl-zoom"); if (z) z.onclick = ev => { ev.preventDefault(); M.closePopup(); M.fitBounds(ll.pad(0.3)); }; })
         .on("dblclick", () => M.fitBounds(ll.pad(0.3))));
       const mk = pins.get(k); if (!pinG.hasLayer(mk)) mk.addTo(pinG);
@@ -720,10 +767,10 @@ function viewHouse(el) {
     <a href="#advisor" class="card adv-cta">${t("advisorCta")} →</a>
     <div class="card">
       <div class="inputs">
-        <div class="full"><label>${t("areaLbl")}</label>
+        <div class="full"><label for="area">${t("areaLbl")}</label>
           <div class="range-row"><input type="range" id="area" min="30" max="300" step="5" value="${h.area}"><output id="areaO">${h.area} ${t("u_insul")}</output></div></div>
-        <div><label>${t("coalLbl")}</label><input type="number" id="coal" min="0.5" max="30" step="0.5" value="${h.coal}"></div>
-        <div><label>${t("priceLbl")}</label><input type="number" id="price" min="1000" max="30000" step="100" value="${h.price}"></div>
+        <div><label for="coal">${t("coalLbl")}</label><input type="number" id="coal" min="0.5" max="30" step="0.5" value="${h.coal}"></div>
+        <div><label for="price">${t("priceLbl")}</label><input type="number" id="price" min="1000" max="30000" step="100" value="${h.price}"></div>
       </div>
       <label class="row" style="margin-top:14px;cursor:pointer;color:var(--ink)"><input type="checkbox" id="group" ${h.group ? "checked" : ""} style="width:20px;height:20px;accent-color:var(--green-500)"> ${t("groupChk")}</label>
     </div>
@@ -840,11 +887,11 @@ function openNewGroup() {
   const m = $("#modal");
   m.innerHTML = `<div class="sheet">
     <h3>${t("newGroup")}</h3><p class="sub" style="margin:0">${t("newGroupSub")}</p>
-    <label>${t("whatBuy")}</label>
+    <label for="nCat">${t("whatBuy")}</label>
     <select id="nCat">${Object.entries(CATS).map(([k, c]) => `<option value="${k}">${c.icon} ${t("cat_" + k)}</option>`).join("")}</select>
-    <label>${t("district")}</label><select id="nDist">${districtOptions(state.district)}</select>
-    <label>${t("howMany")}</label><input type="number" id="nTarget" min="3" max="50" value="10">
-    <label>${t("titleLbl")}</label><input id="nTitle" placeholder="${t("titlePh")}">
+    <label for="nDist">${t("district")}</label><select id="nDist">${districtOptions(state.district)}</select>
+    <label for="nTarget">${t("howMany")}</label><input type="number" id="nTarget" min="3" max="50" value="10">
+    <label for="nTitle">${t("titleLbl")}</label><input id="nTitle" placeholder="${t("titlePh")}">
     <div class="row" style="margin-top:16px"><button class="btn ghost" id="nCancel" style="flex:1">${t("cancel")}</button><button class="btn" id="nSave" style="flex:2">${t("createBtn")}</button></div>
   </div>`;
   m.classList.remove("hidden");
@@ -944,12 +991,12 @@ function viewAdvisor(el) {
     <div class="rule-note">${cfg.key ? "🟢 " + t("llmOn") : t("ruleNote")}</div>
     <div class="chat" id="chat">${chat}</div>
     <div class="chips">${chips}</div>
-    <form class="ask" id="askForm"><input id="askIn" placeholder="${t("askPh")}" autocomplete="off"><button class="btn" type="submit">→</button></form>
+    <form class="ask" id="askForm"><input id="askIn" aria-label="${esc(t("askPh"))}" placeholder="${t("askPh")}" autocomplete="off"><button class="btn" type="submit">→</button></form>
     <details class="card how" id="llmBox"><summary>${t("llmTitle")}</summary>
       <p class="small muted" style="font-weight:700">${t("llmNote")}</p>
-      <label>${t("baseUrl")}</label><input id="llmUrl" value="${esc(cfg.url || "https://api.openai.com/v1")}">
-      <label>${t("model")}</label><input id="llmModel" value="${esc(cfg.model || "gpt-4o-mini")}">
-      <label>${t("apiKey")}</label><input id="llmKey" type="password" value="${esc(cfg.key || "")}" placeholder="sk-…" autocomplete="off">
+      <label for="llmUrl">${t("baseUrl")}</label><input id="llmUrl" value="${esc(cfg.url || "https://api.openai.com/v1")}">
+      <label for="llmModel">${t("model")}</label><input id="llmModel" value="${esc(cfg.model || "gpt-4o-mini")}">
+      <label for="llmKey">${t("apiKey")}</label><input id="llmKey" type="password" value="${esc(cfg.key || "")}" placeholder="sk-…" autocomplete="off">
       <div class="row" style="margin-top:12px"><button class="btn" id="llmSave" style="flex:1">${t("saveBtn")}</button><button class="btn ghost" id="llmClear" style="flex:1">${t("clearBtn")}</button></div>
     </details>
   `;
@@ -1072,8 +1119,8 @@ function viewProfile(el) {
       </div>
       <div id="permMsg">${permHTML()}</div>
       <div class="inputs" style="margin-top:4px">
-        <div><label>${t("alertDistrict")}</label><select id="alDist">${districtOptions(al.district)}</select></div>
-        <div><label>${t("threshold")}</label><select id="alTh">${[50, 100, 150, 200].map(v => `<option value="${v}" ${v === al.threshold ? "selected" : ""}>${v === 50 ? t("th50") : v + " — " + tr(level(v).short).replace("*", "")}</option>`).join("")}</select></div>
+        <div><label for="alDist">${t("alertDistrict")}</label><select id="alDist">${districtOptions(al.district)}</select></div>
+        <div><label for="alTh">${t("threshold")}</label><select id="alTh">${[50, 100, 150, 200].map(v => `<option value="${v}" ${v === al.threshold ? "selected" : ""}>${v === 50 ? t("th50") : v + " — " + tr(level(v).short).replace("*", "")}</option>`).join("")}</select></div>
       </div>
       ${tomorrow != null ? `<div class="small" style="font-weight:800;margin-top:10px;color:${level(tomorrow).color}">📅 ${t("tomorrowFc", { in: dLoc(byId(al.district)), aqi: tomorrow })}</div>` : ""}
       <button class="btn sun block" id="alTest" style="margin-top:12px">${t("testBtn")}</button>
@@ -1111,8 +1158,8 @@ function viewProfile(el) {
     </div>
 
     <div class="card">
-      <label style="margin-top:0">${t("nameLbl")}</label><input id="pName" value="${esc(state.name)}">
-      <label>${t("myDistrict")}</label><select id="pDist">${districtOptions(state.district)}</select>
+      <label for="pName" style="margin-top:0">${t("nameLbl")}</label><input id="pName" value="${esc(state.name)}">
+      <label for="pDist">${t("myDistrict")}</label><select id="pDist">${districtOptions(state.district)}</select>
       <button class="btn ghost block" id="resetBtn" style="margin-top:14px">${t("reset")}</button>
     </div>
     <div class="foot">${t("profileFoot")}</div>
@@ -1120,7 +1167,7 @@ function viewProfile(el) {
   $("#swBtn").onclick = () => { state.switched = !state.switched; save(); viewProfile(el); if (state.switched) toast(t("badgeToast")); };
   $("#pName").onchange = e => { state.name = e.target.value.trim() || t("defaultName"); save(); viewProfile(el); };
   $("#pDist").onchange = e => { state.district = e.target.value; save(); viewProfile(el); };
-  $("#resetBtn").onclick = () => { localStorage.removeItem(STORE_KEY); state = load(); groupFilter = "all"; viewProfile(el); toast(t("resetToast")); };
+  $("#resetBtn").onclick = () => { localStorage.removeItem(STORE_KEY); phTx("readwrite", st => st.clear()).catch(() => { }); state = load(); groupFilter = "all"; viewProfile(el); toast(t("resetToast")); };
   $("#alOn").onchange = async e => {
     state.alerts.on = e.target.checked; save();
     if (state.alerts.on && "Notification" in window && Notification.permission === "default") {
@@ -1212,7 +1259,7 @@ function viewComplaints(el) {
       <input type="file" id="cFile" accept="image/*" capture="environment" hidden>
       <label>${t("cCategory")}</label>
       <div class="cat-chips">${cats.map(c => `<button class="${draft.cat === c ? "on" : ""}" data-cat="${c}">${C_EMOJI[c]} ${t("cat_c_" + c)}</button>`).join("")}</div>
-      <label>${t("cDesc")}</label><input id="cText" value="${esc(draft.text)}" placeholder="${t("cDescPh")}">
+      <label for="cText">${t("cDesc")}</label><input id="cText" value="${esc(draft.text)}" placeholder="${t("cDescPh")}">
       <label>${t("cPlace")}</label>
       <div id="cMap" class="mini-map"></div>
       <button class="btn ghost block" id="cGeo" style="margin-top:8px">${t("cGeo")}</button>
@@ -1220,11 +1267,11 @@ function viewComplaints(el) {
     </div>
     <h2>${t("cList")}</h2>
     ${allComplaints().map(c => `<div class="card c-item">
-      <div class="c-thumb">${c.photo ? `<img src="${c.photo}" alt="">` : (C_EMOJI[c.cat] || "⚠️")}</div>
+      <div class="c-thumb">${hasPhoto(c) ? phImg(c, 'alt=""') : (C_EMOJI[c.cat] || "⚠️")}</div>
       <div style="flex:1;min-width:0"><b>${t("cat_c_" + c.cat)}</b>${c.mine ? ` <span class="chip">${t("cMine")}</span>` : ` <span class="chip demo">${t("demoChip")}</span>`}
         <div class="small" style="font-weight:600;margin:2px 0">${esc(tr(c.text)) || "—"}</div>
         <div class="steps">${st.map((s, i) => `<span class="${i <= (c.status || 0) ? "on" : ""}">${s}</span>`).join("")}</div>
-        <div class="small muted" style="font-weight:700;margin-top:4px">📍 ${esc(dName(nearestDistrict(c.lat, c.lon)))} · ${c.date}${c.mine ? ` · <a href="#" data-del="${c.id}" style="color:#c9303a">${t("cDelete")}</a>` : ""}</div>
+        <div class="small muted" style="font-weight:700;margin-top:4px">📍 ${esc(dName(nearestDistrict(c.lat, c.lon)))} · ${esc(fmtDay(c.date))}${c.mine ? ` · <a href="#" data-del="${c.id}" style="color:#c9303a">${t("cDelete")}</a>` : ""}</div>
       </div></div>`).join("")}
     <div class="foot">${t("cMock")}</div>
   `;
@@ -1258,7 +1305,7 @@ function viewComplaints(el) {
     // Имитация «передачи в службы»: через 4 секунды статус меняется на «передано».
     setTimeout(() => { const s = state.complaints.find(x => x.id === c.id); if (s) { s.status = 1; save(); } if (location.hash === "#complaints") { const y = scrollY; viewComplaints($("#view")); scrollTo(0, y); } }, 4000);
   };
-  el.querySelectorAll("[data-del]").forEach(a => a.onclick = e => { e.preventDefault(); state.complaints = state.complaints.filter(x => x.id !== a.dataset.del); save(); viewComplaints(el); });
+  el.querySelectorAll("[data-del]").forEach(a => a.onclick = e => { e.preventDefault(); { const g = state.complaints.find(x => x.id === a.dataset.del); if (g) phDel(g.photoId); } state.complaints = state.complaints.filter(x => x.id !== a.dataset.del); save(); viewComplaints(el); });
 }
 
 /* ---------------- 9. Эко-маршруты ---------------- */
@@ -1270,11 +1317,11 @@ function haversineKm(a, b) {
 }
 const routeKm = r => r.path.slice(1).reduce((s, p, i) => s + haversineKm(r.path[i], p), 0);
 const CAR_KG_PER_KM = 0.17;  // средний легковой автомобиль, кг CO₂ на км
-const routeAqi = r => { const ids = [...new Set(r.path.map(p => nearestDistrict(p[0], p[1]).id))]; return Math.round(ids.reduce((s, id) => s + air.byDistrict[id].aqi, 0) / ids.length); };
+const routeAqi = r => { const v = [...new Set(r.path.map(p => nearestDistrict(p[0], p[1]).id))].map(id => air.byDistrict[id] && air.byDistrict[id].aqi).filter(x => x != null); return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length) : null; };
 let selRoute = null;
 function viewRoutes(el) {
   const rs = ECO_ROUTES.map(r => ({ r, km: routeKm(r), aqi: routeAqi(r) }));
-  const cleanest = rs.slice().sort((a, b) => a.aqi - b.aqi)[0].r.id;
+  const cleanest = rs.slice().sort((a, b) => (a.aqi ?? 1e9) - (b.aqi ?? 1e9))[0].r.id;
   const total = rs.reduce((s, x) => s + x.km * CAR_KG_PER_KM, 0);
   el.innerHTML = `
     <h1>🌳 ${t("rTitle")}</h1>
@@ -1286,7 +1333,7 @@ function viewRoutes(el) {
       return `<div class="card route ${selRoute === r.id ? "sel" : ""}" data-route="${r.id}">
         <div class="row between"><b style="font-size:16px"><span class="rdot" style="background:${r.color}"></span>${tr(r.name)}</b>${r.id === cleanest ? `<span class="chip">${t("rBest")}</span>` : ""}</div>
         <div class="r-meta"><span>${r.mode === "walk" ? t("rWalk") : t("rBike")}</span><span>📏 ${t("rKm", { n: fmt(km, 1) })}</span><span>⏱️ ${t("rMin", { n: Math.round(km / speed * 60) })}</span>
-          <span style="background:${Lv.color}22;color:${Lv.color}">AQI ${aqi}</span><span class="g">🌱 ${t("rCO2", { n: fmt(km * CAR_KG_PER_KM, 2) })}</span></div>
+          <span style="background:${Lv.color}22;color:${Lv.color}">AQI ${aqiTxt(aqi)}</span><span class="g">🌱 ${t("rCO2", { n: fmt(km * CAR_KG_PER_KM, 2) })}</span></div>
         <div class="small muted" style="font-weight:700;margin-top:6px">🚫 ${t("rAvoid", { s: tr(r.avoid) })}</div>
       </div>`;
     }).join("")}

@@ -182,7 +182,7 @@ async function answerFree2(q) {
   if (prov === "rules" || !cfg.key) { await new Promise(r => setTimeout(r, 400)); return qk ? { html: quickAnswer(qk) } : ruleAnswer(q); }
   const c = airCtx(); if (!c) return { html: noDataAnswer(qk) };
   const P = c.P;
-  const ctx = `Current district ${c.vars.d}, US AQI ${c.a.aqi} (source: ${c.a.src}), best hour today ${c.vars.best} (AQI ${c.vars.bv}), peak ${c.vars.worst} (AQI ${c.vars.wv}), tomorrow max ${c.vars.tm}. User profile: kids=${P.kids}, asthma=${P.asthma}, elderly=${P.elderly}, sport=${P.sport}, heating=${P.heat}. Advisor mode: ${adv.mode}.`;
+  const ctx = `Current district ${c.vars.d}, US AQI ${aqiTxt(c.a.aqi)} (source: ${c.a.src}), best hour today ${c.vars.best} (AQI ${c.vars.bv}), peak ${c.vars.worst} (AQI ${c.vars.wv}), tomorrow max ${c.vars.tm}. User profile: kids=${P.kids}, asthma=${P.asthma}, elderly=${P.elderly}, sport=${P.sport}, heating=${P.heat}. Advisor mode: ${adv.mode}.`;
   const langName = { ru: "Russian", ky: "Kyrgyz (Cyrillic)", en: "English", tr: "Turkish" }[LANG];
   try {
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 20000);
@@ -237,15 +237,15 @@ function viewAdvisor2(el) {
     <div class="chat" id="chat">${chat}</div>
     <div class="chips">${chips}</div>
     <div class="quick-q"><span class="qlbl">${A("quickLbl")}</span>${QUICK.map(q => `<button data-q="${q}">${A("q_" + q)}</button>`).join("")}</div>
-    <form class="ask" id="askForm"><input id="askIn" placeholder="${t("askPh")}" autocomplete="off">${hasSR ? `<button class="btn ghost mic" type="button" id="micBtn" aria-label="${A("voice")}" title="${A("voice")}">🎤</button>` : ""}<button class="btn" type="submit" aria-label="→">→</button></form>
+    <form class="ask" id="askForm"><input id="askIn" aria-label="${esc(t("askPh"))}" placeholder="${t("askPh")}" autocomplete="off">${hasSR ? `<button class="btn ghost mic" type="button" id="micBtn" aria-label="${A("voice")}" title="${A("voice")}">🎤</button>` : ""}<button class="btn" type="submit" aria-label="→">→</button></form>
     <details class="card how" id="llmBox"><summary>${t("llmTitle")}</summary>
       <p class="small muted" style="font-weight:700">${t("llmNote")}</p>
-      <label>${A("provLbl")}</label>
+      <label for="llmProv">${A("provLbl")}</label>
       <select id="llmProv">${Object.keys(PROVIDERS).map(k => `<option value="${k}" ${k === prov ? "selected" : ""}>${k === "rules" ? A("p_rules") : PROVIDERS[k].name}</option>`).join("")}</select>
       <div id="llmFields" class="${prov === "rules" ? "hidden" : ""}">
-        <label>${t("baseUrl")}</label><input id="llmUrl" value="${esc(cfg.url || pv.url || "")}">
-        <label>${t("model")}</label><input id="llmModel" value="${esc(cfg.model || pv.model || "")}">
-        <label>${t("apiKey")}</label><input id="llmKey" type="password" value="${esc(cfg.key || "")}" placeholder="API key" autocomplete="off">
+        <label for="llmUrl">${t("baseUrl")}</label><input id="llmUrl" value="${esc(cfg.url || pv.url || "")}">
+        <label for="llmModel">${t("model")}</label><input id="llmModel" value="${esc(cfg.model || pv.model || "")}">
+        <label for="llmKey">${t("apiKey")}</label><input id="llmKey" type="password" value="${esc(cfg.key || "")}" placeholder="API key" autocomplete="off">
       </div>
       <div class="row" style="margin-top:12px"><button class="btn" id="llmSave" style="flex:1">${t("saveBtn")}</button><button class="btn ghost" id="llmClear" style="flex:1">${t("clearBtn")}</button></div>
     </details>`;
@@ -328,7 +328,7 @@ const RT_SPEED = { walk: 4.5, bike: 14, run: 9, school: 4, commute: 14, trip: 3 
 let rtFilter = "all", rtSort = "clean";
 function routeAqi2(r) {
   if (r.far) return air.byRoute && air.byRoute[r.id] != null ? { v: air.byRoute[r.id], src: "model" } : null;
-  const ids = [...new Set(r.path.map(p => nearestDistrict(p[0], p[1]).id))].filter(id => air.byDistrict[id]);
+  const ids = [...new Set(r.path.map(p => nearestDistrict(p[0], p[1]).id))].filter(id => air.byDistrict[id] && air.byDistrict[id].aqi != null);
   if (!ids.length) return null;
   const src = ids.some(id => ["sensors", "station"].includes(air.byDistrict[id].src)) ? "sensors" : air.byDistrict[ids[0]].src;
   return { v: Math.round(ids.reduce((s, id) => s + air.byDistrict[id].aqi, 0) / ids.length), src };
@@ -423,7 +423,7 @@ async function loadWeather(force) {
   if (!force && cur && Date.now() - cur.at < 15 * 60e3) return;
   try {
     const u = `https://api.open-meteo.com/v1/forecast?latitude=${c[0]}&longitude=${c[1]}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,surface_pressure,precipitation,cloud_cover,weather_code` +
-      `&hourly=temperature_2m,weather_code,wind_speed_10m,precipitation_probability,temperature_850hPa&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&wind_speed_unit=ms&timezone=Asia%2FBishkek&forecast_days=7`;
+      `&hourly=temperature_2m,weather_code,wind_speed_10m,precipitation_probability,temperature_850hPa&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum&wind_speed_unit=ms&timezone=auto&forecast_days=7`;
     newsState.wx[id] = { at: Date.now(), d: await fetchJSON(u) }; newsState.wxErr[id] = false;
   } catch (e) { newsState.wxErr[id] = true; }
 }
@@ -432,18 +432,20 @@ async function loadNews(force) {
   const cur = newsState.news;
   if (!force && cur && cur.ctry === ctry && Date.now() - cur.at < 30 * 60e3) return;
   if (cur && cur.ctry !== ctry) { newsState.news = null; newsSrcFilter = "all"; }
-  const strip = s => { const d = document.createElement("div"); d.innerHTML = s || ""; return d.textContent.replace(/\s+/g, " ").trim(); };
+  // DOMParser не выполняет скрипты и не грузит картинки; вызываем ОДИН раз (повторный разбор превратил бы &lt;img…&gt; в настоящий HTML)
+  const strip = s => (new DOMParser().parseFromString(String(s || ""), "text/html").body.textContent || "").replace(/\s+/g, " ").trim();
+  const safeUrl = u => { try { const x = new URL(String(u || "").trim()); return /^https?:$/.test(x.protocol) ? x.href : ""; } catch (e) { return ""; } };
   const res = await Promise.all(feeds.map(async F => {
     try {
       const j = await fetchJSON("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(F.url));
       if (j.status !== "ok" || !j.items || !j.items.length) return { F, items: [] };
-      return { F, ok: true, items: j.items.map(x => ({ src: F.name, title: strip(strip(x.title)), link: x.link, date: x.pubDate, text: strip(strip(x.description)).slice(0, 400) })) };
+      return { F, ok: true, items: j.items.map(x => ({ src: F.name, title: strip(x.title), link: safeUrl(x.link), date: x.pubDate, text: strip(x.description).slice(0, 400) })) };
     } catch (e) { return { F, items: [] }; }
   }));
   const ok = res.filter(r => r.ok);
   if (!ok.length) { newsState.newsErr = true; if (!cur || cur.ctry !== ctry) newsState.news = null; return; }
   const seen = new Set(), items = [];
-  ok.flatMap(r => r.items).forEach(x => { const k = x.title.toLowerCase().replace(/[^a-zа-яёçğıöşüөүң0-9]/gi, "").slice(0, 60); if (!seen.has(k) && !seen.has(x.link)) { seen.add(k); seen.add(x.link); items.push(x); } });
+  ok.flatMap(r => r.items).forEach(x => { const k = x.title.toLowerCase().replace(/[^a-zа-яёçğıöşüөүң0-9]/gi, "").slice(0, 60); if (!seen.has(k) && !(x.link && seen.has(x.link))) { seen.add(k); if (x.link) seen.add(x.link); items.push(x); } });
   const ts = x => Date.parse((x.date || "").replace(" ", "T") + "Z") || 0;
   items.sort((x, y) => ts(y) - ts(x));
   newsState.news = { ctry, at: Date.now(), items, sources: ok.map(r => r.F.name), failed: res.filter(r => !r.ok).map(r => r.F.name) };
@@ -463,7 +465,7 @@ function newsHTML() {
   const items = S.items.filter(x => newsSrcFilter === "all" || x.src === newsSrcFilter);
   const mine = items.filter(x => rx.test(x.title + " " + x.text)), rest = items.filter(x => !mine.includes(x));
   const dt = x => { const d = new Date((x.date || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleString(numLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
-  const li = x => `<a class="card news-item" href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"><b>${/смог|воздух|загрязн|выброс|hava kirlili|smog/i.test(x.title) ? "💨 " : ""}${esc(x.title)}</b><div class="small muted"><span class="nsrc">${esc(x.src)}</span> · ${esc(dt(x))}</div></a>`;
+  const li = x => `<${x.link ? "a" : "div"} class="card news-item"${x.link ? ` href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"` : ""}><b>${/смог|воздух|загрязн|выброс|hava kirlili|smog/i.test(x.title) ? "💨 " : ""}${esc(x.title)}</b><div class="small muted"><span class="nsrc">${esc(x.src)}</span> · ${esc(dt(x))}</div></${x.link ? "a" : "div"}>`;
   const chips = `<div class="adv-modes nchips">${["all", ...S.sources].map(s => `<button class="${newsSrcFilter === s ? "on" : ""}" aria-pressed="${newsSrcFilter === s}" data-nsrc="${esc(s)}">${s === "all" ? "✨ " + R("all") : esc(s)}</button>`).join("")}</div>`;
   return `${chips}
     <p class="small muted">🕒 ${N("updN", { t: new Date(S.at).toLocaleTimeString(numLocale(), { hour: "2-digit", minute: "2-digit" }) })} · ${N("srcN", { n: S.sources.length })}</p>

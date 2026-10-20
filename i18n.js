@@ -34,7 +34,7 @@ ru: {
     "Электричество: ~2 сом/кВт·ч, сеть КР почти чистая (~90% ГЭС).",
     "Утепление: ~1 100 сом/м² дома, минус 40% тепла.",
     "Тепловой насос: 180 000 сом + 1 800 сом/м², КПД (COP) ~2,7 зимой.",
-    "Солнце: ~48 000 сом за 1 кВт, ~1 350 кВт·ч/кВт в год в {cityPrep}, плюс 2 кондиционера на обогрев закрывают половину тепла.",
+    "Солнце: ~48 000 сом за 1 кВт, ~{pvY} кВт·ч/кВт в год в {cityPrep} (оценка), плюс 2 кондиционера на обогрев закрывают половину тепла.",
     "1 дерево поглощает ~22 кг CO₂ в год.", "Это оценка для сравнения вариантов, а не коммерческое предложение."],
   groupTitle: "Вместе дешевле", groupSub: "Объединяйтесь с соседями: чем больше домов, тем ниже цена у поставщика",
   youJoined: "Вы участвуете: {n}", savedPerUnit: "Экономия за единицу: {s}", create: "＋ Создать", allDistricts: "Все районы",
@@ -53,7 +53,7 @@ ru: {
   you: "вы", nameLbl: "Имя", myDistrict: "Мой район", reset: "Сбросить демо-данные", resetToast: "Демо-данные сброшены",
   profileFoot: "Профиль, бейджи и рейтинг — демо. Данные хранятся только на этом устройстве.", defaultName: "Житель Бишкека",
   alertsTitle: "🔔 Уведомления о смоге", alertsSub: "Предупредим заранее, если завтра воздух будет плохим", alertsOn: "Включить уведомления",
-  alertDistrict: "Район для уведомлений", threshold: "Порог AQI", th50: "50 — для демо", testBtn: "🔔 Тестовое уведомление",
+  alertDistrict: "Район для уведомлений", threshold: "Порог AQI", th50: "50 — очень чутко (зимой почти каждый день)", testBtn: "🔔 Тестовое уведомление",
   permGranted: "Браузер разрешил уведомления ✓", permDenied: "Браузер запретил уведомления — покажем их внутри приложения",
   permUnsupported: "Браузер не поддерживает уведомления — покажем их внутри приложения",
   tomorrowFc: "Прогноз на завтра {in}: до {aqi} AQI", checkNote: "Проверяем прогноз Open-Meteo каждые 30 минут, пока приложение открыто.",
@@ -69,7 +69,7 @@ ru: {
   whyLow: "С бюджетом {b} лучше начать с самого дешёвого и быстрого шага: через чердак и щели в окнах уходит до трети тепла.",
   whyInsul: "Утепление окупается быстрее всего, а каждая следующая технология после него будет дешевле и эффективнее.",
   whyPump: "Бюджет позволяет полностью уйти от угля: сначала утепляем, потом ставим насос меньшей мощности. Так дешевле, чем один большой насос на «дырявый» дом.",
-  whySolar: "В {cityPrep} ~2 600 солнечных часов в год: панели питают дом летом и помогают обогреву зимой.",
+  whySolar: "В {cityPrep} много солнечных дней: панели питают дом летом и помогают обогреву зимой.",
   wn_brick: "Кирпичные стены без утепления быстро остывают, утепление фасада даст заметный эффект.",
   wn_adobe: "Саманные стены и так неплохо держат тепло, поэтому главное — крыша, окна и пол.",
   wn_block: "Шлакоблок плохо держит тепло, утепление стен даст максимальный эффект.",
@@ -124,7 +124,7 @@ ky: {
     "Электр энергиясы: ~2 сом/кВт·с, Кыргызстандын тармагы дээрлик таза (~90% ГЭС).",
     "Жылуулоо: үйдүн ар бир м² үчүн ~1 100 сом, жылуулук 40% аз керектелет.",
     "Жылуулук насосу: 180 000 сом + 1 800 сом/м², кышында ПАК (COP) ~2,7.",
-    "Күн: 1 кВт үчүн ~48 000 сом, {cityPrep} жылына ~1 350 кВт·с/кВт, жылытуучу 2 кондиционер жылуулуктун жарымын камсыз кылат.",
+    "Күн: 1 кВт үчүн ~48 000 сом, {cityPrep} жылына ~{pvY} кВт·с/кВт (болжол), жылытуучу 2 кондиционер жылуулуктун жарымын камсыз кылат.",
     "1 дарак жылына ~22 кг CO₂ сиңирет.", "Бул варианттарды салыштыруу үчүн болжолдуу эсеп, коммерциялык сунуш эмес."],
   groupTitle: "Бирге арзан", groupSub: "Коңшулар менен биригиңиз: үй канча көп болсо, жеткирүүчүнүн баасы ошончо арзан",
   youJoined: "Сиз катышып жатасыз: {n}", savedPerUnit: "Бирдикке үнөм: {s}", create: "＋ Түзүү", allDistricts: "Бардык райондор",
@@ -143,7 +143,7 @@ ky: {
   you: "сиз", nameLbl: "Аты", myDistrict: "Менин районум", reset: "Демо-маалыматты баштапкы абалга келтирүү", resetToast: "Демо-маалымат баштапкы абалга келди",
   profileFoot: "Профиль, бейджилер жана рейтинг — демо. Маалымат ушул түзмөктө гана сакталат.", defaultName: "Бишкектик",
   alertsTitle: "🔔 Смог тууралуу эскертүүлөр", alertsSub: "Эртең аба начар болсо, алдын ала эскертебиз", alertsOn: "Эскертүүлөрдү күйгүзүү",
-  alertDistrict: "Кайсы район боюнча эскертүү", threshold: "AQI чеги", th50: "50 — демо үчүн", testBtn: "🔔 Сыноо эскертүүсү",
+  alertDistrict: "Кайсы район боюнча эскертүү", threshold: "AQI чеги", th50: "50 — өтө сезгич (кышында дээрлик күн сайын)", testBtn: "🔔 Сыноо эскертүүсү",
   permGranted: "Браузер эскертүүлөргө уруксат берди ✓", permDenied: "Браузер эскертүүлөргө тыюу салды — аларды колдонмонун ичинде көрсөтөбүз",
   permUnsupported: "Браузер эскертүүлөрдү колдобойт — аларды колдонмонун ичинде көрсөтөбүз",
   tomorrowFc: "Эртеңки божомол, {in}: {aqi} AQI чейин", checkNote: "Колдонмо ачык турганда Open-Meteo божомолун ар 30 мүнөт сайын текшеребиз.",
@@ -159,7 +159,7 @@ ky: {
   whyLow: "{b} бюджет менен эң арзан жана тез кадамдан баштаган оң: жылуулуктун үчтөн бирине чейини чатыр жана терезенин жылчыктары аркылуу чыгып кетет.",
   whyInsul: "Жылуулоо баарынан тез актанат, ал эми андан кийинки ар бир технология арзаныраак жана натыйжалуураак болот.",
   whyPump: "Бюджетиңиз көмүрдөн толук баш тартууга жетет: адегенде үйдү жылуулайбыз, андан соң кубаттуулугу азыраак насос коёбуз. Бул жылуулук чыгып кеткен үйгө чоң насос коюудан арзан.",
-  whySolar: "{cityPrep} жылына ~2 600 саат күн тийет: панелдер жайында үйдү электр менен камсыз кылып, кышында жылытууга жардам берет.",
+  whySolar: "{cityPrep} күн ачык күндөр көп: панелдер жайында үйдү электр менен камсыз кылып, кышында жылытууга жардам берет.",
   wn_brick: "Жылуулоосуз кыш дубалдар тез муздайт, фасадды жылуулоо байкаларлык натыйжа берет.",
   wn_adobe: "Саман дубалдар жылуулукту жакшы кармайт, ошондуктан негизгиси — чатыр, терезе жана пол.",
   wn_block: "Шлакоблок жылуулукту начар кармайт, дубалды жылуулоо эң чоң натыйжа берет.",
@@ -214,7 +214,7 @@ en: {
     "Electricity: ~2 som/kWh; Kyrgyzstan's grid is almost clean (~90% hydro).",
     "Insulation: ~1,100 som per m² of house, 40% less heat needed.",
     "Heat pump: 180,000 som + 1,800 som/m², COP ~2.7 in winter.",
-    "Solar: ~48,000 som per kW, ~1,350 kWh/kW per year in {city}, plus 2 heating air-conditioners cover half the heat.",
+    "Solar: ~48,000 som per kW, ~{pvY} kWh/kW per year in {city} (estimate), plus 2 heating air-conditioners cover half the heat.",
     "1 tree absorbs ~22 kg CO₂ per year.", "This is an estimate for comparing options, not a commercial offer."],
   groupTitle: "Cheaper Together", groupSub: "Team up with neighbours: the more homes, the lower the supplier price",
   youJoined: "You're in: {n}", savedPerUnit: "Savings per unit: {s}", create: "＋ Create", allDistricts: "All districts",
@@ -233,7 +233,7 @@ en: {
   you: "you", nameLbl: "Name", myDistrict: "My district", reset: "Reset demo data", resetToast: "Demo data reset",
   profileFoot: "Profile, badges and leaderboard are demo. Data stays on this device only.", defaultName: "Bishkek resident",
   alertsTitle: "🔔 Smog alerts", alertsSub: "We'll warn you in advance if tomorrow's air will be bad", alertsOn: "Enable alerts",
-  alertDistrict: "District to watch", threshold: "AQI threshold", th50: "50 — for demo", testBtn: "🔔 Test notification",
+  alertDistrict: "District to watch", threshold: "AQI threshold", th50: "50 — very sensitive (almost daily in winter)", testBtn: "🔔 Test notification",
   permGranted: "Browser notifications allowed ✓", permDenied: "Browser blocked notifications — we'll show them inside the app",
   permUnsupported: "This browser doesn't support notifications — we'll show them inside the app",
   tomorrowFc: "Tomorrow's forecast {in}: up to {aqi} AQI", checkNote: "We check the Open-Meteo forecast every 30 minutes while the app is open.",
@@ -249,7 +249,7 @@ en: {
   whyLow: "With a budget of {b}, start with the cheapest, fastest step: up to a third of the heat escapes through the attic and window gaps.",
   whyInsul: "Insulation pays back fastest, and every technology you add after it becomes cheaper and more effective.",
   whyPump: "Your budget lets you quit coal completely: insulate first, then install a smaller heat pump. That's cheaper than one big pump for a leaky house.",
-  whySolar: "{city} gets ~2,600 hours of sunshine a year: panels power the home in summer and help with heating in winter.",
+  whySolar: "{city} gets plenty of sunny days: panels power the home in summer and help with heating in winter.",
   wn_brick: "Uninsulated brick walls cool down quickly, so facade insulation makes a clear difference.",
   wn_adobe: "Adobe walls already hold heat fairly well, so focus on the roof, windows and floor.",
   wn_block: "Cinder block holds heat poorly, so wall insulation gives the biggest effect.",
@@ -280,11 +280,13 @@ en: {
 function t(key, vars = {}) {
   if (typeof CITY_VARS === "function") vars = Object.assign(CITY_VARS(), vars);
   let s = (DICT[LANG] && DICT[LANG][key]) ?? (LANG === "tr" ? DICT.en[key] : undefined) ?? DICT.ru[key] ?? key;
-  if (typeof s !== "string") return s;
-  return s.replace(/\{(\w+)\}/g, (_, k) => {
+  const sub = x => x.replace(/\{(\w+)\}/g, (_, k) => {
     if (k === "In" && vars.in != null) return String(vars.in).charAt(0).toUpperCase() + String(vars.in).slice(1);
     return vars[k] ?? "";
   });
+  if (Array.isArray(s)) return s.map(x => typeof x === "string" ? sub(x) : x);   // списки (например «Как считаем») тоже с подстановкой
+  if (typeof s !== "string") return s;
+  return sub(s);
 }
 /* tr({ru, ky, en}) — выбрать перевод для поля данных. */
 const tr = o => (o && typeof o === "object" && !Array.isArray(o)) ? (o[LANG] ?? (LANG === "tr" ? o.en : undefined) ?? o.ru) : o;

@@ -260,11 +260,11 @@ const CITIES = {
  * смещения от центра города (приблизительно). Все дома, закупки, жалобы, маршруты и рейтинг — DEMO.
  */
 const SIDE = {
-  center: { name: { ru: "Центр", ky: "Борбор", en: "Centre" }, type: "apts", dlat: 0, dlon: 0 },
-  north: { name: { ru: "Северная часть", ky: "Түндүк бөлүгү", en: "North side" }, loc: { ru: "в северной части", ky: "түндүк бөлүгүндө", en: "on the north side" }, type: "private", dlat: 0.013, dlon: 0.004 },
-  south: { name: { ru: "Южная часть", ky: "Түштүк бөлүгү", en: "South side" }, loc: { ru: "в южной части", ky: "түштүк бөлүгүндө", en: "on the south side" }, type: "private", dlat: -0.013, dlon: -0.003 },
-  east: { name: { ru: "Восточная часть", ky: "Чыгыш бөлүгү", en: "East side" }, loc: { ru: "в восточной части", ky: "чыгыш бөлүгүндө", en: "on the east side" }, type: "micro", dlat: 0.002, dlon: 0.02 },
-  west: { name: { ru: "Западная часть", ky: "Батыш бөлүгү", en: "West side" }, loc: { ru: "в западной части", ky: "батыш бөлүгүндө", en: "on the west side" }, type: "private", dlat: -0.002, dlon: -0.02 },
+  center: { name: { ru: "Центр", ky: "Борбор", en: "Centre", tr: "Merkez" }, type: "apts", dlat: 0, dlon: 0 },
+  north: { name: { ru: "Северная часть", ky: "Түндүк бөлүгү", en: "North side", tr: "Kuzey kesimi" }, loc: { ru: "в северной части", ky: "түндүк бөлүгүндө", en: "on the north side", tr: "kuzey kesiminde" }, type: "private", dlat: 0.013, dlon: 0.004 },
+  south: { name: { ru: "Южная часть", ky: "Түштүк бөлүгү", en: "South side", tr: "Güney kesimi" }, loc: { ru: "в южной части", ky: "түштүк бөлүгүндө", en: "on the south side", tr: "güney kesiminde" }, type: "private", dlat: -0.013, dlon: -0.003 },
+  east: { name: { ru: "Восточная часть", ky: "Чыгыш бөлүгү", en: "East side", tr: "Doğu kesimi" }, loc: { ru: "в восточной части", ky: "чыгыш бөлүгүндө", en: "on the east side", tr: "doğu kesiminde" }, type: "micro", dlat: 0.002, dlon: 0.02 },
+  west: { name: { ru: "Западная часть", ky: "Батыш бөлүгү", en: "West side", tr: "Batı kesimi" }, loc: { ru: "в западной части", ky: "батыш бөлүгүндө", en: "on the west side", tr: "batı kesiminde" }, type: "private", dlat: -0.002, dlon: -0.02 },
 };
 const SURNAMES = [
   { ru: "Семья Абдраимовых", ky: "Абдраимовдордун үй-бүлөсү", en: "The Abdraimov family" },
@@ -279,7 +279,7 @@ function makeCity(c) {
     const S = SIDE[sd];
     return { id: `${c.id}_${sd}`, lat: +(c.center[0] + S.dlat).toFixed(4), lon: +(c.center[1] + S.dlon).toFixed(4),
       factor: c.factors[i], coalShare: c.coal[i], type: S.type, name: S.name,
-      loc: sd === "center" ? { ru: `в центре ${c.gen.ru}`, ky: `${c.gen.ky} борборунда`, en: `in central ${c.name.en}` } : S.loc };
+      loc: sd === "center" ? { ru: `в центре ${c.gen.ru}`, ky: `${c.gen.ky} борборунда`, en: `in central ${c.name.en}`, tr: `${c.name.en} merkezinde` } : S.loc };
   });
   const D = i => districts[i % districts.length];
   const off = (d, a, b) => [+(d.lat + a).toFixed(4), +(d.lon + b).toFixed(4)];
@@ -290,16 +290,16 @@ function makeCity(c) {
   const d1 = D(1), d2 = D(0);
   const groups = [
     { id: `${c.id}_g1`, icon: "🧱", district: d1.id, cat: "insul", basePrice: 1400, target: 10, joined: 3 + c.seed % 5,
-      title: { ru: `10 домов ${d1.loc.ru} — утеплитель`, ky: `${cap(d1.loc.ky)} 10 үй — жылуулагыч`, en: `10 homes ${d1.loc.en} — insulation` },
-      product: { ru: "Минвата 100 мм + монтаж, за м² стены", ky: "100 мм минвата + орнотуу, дубалдын м² үчүн", en: "100 mm mineral wool + installation, per m² of wall" },
-      unit: { ru: "м²", ky: "м²", en: "m²" }, deadline: { ru: "30 октября", ky: "30-октябрга", en: "Oct 30" },
-      supplier: { ru: `«${c.name.ru} Курулуш» (демо)`, ky: `«${c.name.ky} Курулуш» (демо)`, en: `${c.name.en} Kurulush (demo)` },
+      title: { ru: `10 домов ${d1.loc.ru} — утеплитель`, ky: `${cap(d1.loc.ky)} 10 үй — жылуулагыч`, en: `10 homes ${d1.loc.en} — insulation`, tr: `${cap(d1.loc.tr || d1.loc.en)} 10 ev — yalıtım` },
+      product: { ru: "Минвата 100 мм + монтаж, за м² стены", ky: "100 мм минвата + орнотуу, дубалдын м² үчүн", en: "100 mm mineral wool + installation, per m² of wall", tr: "100 mm taş yünü + montaj, duvarın m² başına" },
+      unit: { ru: "м²", ky: "м²", en: "m²" }, deadline: { ru: "30 октября", ky: "30-октябрга", en: "Oct 30", tr: "30 Ekim" },
+      supplier: { ru: `«${c.name.ru} Курулуш» (демо)`, ky: `«${c.name.ky} Курулуш» (демо)`, en: `${c.name.en} Kurulush (demo)`, tr: `${c.name.en} İnşaat (demo)` },
       tiers: [{ n: 1, price: 1400 }, { n: 4, price: 1230 }, { n: 7, price: 1110 }, { n: 10, price: 990 }] },
     { id: `${c.id}_g2`, icon: "☀️", district: d2.id, cat: "solar", basePrice: 285000, target: 12, joined: 2 + c.seed % 6,
-      title: { ru: `Солнечные панели для ${c.gen.ru}`, ky: `${c.name.ky} үчүн күн панелдери`, en: `Solar panels for ${c.name.en}` },
-      product: { ru: "Комплект 5 кВт: панели + инвертор", ky: "5 кВт комплект: панелдер + инвертор", en: "5 kW kit: panels + inverter" },
-      unit: { ru: "комплект", ky: "комплект", en: "kit" }, deadline: { ru: "10 ноября", ky: "10-ноябрга", en: "Nov 10" },
-      supplier: { ru: "«Күн Энерджи» (демо)", ky: "«Күн Энерджи» (демо)", en: "Kun Energy (demo)" },
+      title: { ru: `Солнечные панели для ${c.gen.ru}`, ky: `${c.name.ky} үчүн күн панелдери`, en: `Solar panels for ${c.name.en}`, tr: `${c.name.en} için güneş panelleri` },
+      product: { ru: "Комплект 5 кВт: панели + инвертор", ky: "5 кВт комплект: панелдер + инвертор", en: "5 kW kit: panels + inverter", tr: "5 kW set: paneller + invertör" },
+      unit: { ru: "комплект", ky: "комплект", en: "kit", tr: "set" }, deadline: { ru: "10 ноября", ky: "10-ноябрга", en: "Nov 10", tr: "10 Kasım" },
+      supplier: { ru: "«Күн Энерджи» (демо)", ky: "«Күн Энерджи» (демо)", en: "Kun Energy (demo)", tr: "Kun Energy (demo)" },
       tiers: [{ n: 1, price: 285000 }, { n: 4, price: 264000 }, { n: 8, price: 246000 }, { n: 12, price: 229000 }] },
   ];
   const [c1lat, c1lon] = off(D(1), 0.003, -0.004), [c2lat, c2lon] = off(D(2), -0.002, 0.004);
@@ -578,17 +578,18 @@ const TR_ROUTES = {
   antalya: [["ant_r1", "bike", "Набережная Коньяалты", "Коняалты жээги", "Konyaaltı beach promenade", [[36.8770, 30.6600], [36.8700, 30.6400], [36.8620, 30.6200]]],
     ["ant_r2", "walk", "Старый город Калеичи", "Калеичи эски шаары", "Kaleiçi old town", [[36.8840, 30.7050], [36.8860, 30.7080], [36.8830, 30.7100]]]],
 };
+const TR_ROUTE_TR = {"ist_r1": "Beşiktaş → Bebek sahili", "ist_r2": "Moda → Caddebostan sahil yolu", "ist_r3": "Yıldız Parkı", "ank_r1": "Gençlik Parkı", "ank_r2": "Eymir Gölü", "izm_r1": "Kordon yürüyüşü", "izm_r2": "Karşıyaka sahili", "brs_r1": "Kültürpark", "brs_r2": "Uludağ", "ant_r1": "Konyaaltı sahil yolu", "ant_r2": "Kaleiçi (eski şehir)", "kon_r1": "Alaaddin Tepesi", "kon_r2": "Meram bağları", "gaz_r1": "Gaziantep Kalesi yürüyüşü", "gaz_r2": "Alleben vadisi", "erz_r1": "Çifte Minareli → Kale", "erz_r2": "Palandöken", "trb_r1": "Boztepe", "trb_r2": "Trabzon sahili", "trb_r3": "Uzungöl", "ada_r1": "Seyhan kıyısı", "ada_r2": "Adana Merkez Park", "kay_r1": "Kayseri Kalesi", "kay_r2": "Erciyes Dağı", "sam_r1": "Samsun sahili", "sam_r2": "Amisos Tepesi", "diy_r1": "Diyarbakır surları", "diy_r2": "On Gözlü Köprü", "esk_r1": "Porsuk kıyısı", "esk_r2": "Sazova Parkı koşusu", "mer_r1": "Mersin sahili", "den_r1": "Çamlık Parkı", "den_r2": "Pamukkale travertenleri", "san_r1": "Balıklıgöl", "san_r2": "Göbeklitepe", "mal_r1": "Eski Malatya (Battalgazi)", "van_r1": "Van Gölü kıyısı", "van_r2": "Van Kalesi", "koc_r1": "İzmit sahili", "koc_r2": "Kartepe"};
 const TR_ORDER = TR_CITIES.map(c => c[0]);
 TR_CITIES.forEach(([id, emoji, center, ru, ky, en, gru, gky, pru, pky, rx, ds], i) => {
   const C = makeCity({ id, emoji, center, seed: i, demoBase: 70, name: { ru, ky, en }, gen: { ru: gru, ky: gky, en }, prep: { ru: pru, ky: pky, en },
     sides: ["north", "south", "east"], factors: [1, 1, 1, 1], coal: [0.1, 0.1, 0.1, 0.1], house: { area: 100, coal: 3, price: 9000 }, k: {} });
   C.country = "tr"; C.newsRx = rx; C.zoom = 11; C.radius = 1300;
   C.districts = ds.map(([did, lat, lon, dru, dky, den, type]) => ({ id: did, lat, lon, factor: 1, coalShare: 0.1, type, approx: true, name: { ru: dru, ky: dky, en: den },
-    loc: { ru: `в районе ${dru}`, ky: `${dky} районунда`, en: `in ${den}` } }));
+    loc: { ru: `в районе ${dru}`, ky: `${dky} районунда`, en: `in ${den}`, tr: `${den} bölgesinde` } }));
   C.defaultDistrict = C.alertDistrict = C.districts[0].id;
   C.leaderboard = Object.fromEntries(C.districts.map(d => [d.id, 90])); C.demoAqi = Object.fromEntries(C.districts.map(d => [d.id, 70]));
   C.groups.forEach((g, k) => { g.district = C.districts[k % C.districts.length].id; });
-  C.routes = (TR_ROUTES[id] || []).map(([rid, type, rru, rky, ren, path, far]) => ({ id: rid, type, mode: type === "bike" ? "bike" : "walk", color: RT_COLOR[type], far: !!far, approx: true, name: { ru: rru, ky: rky, en: ren }, path }));
+  C.routes = (TR_ROUTES[id] || []).map(([rid, type, rru, rky, ren, path, far]) => ({ id: rid, type, mode: type === "bike" ? "bike" : "walk", color: RT_COLOR[type], far: !!far, approx: true, name: { ru: rru, ky: rky, en: ren, tr: TR_ROUTE_TR[rid] || ren }, path }));
   CITIES[id] = C;
 });
 KG_ORDER.forEach(id => { CITIES[id].country = "kg"; });

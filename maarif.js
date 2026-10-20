@@ -293,7 +293,7 @@ function viewSchools(el) {
     <div class="card mf-off"><div class="mf-off-h small">${MT("offH", { d: O.date })}</div>
       <div class="mf-off-g">${[["countries", O.countries], ["inst", O.inst], ["schools", O.schools], ["students", O.students], ["univ2", O.univ], ["trc", O.trc], ["edc", O.edc], ["dorm", O.dorm]].map(([k, v]) => `<div><b>${esc(String(v))}</b><span>${MT("o_" + k)}</span></div>`).join("")}</div>
       <div class="small muted">${MT("src")}: <a href="${MF_SRC_LIST}" target="_blank" rel="noopener">turkiyemaarif.org/dunyada-maarif</a> · ${MT("offNote", { c: nCtr, n: all.length })}</div></div>
-    <div class="mf-tools"><div class="mf-row2"><input id="mfSearch" type="search" placeholder="${MT("searchW")}" value="${esc(mfQ)}" autocomplete="off">
+    <div class="mf-tools"><div class="mf-row2"><input id="mfSearch" type="search" aria-label="${esc(MT("searchW"))}" placeholder="${MT("searchW")}" value="${esc(mfQ)}" autocomplete="off">
       <select id="mfCo" aria-label="${MT("country")}"><option value="">🌍 ${MT("allCtr")} (${ctrs.length})</option>${ctrs.map(c => `<option value="${c}"${mfCo === c ? " selected" : ""}>${mfFlag(c)} ${esc(mfCtryName(c))} · ${nIn(s => s.c === c)}</option>`).join("")}</select></div>
       <div class="filters">${F.map(([k, l]) => `<div class="toggle ${mfC === k ? "on" : ""}" data-mfc="${k}" role="button" tabindex="0">${l}</div>`).join("")}</div>
       <div class="mf-stat" id="mfStat"></div></div>

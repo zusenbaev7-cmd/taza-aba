@@ -119,7 +119,7 @@ function sourcesCardHTML(d) {
   const live = air.status === "ok", sc = live ? (air.sensors || []) : [], st = live ? (air.stations || []) : [];
   const m = a.model || (a.src === "model" ? { aqi: a.aqi, pm25: a.pm25 } : null);
   const rows = [];
-  if (m) rows.push(`<li><span class="src-ic">🛰️</span><div><b>${ST("model")}</b><small>${ST("modelSub")}${a.currentTime ? " · " + esc(a.currentTime.slice(11, 16)) : ""}</small></div><em style="--c:${level(m.aqi).color}">${m.aqi}</em></li>`);
+  if (m) rows.push(`<li><span class="src-ic">🛰️</span><div><b>${ST("model")}</b><small>${ST("modelSub")}${a.currentTime ? " · " + esc(a.currentTime.slice(11, 16)) : ""}</small></div><em style="--c:${level(m.aqi).color}">${aqiTxt(m.aqi)}</em></li>`);
   if (sc.length) { const near = Math.min(...sc.map(s => kmDist(d, s))), mdv = pm25ToAqi(median(sc.map(s => s.p2)));
     rows.push(`<li><span class="src-ic">📡</span><div><b>${ST("sc")}</b><small>${ST("scSub", { n: sc.length })} · ${near <= 2.5 ? ST("near", { k: fmt(near, 1) }) : ST("far")}</small></div><em style="--c:${level(mdv).color}">${mdv}</em></li>`); }
   else rows.push(`<li class="dim"><span class="src-ic">📡</span><div><b>${ST("sc")}</b><small>${live ? ST("scNone") : "—"}</small></div><em>—</em></li>`);
