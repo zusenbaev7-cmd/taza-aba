@@ -811,7 +811,7 @@ function viewGroup(el) {
           <div style="flex:1"><div class="t">${esc(gTitle(g))}</div><div class="small muted" style="font-weight:700">${gProduct(g)}</div></div></div>
         <div class="progress"><div style="width:${pct}%"></div></div>
         <div class="row between small" style="font-weight:800">
-          <div class="row" style="gap:8px"><div class="avatars">${Array.from({ length: Math.min(5, n) }, (_, i) => `<i style="background:${me && i === 0 ? "#ffc93c" : AV_COLORS[i % 6]}">${me && i === 0 ? "★" : ""}</i>`).join("")}</div>
+          <div class="row" style="gap:8px"><div class="avatars">${Array.from({ length: Math.min(5, n) }, (_, i) => `<i style="background:${me && i === 0 ? "#4fc3f7" : AV_COLORS[i % 6]}">${me && i === 0 ? "★" : ""}</i>`).join("")}</div>
             <span>${t("ofHomes", { n, t: g.target })}</span></div>
           <span class="muted">${t("until", { d: gDeadline(g) })}</span>
         </div>
@@ -1094,7 +1094,7 @@ function viewProfile(el) {
       <div class="stat"><div class="k">${t("lessCO2")}</div><div class="v">${fmt(plan.co2 * k, 1)} ${t("t")}</div></div>
       <div class="stat"><div class="k">${t("lessPM")}</div><div class="v">${fmt(plan.pm * k, 0)} ${t("kg")}</div></div>
       <div class="stat"><div class="k">${t("likeTrees")}</div><div class="v">${fmt(plan.trees * k)}</div></div>
-      <div class="stat" style="grid-column:1/-1;background:linear-gradient(135deg,#fff8d9,#e9f7e6)"><div class="k">${t("familySave")}</div><div class="v">${som(plan.save * k)}</div></div>
+      <div class="stat" style="grid-column:1/-1;background:linear-gradient(135deg,#e1f5fe,#e9f7e6)"><div class="k">${t("familySave")}</div><div class="v">${som(plan.save * k)}</div></div>
     </div>
 
     <h2>${t("badgesT")}</h2>

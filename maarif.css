@@ -1,5 +1,5 @@
 /* Школы Маариф — зелёный + золото, обе темы */
-.mf-toggle.on{background:#1F5A3D!important;border-color:#F2B705!important;color:#fff!important}
+.mf-toggle.on{background:#1F5A3D!important;border-color:#38BDF8!important;color:#fff!important}
 .mf-card .mf-h{display:flex;gap:10px;align-items:flex-start}
 .mf-card .mf-ico{font-size:22px;line-height:1}
 .mf-card .mf-name{font-size:14px;line-height:1.25;display:block}
@@ -7,10 +7,10 @@
 .mf-card .mf-addr,.mf-card .mf-facts,.mf-card .mf-air{margin-top:6px;font-weight:600}
 .mf-card .mf-facts{opacity:.85}
 .mf-card .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
-.mf-prec{display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px;background:#F2B70533;color:#7a5b00;margin-left:4px}
+.mf-prec{display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px;background:#F2B70533;color:#055275;margin-left:4px}
 .mf-prec.exact{background:#1F5A3D22;color:#1F5A3D}
 .mf-links{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px}
-.mf-links a{font-weight:800;color:#1F5A3D;text-decoration:none;border-bottom:1.5px solid #F2B705}
+.mf-links a{font-weight:800;color:#1F5A3D;text-decoration:none;border-bottom:1.5px solid #38BDF8}
 .mf-aqi{min-width:34px;height:34px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;padding:0 4px}
 .mf-aqi.muted{background:transparent;color:inherit}
 .mf-tools{display:flex;flex-direction:column;gap:10px;margin:6px 0 10px}
@@ -21,36 +21,36 @@
 .mf-grid{display:grid;grid-template-columns:1fr;gap:10px}
 @media (min-width:900px){.mf-grid{grid-template-columns:repeat(2,1fr)}}
 .mf-item{margin:0!important}
-.mf-note{border-left:4px solid #F2B705;margin-top:12px;font-weight:600;line-height:1.45}
+.mf-note{border-left:4px solid #38BDF8;margin-top:12px;font-weight:600;line-height:1.45}
 .leaflet-popup-content .mf-card{min-width:220px}
 [data-theme="dark"] .mf-card .mf-lvl,[data-theme="dark"] .mf-city,[data-theme="dark"] .mf-links a{color:#9fd8b4}
-[data-theme="dark"] .mf-prec{color:#F2B705}
+[data-theme="dark"] .mf-prec{color:#38BDF8}
 [data-theme="dark"] .mf-prec.exact{background:#9fd8b422;color:#9fd8b4}
 
 /* эмблемные маркеры: белый круг, зелёное кольцо (точный адрес) / золотое пунктирное с ≈ (примерно) */
 .mf-pin{position:relative;width:38px;height:38px;box-sizing:border-box;border-radius:50%;display:grid;place-items:center;background:#fff;border:3px solid #1F5A3D;box-shadow:0 0 0 3px var(--aq,transparent),0 3px 8px rgba(0,0,0,.35)}
 .mf-pin .mf-emb{display:block;width:72%;height:72%;background:url(icons/maarif-emblem.png) center/contain no-repeat}
 .mf-pin.approx{border:3px dashed #D9A400}
-.mf-pin i{position:absolute;right:-7px;top:-7px;font-style:normal;font-weight:800;font-size:11px;line-height:16px;width:16px;height:16px;border-radius:50%;background:#F2B705;color:#1F3A2A;text-align:center}
+.mf-pin i{position:absolute;right:-7px;top:-7px;font-style:normal;font-weight:800;font-size:11px;line-height:16px;width:16px;height:16px;border-radius:50%;background:#38BDF8;color:#1F3A2A;text-align:center}
 .mf-pin.hq{border-color:#7a1f1f}
 .mf-pin.sm{width:28px;height:28px;border-width:2px}
 .mf-pin.sm i{display:none}
-.mf-card .mf-h img.mf-ico{width:26px;height:26px;object-fit:contain;flex:none;background:#fff;border-radius:50%;padding:2px;border:1.5px solid #F2B705}
+.mf-card .mf-h img.mf-ico{width:26px;height:26px;object-fit:contain;flex:none;background:#fff;border-radius:50%;padding:2px;border:1.5px solid #38BDF8}
 .mf-ph{margin:-2px 0 8px;position:relative}
-.mf-ph img{display:block;width:100%;aspect-ratio:62/45;object-fit:cover;border-radius:12px;border:2px solid #F2B705}
+.mf-ph img{display:block;width:100%;aspect-ratio:62/45;object-fit:cover;border-radius:12px;border:2px solid #38BDF8}
 .mf-ph figcaption{font-size:10.5px;font-weight:700;opacity:.75;margin-top:3px}
 .mf-ph figcaption a{color:inherit}
 .mf-ph.none{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;aspect-ratio:62/30;border-radius:12px;border:2px dashed #F2B70599;background:linear-gradient(135deg,#1F5A3D10,#F2B70518)}
 .mf-ph.none img{width:44px;height:44px;border:0;aspect-ratio:auto;object-fit:contain;opacity:.85}
 .mf-ph.none span{font-size:12px;font-weight:800;opacity:.7}
 .mf-head{display:flex;gap:14px;align-items:center}
-.mf-logo{width:62px;height:auto;flex:none;background:#fff;border-radius:16px;padding:6px;border:2px solid #F2B705}
+.mf-logo{width:62px;height:auto;flex:none;background:#fff;border-radius:16px;padding:6px;border:2px solid #38BDF8}
 .mf-layout{display:grid;grid-template-columns:1fr;gap:14px}
-#mfMap{height:55vh;min-height:320px;border-radius:22px;overflow:hidden;border:2px solid #F2B705;z-index:0}
+#mfMap{height:55vh;min-height:320px;border-radius:22px;overflow:hidden;border:2px solid #38BDF8;z-index:0}
 .mf-hint{margin-top:6px;font-weight:700}
 .mf-row{display:flex;gap:12px;align-items:center;cursor:pointer;margin:0 0 10px!important;padding:10px!important}
-.mf-row:hover{outline:2px solid #F2B705}
-.mf-th{width:64px;height:48px;flex:none;border-radius:10px;object-fit:cover;border:1.5px solid #F2B705}
+.mf-row:hover{outline:2px solid #38BDF8}
+.mf-th{width:64px;height:48px;flex:none;border-radius:10px;object-fit:cover;border:1.5px solid #38BDF8}
 .mf-th.none{display:grid;place-items:center;background:#fff;border-style:dashed}
 .mf-th.none img{width:30px;height:30px;object-fit:contain}
 .mf-row .mf-name{font-size:13.5px;line-height:1.25}
@@ -60,7 +60,7 @@
 .leaflet-popup-content .mf-card{min-width:0}
 .leaflet-popup-content .mf-ph img{max-height:140px}.leaflet-popup-content .mf-ph.none{aspect-ratio:auto;padding:10px 0}
 /* ---- карта мира ---- */
-.mf-off{border-left:4px solid #F2B705}
+.mf-off{border-left:4px solid #38BDF8}
 .mf-off-h{font-weight:800;margin-bottom:8px;color:#1F5A3D}
 .mf-off-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
 .mf-off-g div{background:#1F5A3D0d;border:1.5px solid #F2B70566;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column}
@@ -71,7 +71,7 @@
 .mf-row2 input{flex:2 1 220px;width:auto}
 .mf-row2 select{flex:1 1 180px;padding:12px;border-radius:14px;border:1.5px solid var(--line,#cfd8c4);font:inherit;font-weight:700;background:var(--paper,#fff);color:inherit;min-width:0}
 .mf-stat{font-weight:700}
-.mf-cl{position:relative;box-sizing:border-box;border-radius:50%;background:#1F5A3D;border:3px solid #F2B705;box-shadow:0 0 0 4px #F2B70544,0 3px 10px rgba(0,0,0,.35);display:grid;place-items:center;color:#fff;cursor:pointer}
+.mf-cl{position:relative;box-sizing:border-box;border-radius:50%;background:#1F5A3D;border:3px solid #38BDF8;box-shadow:0 0 0 4px #F2B70544,0 3px 10px rgba(0,0,0,.35);display:grid;place-items:center;color:#fff;cursor:pointer}
 .mf-cl .mf-emb{position:absolute;inset:18%;background:url(icons/maarif-emblem.png) center/contain no-repeat;opacity:.28;filter:brightness(3)}
 .mf-cl span{position:relative;font-weight:900;font-size:14px;text-shadow:0 1px 2px #0008}
 .mf-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-weight:700;align-items:center}

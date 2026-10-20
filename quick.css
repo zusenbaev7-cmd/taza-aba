@@ -24,7 +24,7 @@ body{font-size:16.5px;line-height:1.5}
 .send-row .sh-a.ghost{border-style:solid;opacity:.85}
 .send-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .ph-note{margin-top:6px;font-weight:700}
-.c-item.just{outline:3px solid var(--saffron,#F2B705);outline-offset:2px}
+.c-item.just{outline:3px solid var(--saffron,#38BDF8);outline-offset:2px}
 
 /* вечерний смог */
 .ev-card{display:flex;gap:14px;align-items:flex-start;border-left:8px solid #2E9B5F}
@@ -53,7 +53,7 @@ html[data-theme="dark"] .ev-v{color:#6BCB95} html[data-theme="dark"] .ev-1 .ev-v
 .ob-wrap{position:fixed;inset:0;z-index:4000;background:rgba(10,30,20,.55);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
 @media (min-width:720px){.ob-wrap{align-items:center}}
 .ob-sheet{width:min(560px,100%);max-height:94vh;overflow:auto;background:var(--paper,#FFFBF1);color:var(--walnut,#2b1d12);border-radius:28px 28px 0 0;padding:22px 20px 26px;
-  box-shadow:0 -10px 40px rgba(0,0,0,.3);border-top:4px solid var(--saffron,#F2B705);animation:up .3s ease}
+  box-shadow:0 -10px 40px rgba(0,0,0,.3);border-top:4px solid var(--saffron,#38BDF8);animation:up .3s ease}
 @media (min-width:720px){.ob-sheet{border-radius:28px}}
 .ob-sheet h3{margin:4px 0 6px;font-size:24px;font-weight:900}
 .ob-logo{font-size:40px}
@@ -61,13 +61,13 @@ html[data-theme="dark"] .ev-v{color:#6BCB95} html[data-theme="dark"] .ev-1 .ev-v
 .ob-sheet select{display:block;width:100%;margin-top:4px;padding:11px 12px;font-size:16px;border-radius:14px;font-family:inherit}
 .ob-langs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
 .ob-langs button{padding:10px 4px;border-radius:12px;border:1.5px solid var(--line,#d9cfb8);background:transparent;color:inherit;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
-.ob-langs button.on{background:var(--felt-red,#1F7A4D);color:#fff;border-color:var(--saffron,#F2B705)}
+.ob-langs button.on{background:var(--felt-red,#1F7A4D);color:#fff;border-color:var(--saffron,#38BDF8)}
 .ob-or{text-align:center;color:var(--muted);font-weight:700;font-size:14px;margin:12px 0 0}
 .ob-sels{display:grid;gap:2px}
 @media (min-width:720px){.ob-sels{grid-template-columns:1fr 1fr 1fr;gap:8px}}
 html[data-theme="dark"] .ob-sheet{background:#13221A}
 html[data-theme="dark"] .ob-langs button.on{background:#2F8A5B}
-html[data-theme="dark"] .send-row .sh-a{background:#17251D;color:#EDE6D6;border-color:rgba(242,183,5,.3)}
+html[data-theme="dark"] .send-row .sh-a{background:#17251D;color:#EDE6D6;border-color:rgba(56,189,248,.3)}
 /* 5 вкладок вместо 7 */
 @media (max-width:1023px){.tabbar{grid-template-columns:repeat(5,1fr)!important}}
 .v-more>.more-grid{grid-column:1/-1}
@@ -77,10 +77,10 @@ html[data-theme="dark"] .send-row .sh-a{background:#17251D;color:#EDE6D6;border-
 .nd-arch ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px 14px;font-size:13px}
 .nd-arch li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted #9993;padding:2px 0}
 .nd-arch b{color:inherit;font-weight:700}
-.nd-gentle{border-left:4px solid #F2B705}
+.nd-gentle{border-left:4px solid #38BDF8}
 .sent-hint{margin-top:6px;font-weight:700;padding:6px 10px;border-radius:10px;background:#F2B70522}
 [data-theme="dark"] .sent-hint{background:#F2B70518}
-.hist-link{display:block;text-decoration:none;font-weight:800;color:inherit;border-left:4px solid #F2B705}
+.hist-link{display:block;text-decoration:none;font-weight:800;color:inherit;border-left:4px solid #38BDF8}
 /* источники данных на главной */
 .src-card h3{margin:0 0 8px}
 .src-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}

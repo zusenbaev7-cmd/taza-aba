@@ -1,7 +1,7 @@
 /* ===== Таза Аба · редизайн «premium SolarPunk» — перекрывает styles.css ===== */
 :root{
   --forest:#0e3b2a; --forest-2:#16523a; --leaf:#2f9e62; --leaf-2:#4dbb7d; --leaf-soft:#e4f3e9;
-  --sun:#f5c542; --sun-2:#f0a93b; --sun-soft:#fdf3d3;
+  --sun:#38bdf8; --sun-2:#0ea5e9; --sun-soft:#e0f2fe;
   --cream:#f6f4ec; --paper:#ffffff; --ink:#11261c; --muted:#5d6f66; --line:#e7e8df;
   --green-900:var(--forest); --green-800:var(--forest-2); --green-700:#1f7a4d; --green-500:var(--leaf); --green-300:#a9dcbc; --green-100:var(--leaf-soft);
   --card:rgba(255,255,255,.86); --radius:20px; --r-sm:14px;
@@ -12,7 +12,7 @@
 }
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 body{font-family:var(--font);color:var(--ink);letter-spacing:-.005em;
-  background:radial-gradient(1200px 600px at 100% -10%,#fff4cf 0%,transparent 55%),radial-gradient(900px 600px at -10% 20%,#e3f2e6 0%,transparent 60%),var(--cream);background-attachment:fixed}
+  background:radial-gradient(1200px 600px at 100% -10%,#d1effd 0%,transparent 55%),radial-gradient(900px 600px at -10% 20%,#e3f2e6 0%,transparent 60%),var(--cream);background-attachment:fixed}
 h1{font-size:28px;font-weight:800;letter-spacing:-.025em;color:var(--forest);margin:10px 2px 6px}
 h2{font-size:16px;font-weight:800;letter-spacing:-.01em;color:var(--forest);margin:26px 2px 12px;gap:10px}
 .h2i{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--leaf-soft);color:var(--leaf)}
@@ -41,11 +41,11 @@ b,strong{font-weight:700}
 .card{background:var(--card);border:1px solid rgba(255,255,255,.9);box-shadow:var(--shadow);border-radius:var(--radius);padding:18px;backdrop-filter:blur(10px);transition:transform .2s ease, box-shadow .2s ease}
 a.card:hover,.route:hover,.dlist .item[data-city]:hover{box-shadow:var(--shadow-lg)}
 .chip{font-weight:700;background:var(--leaf-soft);color:var(--forest-2);padding:4px 10px}
-.chip.sun{background:var(--sun-soft);color:#7a5600}
+.chip.sun{background:var(--sun-soft);color:#055275}
 .chip.demo{background:#fdebdc;color:#8f4a14}
 .btn{font-family:var(--font);font-weight:800;font-size:14.5px;border-radius:14px;padding:12px 18px;background:var(--forest);color:#fff;box-shadow:0 6px 16px -8px rgba(14,59,42,.7);transition:transform .12s ease,background .2s,box-shadow .2s}
 .btn:hover{background:var(--forest-2)}
-.btn.sun{background:linear-gradient(180deg,#f8d25d,#f2b93a);color:#4a3300;box-shadow:0 6px 16px -8px rgba(240,169,59,.9)}
+.btn.sun{background:linear-gradient(180deg,#84d4fa,#60c6f5);color:#033147;box-shadow:0 6px 16px -8px rgba(14,165,233,.9)}
 .btn.ghost{background:var(--paper);color:var(--forest);border:1px solid var(--line);box-shadow:var(--shadow)}
 .btn.ghost:hover{background:#fbfaf5}
 .btn.done{background:var(--leaf-soft);color:var(--forest-2);box-shadow:none}
@@ -57,7 +57,7 @@ label{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.01em}
 .stat{background:var(--paper);border:1px solid var(--line);border-radius:16px}
 .stat .k{font-weight:700;font-size:12px}
 .stat .v{font-weight:800;letter-spacing:-.02em}
-.tip{background:linear-gradient(135deg,#fff7db,#eaf6ec);border:1px solid #efe7c8}
+.tip{background:linear-gradient(135deg,#dcf3fe,#eaf6ec);border:1px solid #efe7c8}
 .foot{font-weight:500}
 
 /* ---------- Hero AQI card ---------- */
@@ -96,7 +96,7 @@ label{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.01em}
 .quick a{border:1px solid var(--line);border-radius:18px;padding:14px 4px 12px;font-weight:700;color:var(--forest);background:var(--paper);transition:transform .15s, box-shadow .2s}
 .quick a:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
 .quick a b{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 6px;border-radius:13px;background:var(--leaf-soft);color:var(--leaf)}
-.quick a:nth-child(2) b{background:var(--sun-soft);color:#c08a00}
+.quick a:nth-child(2) b{background:var(--sun-soft);color:#099cdf}
 .quick a:nth-child(3) b{background:#e8f0fb;color:#3a72c4}
 .quick a:nth-child(4) b{background:#fde9e6;color:#d0493c}
 .quick a b .ic{width:22px;height:22px}
