@@ -356,7 +356,7 @@ const idle = (fn, to = 600) => (window.requestIdleCallback ? requestIdleCallback
 function baseMode() { const v = localStorage.getItem(BASE_KEY); return v === "sat" || v === "hyb" ? v : "osm"; }
 function baseTiles(m) {
   const TO = { keepBuffer: 2, updateWhenIdle: IS_MOB, updateWhenZooming: false };
-  const osm = () => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { ...TO, className: "tl-osm", maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+  const osm = () => window.MS_STYLE && typeof msBaseTile === "function" ? msBaseTile() : L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { ...TO, className: "tl-osm", maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
   const sat = () => L.tileLayer(ESRI("World_Imagery"), { ...TO, className: "tl-sat", detectRetina: false, maxZoom: 18, maxNativeZoom: 18, attribution: ESRI_ATTR });
   const lab = () => [L.tileLayer(ESRI("Reference/World_Transportation"), { ...TO, className: "tl-sat", maxZoom: 18, opacity: 0.85 }), L.tileLayer(ESRI("Reference/World_Boundaries_and_Places"), { ...TO, className: "tl-sat", maxZoom: 18 })];
   let cur = [];
@@ -677,15 +677,16 @@ function viewMap(el) {
   const nn = d => { let m = 1e9; for (const x of DISTRICTS) if (x !== d) m = Math.min(m, kmDist(d, x) * 1000); return m; };
   const pinIcon = (txt, c, sz, cl) => L.divIcon({ className: "", html: `<div class="aqi-pin${cl ? " aqi-cl" : ""}" style="width:${sz}px;height:${sz}px;background:${c}">${txt}</div>`, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
   const popD = d => { const a = air.byDistrict[d.id], Lv = level(a.aqi); return `<b>${esc(dName(d))}</b>${d.grp && typeof GRP_NAME !== "undefined" ? `<br><small>${esc(tr(GRP_NAME[d.grp]))}</small>` : ""}<br>US AQI: <b style="color:${Lv.color}">${aqiTxt(a.aqi)}</b> — ${tr(Lv.name)}<br>PM2.5: ${fmt(a.pm25, 1)}<br>${t("popupCoal")}: ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}`; };
-  const circ = new Map(), pins = new Map(), pinG = L.layerGroup().addTo(layers.smog);
+  const MSu = window.MS_STYLE && typeof msSmog === "function" ? msSmog(M, layers.smog, popD) : null, smogT = MSu ? L.layerGroup() : layers.smog;   /* прототипы стилей ?mapstyle= */
+  const circ = new Map(), pins = new Map(), pinG = L.layerGroup().addTo(smogT);
   let sat = baseMode() !== "osm";
   const cStyle = d => { const c = level(air.byDistrict[d.id].aqi).color; return { color: sat ? "#fff" : c, weight: sat ? 1.5 : 1, fillColor: c, fillOpacity: sat ? 0.38 : 0.3 }; };
-  const syncCircles = () => DISTRICTS.forEach(d => { const o = circ.get(d.id);
-    if (o) o.setStyle(cStyle(d)); else circ.set(d.id, L.circle([d.lat, d.lon], { radius: Math.max(250, Math.min(R0, nn(d) * 0.55)), interactive: false, ...cStyle(d) }).addTo(layers.smog)); });
+  const syncCircles = () => MSu ? 0 : DISTRICTS.forEach(d => { const o = circ.get(d.id);
+    if (o) o.setStyle(cStyle(d)); else circ.set(d.id, L.circle([d.lat, d.lon], { radius: Math.max(250, Math.min(R0, nn(d) * 0.55)), interactive: false, ...cStyle(d) }).addTo(smogT)); });
   syncCircles();
   M.on("basemode", e => { sat = e.mode !== "osm"; circ.forEach((o, id) => { const d = DISTRICTS.find(x => x.id === id); d && o.setStyle(cStyle(d)); }); });
   const drawPins = () => {
-    if (M !== map || !M._loaded) return;
+    if (M !== map || !M._loaded || MSu) return;
     const many = DISTRICTS.length > 24, z = M.getZoom(), R = many && z < 15 ? 40 : 0, cls = [], vb = M.getBounds().pad(0.2);
     DISTRICTS.filter(d => vb.contains([d.lat, d.lon])).map(d => ({ d, p: M.latLngToLayerPoint([d.lat, d.lon]) })).sort((x, y) => byAqiDesc(air.byDistrict[x.d.id].aqi, air.byDistrict[y.d.id].aqi)).forEach(o => {
       const c = R && cls.find(c => c.p.distanceTo(o.p) < R); if (c) c.m.push(o.d); else cls.push({ p: o.p, m: [o.d] }); });
@@ -707,19 +708,19 @@ function viewMap(el) {
   let dT = 0; const drawSoon = () => { clearTimeout(dT); dT = setTimeout(drawPins, 120); };
   M.on("zoomend moveend", drawSoon); M.whenReady(drawPins);
   /* обновление данных на месте (догрузка дальних районов) — без пересоздания карты */
-  window.mapUpdate = () => { if (M !== map || !document.body.contains(M.getContainer())) return false; syncCircles(); drawPins();
+  window.mapUpdate = () => { if (M !== map || !document.body.contains(M.getContainer())) return false; syncCircles(); drawPins(); if (MSu) MSu();
     const di = el.querySelector(".dl-items"); if (di) di.innerHTML = distListHTML(); return true; };
   /* фокус на районе (из глобального поиска) */
   window.mapFocus = id => { const d = DISTRICTS.find(x => x.id === id); if (!d || M !== map) return;
     M.flyTo([d.lat, d.lon], Math.max(15, M.getZoom()), { duration: LOWEND ? 0 : 0.6 });
-    M.once("moveend", () => { if (M !== map) return; const op = () => { if (M !== map) return; drawPins(); const mk = pins.get("d:" + id); mk ? mk.openPopup() : L.popup().setLatLng([d.lat, d.lon]).setContent(popD(d)).openOn(M); };
+    M.once("moveend", () => { if (M !== map) return; const op = () => { if (M !== map) return; drawPins(); const mk = MSu ? null : pins.get("d:" + id); mk ? mk.openPopup() : L.popup().setLatLng([d.lat, d.lon]).setContent(popD(d)).openOn(M); };
       op(); window.__gsFocus = null; setTimeout(() => { if (M === map && !M.getContainer().querySelector(".leaflet-popup")) op(); }, 700); }); };
   // список районов и второстепенные слои — в свободное время браузера (не мешают первой отрисовке карты)
   { const items = distListHTML(true); let i = 0; const step = () => { const di = el.querySelector(".dl-items"); if (!di || M !== map || i >= items.length) return;
       di.insertAdjacentHTML("beforeend", items.slice(i, i += 25).join("")); idle(step, 400); }; idle(step, 300); }
   idle(() => { if (M !== map) return;
   DEMO_HOMES.forEach(h => {
-    L.marker([h.lat, h.lon], { icon: L.divIcon({ className: "", html: `<div class="home-pin">🏡</div>`, iconSize: [30, 30], iconAnchor: [15, 15] }) })
+    L.marker([h.lat, h.lon], { icon: window.MS_STYLE ? msHomeIcon() : L.divIcon({ className: "", html: `<div class="home-pin">🏡</div>`, iconSize: [30, 30], iconAnchor: [15, 15] }) })
       .bindPopup(() => `<b>${esc(tr(h.who))}</b><br>✅ ${tr(HOME_WHAT[h.what])}<br>${t("popupSince", { y: h.since })}<br><span style="color:#9a4b12">${t("demoData")}</span>`).addTo(layers.homes);
   });
   allComplaints().forEach(c => L.marker([c.lat, c.lon], { icon: complaintIcon(c) }).bindPopup(() => complaintPopup(c), { maxWidth: 220 }).addTo(layers.complaints));
