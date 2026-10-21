@@ -9,10 +9,10 @@ const msBin = a => a == null ? "#9aa5ad" : MS_BIN[msBinI(a)];
 const msBinRGB = a => { const h = msBin(a); return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
 const msDark = () => document.documentElement.dataset.theme === "dark";
 const MS_T = {
-  ru: { note: "Оценка: AQI сглажен между районами (модель CAMS + датчики)", lo: "Чище всего", hi: "Грязнее всего", all: "Везде" },
-  ky: { note: "Баалоо: AQI райондордун ортосунда жылмаланган (CAMS модели + датчиктер)", lo: "Эң таза", hi: "Эң булганыч", all: "Бардык жерде" },
-  en: { note: "Estimate: AQI smoothed between districts (CAMS model + sensors)", lo: "Cleanest", hi: "Most polluted", all: "Everywhere" },
-  tr: { note: "Tahmin: AQI mahalleler arasında yumuşatıldı (CAMS modeli + sensörler)", lo: "En temiz", hi: "En kirli", all: "Her yerde" } };
+  ru: { note: "Оценка: AQI сглажен между районами (модель CAMS + датчики)", lo: "Чище всего", hi: "Грязнее всего", all: "Везде", find: "Найти свой район, микрорайон, жилмассив…", none: "Ничего не найдено", area: "граница примерная" },
+  ky: { note: "Баалоо: AQI райондордун ортосунда жылмаланган (CAMS модели + датчиктер)", lo: "Эң таза", hi: "Эң булганыч", all: "Бардык жерде", find: "Районуңузду, кичи районду, конушту табыңыз…", none: "Эч нерсе табылган жок", area: "чеги болжолдуу" },
+  en: { note: "Estimate: AQI smoothed between districts (CAMS model + sensors)", lo: "Cleanest", hi: "Most polluted", all: "Everywhere", find: "Find your district or neighbourhood…", none: "Nothing found", area: "approximate boundary" },
+  tr: { note: "Tahmin: AQI mahalleler arasında yumuşatıldı (CAMS modeli + sensörler)", lo: "En temiz", hi: "En kirli", all: "Her yerde", find: "Mahallenizi bulun…", none: "Sonuç yok", area: "sınır yaklaşık" } };
 const MST = k => (MS_T[LANG] || MS_T.ru)[k];
 function msBaseTile() { const k = msDark() ? "Dark" : "Light";
   return L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${k}_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 18, maxNativeZoom: 16, keepBuffer: 2, className: "tl-ms", attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors" }); }
@@ -36,6 +36,36 @@ function msIdw(lat, lon, pts) { let s = 0, w = 0, dmin = 1e9; const k = Math.cos
   return { v: s / w, dmin: Math.sqrt(dmin) }; }
 function msNearest(ll) { let b = null; for (const p of msPts()) { const k = kmDist(p.d, { lat: ll.lat, lon: ll.lng }); if (!b || k < b.k) b = { ...p, k }; } return b; }
 
+/* примерная «зона» района: ячейка Вороного среди соседних районов, обрезанная кругом ~1.6 км (границ районов в данных нет — подписано «граница примерная») */
+function msCell(d) { const k = Math.cos(d.lat * Math.PI / 180) * 111, R = 1.6, N = 36; let poly = [];
+  for (let i = 0; i < N; i++) { const a = 2 * Math.PI * i / N; poly.push([R * Math.cos(a), R * Math.sin(a)]); }
+  const others = DISTRICTS.filter(x => x !== d).map(x => [(x.lon - d.lon) * k, (x.lat - d.lat) * 111]).filter(([x, y]) => x * x + y * y < 4 * R * R);
+  for (const [ox, oy] of others) { const mx = ox / 2, my = oy / 2, f = ([x, y]) => (x - mx) * ox + (y - my) * oy, out = [];
+    for (let i = 0; i < poly.length; i++) { const A = poly[i], B = poly[(i + 1) % poly.length], fa = f(A), fb = f(B);
+      if (fa <= 0) out.push(A); if ((fa <= 0) !== (fb <= 0)) { const t = fa / (fa - fb); out.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); } }
+    poly = out; if (poly.length < 3) break; }
+  return poly.map(([x, y]) => [d.lat + y / 111, d.lon + x / k]); }
+const msNorm = s => String(s || "").toLowerCase().replace(/ё/g, "е").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/[«»"“”()\-–.,]/g, " ").replace(/\s+/g, " ").trim();
+function msSearchUI(M, focus) {
+  const cont = M.getContainer(), box = document.createElement("div"); box.className = "ms-find";
+  box.innerHTML = `<input type="search" autocomplete="off" spellcheck="false" aria-label="${esc(MST("find"))}" placeholder="${esc(MST("find"))}" role="combobox" aria-expanded="false" aria-controls="msFindL"><ul id="msFindL" role="listbox" hidden></ul>`;
+  cont.insertAdjacentElement("beforebegin", box);
+  const inp = box.querySelector("input"), ul = box.querySelector("ul"); let res = [], cur = -1;
+  const show = () => { const q = msNorm(inp.value); if (!q) { ul.hidden = true; inp.setAttribute("aria-expanded", "false"); return; }
+    res = DISTRICTS.map(d => { const ns = Object.values(d.name || {}).map(msNorm), best = Math.min(...ns.map(n => n.startsWith(q) ? 0 : n.split(" ").some(w => w.startsWith(q)) ? 1 : n.includes(q) ? 2 : 9)); return { d, best }; })
+      .filter(x => x.best < 9).sort((a, b) => a.best - b.best || dName(a.d).localeCompare(dName(b.d))).slice(0, 8).map(x => x.d); cur = -1;
+    ul.innerHTML = res.length ? res.map((d, i) => { const a = air.byDistrict[d.id] && air.byDistrict[d.id].aqi, g = d.grp && typeof GRP_NAME !== "undefined" && GRP_NAME[d.grp] ? tr(GRP_NAME[d.grp]) : "";
+      return `<li role="option" data-i="${i}"><i style="background:${msBin(a)}"></i><span>${esc(dName(d))}${g ? `<small>${esc(g)}</small>` : ""}</span><b>${a == null ? "—" : a}</b></li>`; }).join("") : `<li class="none">${esc(MST("none"))}</li>`;
+    ul.hidden = false; inp.setAttribute("aria-expanded", "true"); };
+  const pick = i => { const d = res[i]; if (!d) return; inp.value = dName(d); ul.hidden = true; inp.blur(); focus(d); };
+  inp.addEventListener("input", show); inp.addEventListener("focus", show);
+  inp.addEventListener("keydown", e => { const li = ul.querySelectorAll("li[data-i]");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!li.length) return; cur = (cur + (e.key === "ArrowDown" ? 1 : -1) + li.length) % li.length; li.forEach((x, j) => x.classList.toggle("on", j === cur)); }
+    else if (e.key === "Enter") { e.preventDefault(); pick(cur >= 0 ? cur : 0); } else if (e.key === "Escape") { ul.hidden = true; } });
+  ul.addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li) { e.preventDefault(); pick(+li.dataset.i); } });
+  document.addEventListener("click", e => { if (!box.contains(e.target)) ul.hidden = true; });
+}
+
 function msSmog(M, G, popD) {
   const cont = M.getContainer(); cont.classList.add("ms-on", "ms-a");
   if (!M.getPane("msRef")) { const pn = M.createPane("msRef"); pn.style.zIndex = 450; pn.style.pointerEvents = "none"; }
@@ -45,7 +75,22 @@ function msSmog(M, G, popD) {
   /* легенда под картой — та же палитра */
   const lg = cont.closest(".map-col") && cont.closest(".map-col").querySelector(".legend");
   if (lg) lg.querySelectorAll("span").forEach((s, i) => { s.style.background = MS_BIN[i]; s.style.color = i === 1 ? "#3b2a00" : "#fff"; });
-  M.on("click", e => { if (!G._map) return; const n = msNearest(e.latlng); if (n && n.k < 4) L.popup().setLatLng([n.d.lat, n.d.lon]).setContent(popD(n.d)).openOn(M); });
+  const selG = L.layerGroup().addTo(M); let selId = null;
+  const select = (d, fly) => { selG.clearLayers(); selId = d.id; const dk = msDark();
+    L.polygon(msCell(d), { color: dk ? "#cfe6f5" : "#1d3b53", weight: 1.5, opacity: .75, dashArray: "4 4", fill: true, fillColor: dk ? "#cfe6f5" : "#1d3b53", fillOpacity: .06, interactive: false }).addTo(selG);
+    const open = () => { if (M !== map) return; L.popup({ className: "ms-pop", autoPanPadding: [20, 20] }).setLatLng([d.lat, d.lon]).setContent(popD(d) + `<br><small class="ms-pop-n">${esc(MST("note"))}; ${esc(MST("area"))}</small>`).openOn(M); names(); };
+    if (fly) { M.flyTo([d.lat, d.lon], Math.max(14, M.getZoom()), { duration: (typeof LOWEND !== "undefined" && LOWEND) ? 0 : 0.7 }); M.once("moveend", open); } else open(); };
+  window.msFocus = d => select(d, true);
+  M.on("click", e => { if (!G._map) return; const n = msNearest(e.latlng); if (n && n.k < 4) select(n.d, false); });
+  msSearchUI(M, d => select(d, true));
+  /* бледные названия районов при приближении (без наложений, выбранный — первым) */
+  const nameG = L.layerGroup().addTo(G);
+  const names = () => { nameG.clearLayers(); if (M !== map || M.getZoom() < 13) return; const b = M.getBounds().pad(0.1), boxes = [], hit = (a, c) => a.x < c.x + c.w && c.x < a.x + a.w && a.y < c.y + c.h && c.y < a.y + a.h;
+    const lbl = [...M.getContainer().querySelectorAll(".ms-lbl")].map(e => { const r = e.getBoundingClientRect(), o = M.getContainer().getBoundingClientRect(); return { x: r.left - o.left, y: r.top - o.top, w: r.width, h: r.height }; });
+    DISTRICTS.filter(d => b.contains([d.lat, d.lon])).sort((x, y) => (y.id === selId) - (x.id === selId)).forEach(d => { const p = M.latLngToContainerPoint([d.lat, d.lon]), t = dName(d), w = Math.min(160, t.length * 6.2 + 8), bx = { x: p.x - w / 2, y: p.y + 4, w, h: 15 };
+      if (boxes.some(x => hit(x, bx)) || lbl.some(x => hit(x, bx))) return; boxes.push(bx);
+      L.marker([d.lat, d.lon], { interactive: false, keyboard: false, icon: L.divIcon({ className: "ms-nm-w", html: `<div class="ms-nm${d.id === selId ? " sel" : ""}">${esc(t)}</div>`, iconSize: [0, 0] }) }).addTo(nameG); }); };
+  let nt = 0; M.on("zoomend moveend", () => { clearTimeout(nt); nt = setTimeout(names, 90); });
   const S = (typeof LOWEND !== "undefined" && LOWEND) ? 9 : 6;
   const cv = new MsCanvas((ctx, tl, m, w, h) => { const pts = msPts(); if (!pts.length) return; const gw = Math.ceil(w / S), gh = Math.ceil(h / S), dk = msDark();
     const off = document.createElement("canvas"); off.width = gw; off.height = gh; const oc = off.getContext("2d"), img = oc.createImageData(gw, gh), A = dk ? 195 : 150;
@@ -59,7 +104,7 @@ function msSmog(M, G, popD) {
   const upd = () => { cv._redraw(); lblG.clearLayers(); const pts = msPts(); if (!pts.length) return; const s = [...pts].sort((x, y) => x.a - y.a), lo = s[0], hi = s[s.length - 1];
     if (hi.a - lo.a < 10) { pill({ d: { lat: cityObj().center[0], lon: cityObj().center[1] }, a: Math.round(median(pts.map(p => p.a))) }, "all", esc(MST("all")) + " ≈"); return; }
     pill(lo, "lo", `<em>${esc(MST("lo"))} · </em>${esc(dName(lo.d))}`); pill(hi, "hi", `<em>${esc(MST("hi"))} · </em>${esc(dName(hi.d))}`); };
-  upd();
-  return upd;
+  upd(); setTimeout(names, 200);
+  return () => { upd(); names(); };
 }
 const msHomeIcon = () => L.divIcon({ className: "", html: `<div class="ms-home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8h-5v-5h-6v5H4z"/></svg></div>`, iconSize: [18, 18], iconAnchor: [9, 9] });

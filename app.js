@@ -711,7 +711,7 @@ function viewMap(el) {
   window.mapUpdate = () => { if (M !== map || !document.body.contains(M.getContainer())) return false; syncCircles(); drawPins(); if (MSu) MSu();
     const di = el.querySelector(".dl-items"); if (di) di.innerHTML = distListHTML(); return true; };
   /* фокус на районе (из глобального поиска) */
-  window.mapFocus = id => { const d = DISTRICTS.find(x => x.id === id); if (!d || M !== map) return;
+  window.mapFocus = id => { const d = DISTRICTS.find(x => x.id === id); if (!d || M !== map) return; if (MSu && window.msFocus) return msFocus(d);
     M.flyTo([d.lat, d.lon], Math.max(15, M.getZoom()), { duration: LOWEND ? 0 : 0.6 });
     M.once("moveend", () => { if (M !== map) return; const op = () => { if (M !== map) return; drawPins(); const mk = MSu ? null : pins.get("d:" + id); mk ? mk.openPopup() : L.popup().setLatLng([d.lat, d.lon]).setContent(popD(d)).openOn(M); };
       op(); window.__gsFocus = null; setTimeout(() => { if (M === map && !M.getContainer().querySelector(".leaflet-popup")) op(); }, 700); }); };
