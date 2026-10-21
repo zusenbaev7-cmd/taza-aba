@@ -1,0 +1,81 @@
+{
+ "title": "Taza Aba — news headlines from public RSS feeds",
+ "note": "Headline, link to the original article, date and a short teaser only. Copyright belongs to the publishers.",
+ "updated": "2026-10-21T04:00:59.722Z",
+ "sets": {
+  "kg-ru": [
+   {
+    "name": "Kabar",
+    "url": "https://ru.kabar.kg/rss/",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "24.kg",
+    "url": "https://24.kg/rss/",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "Kloop",
+    "url": "https://kloop.kg/feed/",
+    "ok": true,
+    "items": 12
+   }
+  ],
+  "kg-ky": [
+   {
+    "name": "Kabar",
+    "url": "https://kabar.kg/rss/",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "24.kg",
+    "url": "https://24.kg/kyrgyzcha/rss/",
+    "ok": true,
+    "items": 30
+   }
+  ],
+  "kg-en": [
+   {
+    "name": "Kabar",
+    "url": "https://en.kabar.kg/rss/",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "24.kg",
+    "url": "https://24.kg/english/rss/",
+    "ok": true,
+    "items": 30
+   }
+  ],
+  "tr": [
+   {
+    "name": "Anadolu Ajansı",
+    "url": "https://www.aa.com.tr/tr/rss/default?cat=guncel",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "TRT Haber",
+    "url": "https://www.trthaber.com/sondakika.rss",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "Hürriyet",
+    "url": "https://www.hurriyet.com.tr/rss/anasayfa",
+    "ok": true,
+    "items": 30
+   },
+   {
+    "name": "Sözcü",
+    "url": "https://www.sozcu.com.tr/feeds-rss-category-gundem",
+    "ok": true,
+    "items": 30
+   }
+  ]
+ }
+}

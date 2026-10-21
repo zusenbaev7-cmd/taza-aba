@@ -403,22 +403,22 @@ const NW = {
   ru: { title: "Новости и погода", sub: "Живой прогноз Open-Meteo и свежие новости для города {city}", now: "Сейчас", feels: "Ощущается", hum: "Влажность", wind: "Ветер", pres: "Давление", prec: "Осадки", cloud: "Облачность",
     h24: "Ближайшие 24 часа", d7: "7 дней", sunrise: "Восход", sunset: "Закат", upd: "Обновлено {t} · автообновление каждые 15 мин",
     smogHi: "⚠️ Риск смога: слабый ветер ({w} м/с){inv} — дым от печей застаивается. Вечером и ночью держите окна закрытыми.", smogLo: "✅ Риск смога невысокий: ветер {w} м/с перемешивает воздух.", inv: " и температурная инверсия (на высоте ~1,5 км теплее, чем у земли)",
-    news: "Новости", newsSrc: "Источник: RSS 24.kg через rss2json.com · обновление каждые 30 мин", cityNews: "Про {city}", kgNews: "Кыргызстан — последние", noCity: "Свежих новостей именно про {city} в ленте нет — показываем общие новости Кыргызстана.",
+    news: "Новости", newsSrc: "Источник: RSS изданий · обновление раз в час", cityNews: "Про {city}", kgNews: "Кыргызстан — последние", noCity: "Свежих новостей именно про {city} в ленте нет — показываем общие новости Кыргызстана.",
     fail: "Не удалось загрузить", retry: "Повторить", loading: "Загружаю…", hpa: "гПа", mm: "мм" },
   ky: { title: "Жаңылыктар жана аба ырайы", sub: "Open-Meteo жандуу болжолу жана {city} үчүн жаңы кабарлар", now: "Азыр", feels: "Сезилет", hum: "Нымдуулук", wind: "Шамал", pres: "Басым", prec: "Жаан-чачын", cloud: "Булуттуулук",
     h24: "Жакынкы 24 саат", d7: "7 күн", sunrise: "Күн чыгышы", sunset: "Күн батышы", upd: "Жаңыланды {t} · ар 15 мүн. сайын автоматтык",
     smogHi: "⚠️ Смог коркунучу: шамал алсыз ({w} м/с){inv} — мештердин түтүнү туруп калат. Кечинде жана түнү терезелерди жабык кармаңыз.", smogLo: "✅ Смог коркунучу төмөн: {w} м/с шамал абаны аралаштырат.", inv: " жана температуралык инверсия (~1,5 км бийиктикте жерге караганда жылуу)",
-    news: "Жаңылыктар", newsSrc: "Булак: 24.kg RSS, rss2json.com аркылуу · ар 30 мүн. сайын жаңылоо", cityNews: "{city} тууралуу", kgNews: "Кыргызстан — акыркылар", noCity: "Тасмада дал {city} тууралуу жаңы кабар жок — Кыргызстандын жалпы жаңылыктары көрсөтүлдү.",
+    news: "Жаңылыктар", newsSrc: "Булак: басылмалардын RSS · саатына бир жаңылоо", cityNews: "{city} тууралуу", kgNews: "Кыргызстан — акыркылар", noCity: "Тасмада дал {city} тууралуу жаңы кабар жок — Кыргызстандын жалпы жаңылыктары көрсөтүлдү.",
     fail: "Жүктөлгөн жок", retry: "Кайталоо", loading: "Жүктөлүүдө…", hpa: "гПа", mm: "мм" },
   en: { title: "News & weather", sub: "Live Open-Meteo forecast and fresh news for {city}", now: "Now", feels: "Feels like", hum: "Humidity", wind: "Wind", pres: "Pressure", prec: "Precipitation", cloud: "Cloud cover",
     h24: "Next 24 hours", d7: "7 days", sunrise: "Sunrise", sunset: "Sunset", upd: "Updated {t} · auto-refresh every 15 min",
     smogHi: "⚠️ Smog risk: weak wind ({w} m/s){inv} — stove smoke stagnates. Keep windows closed in the evening and at night.", smogLo: "✅ Low smog risk: {w} m/s wind mixes the air.", inv: " and a temperature inversion (warmer at ~1.5 km than at ground level)",
-    news: "News", newsSrc: "Source: 24.kg RSS via rss2json.com · refreshed every 30 min", cityNews: "About {city}", kgNews: "Kyrgyzstan — latest", noCity: "No fresh items about {city} in the feed right now — showing general Kyrgyzstan news.",
+    news: "News", newsSrc: "Source: publishers' RSS · refreshed hourly", cityNews: "About {city}", kgNews: "Kyrgyzstan — latest", noCity: "No fresh items about {city} in the feed right now — showing general Kyrgyzstan news.",
     fail: "Failed to load", retry: "Retry", loading: "Loading…", hpa: "hPa", mm: "mm" },
 };
-Object.assign(NW.ru, { wxTab: "Погода", updN: "Новости обновлены {t}", srcN: "источников: {n}", noCity2: "Свежих новостей про {city} в лентах сейчас нет.", ctryNews: "Новости страны — {c}", newsSrc2: "Источники (RSS через rss2json.com, обновление каждые 30 мин): {s}", newsFail: "не ответили: {s}" });
-Object.assign(NW.ky, { wxTab: "Аба ырайы", updN: "Жаңылыктар жаңыланды {t}", srcN: "булактар: {n}", noCity2: "Тасмаларда азыр {city} тууралуу жаңы кабар жок.", ctryNews: "Өлкөнүн жаңылыктары — {c}", newsSrc2: "Булактар (RSS, rss2json.com аркылуу, ар 30 мүн. жаңылоо): {s}", newsFail: "жооп бербеди: {s}" });
-Object.assign(NW.en, { wxTab: "Weather", updN: "News updated {t}", srcN: "sources: {n}", noCity2: "No fresh items about {city} in the feeds right now.", ctryNews: "Country news — {c}", newsSrc2: "Sources (RSS via rss2json.com, refreshed every 30 min): {s}", newsFail: "no response: {s}" });
+Object.assign(NW.ru, { wxTab: "Погода", updN: "Новости обновлены {t}", srcN: "источников: {n}", noCity2: "Свежих новостей про {city} в лентах сейчас нет.", ctryNews: "Новости страны — {c}", newsSrc2: "Источники: публичные RSS-ленты изданий (заголовки и ссылки на оригинал), сервер приложения забирает их раз в час: {s}", newsFail: "в последний раз не ответили (показаны прошлые заголовки): {s}", airNews: "Экология: воздух, смог, уголь", newsNone: "Новости сейчас недоступны: файл с заголовками не загрузился (нет сети или лента ещё не обновилась).", newsDirect: "Сайты изданий:", newsStale: "Ленты давно не обновлялись — заголовки могут быть устаревшими." });
+Object.assign(NW.ky, { wxTab: "Аба ырайы", updN: "Жаңылыктар жаңыланды {t}", srcN: "булактар: {n}", noCity2: "Тасмаларда азыр {city} тууралуу жаңы кабар жок.", ctryNews: "Өлкөнүн жаңылыктары — {c}", newsSrc2: "Булактар: басылмалардын ачык RSS тасмалары (аталыштар жана түпнускага шилтемелер), колдонмонун сервери саатына бир жолу алат: {s}", newsFail: "акыркы жолу жооп бербеди (мурунку аталыштар көрсөтүлдү): {s}", airNews: "Экология: аба, түтүн, көмүр", newsNone: "Жаңылыктар азыр жеткиликсиз: аталыштар файлы жүктөлгөн жок (тармак жок же тасма али жаңыланган жок).", newsDirect: "Басылмалардын сайттары:", newsStale: "Тасмалар көптөн бери жаңыланган жок — аталыштар эскирген болушу мүмкүн." });
+Object.assign(NW.en, { wxTab: "Weather", updN: "News updated {t}", srcN: "sources: {n}", noCity2: "No fresh items about {city} in the feeds right now.", ctryNews: "Country news — {c}", newsSrc2: "Sources: publishers' public RSS feeds (headlines and links to the original), fetched hourly by the app's server: {s}", newsFail: "did not respond last time (showing earlier headlines): {s}", airNews: "Environment: air, smog, coal", newsNone: "News is unavailable right now: the headlines file did not load (no connection or the feed has not been updated yet).", newsDirect: "Publisher websites:", newsStale: "The feeds have not been updated for a while — headlines may be outdated." });
 const N = (k, v = {}) => String(NW[LANG][k] ?? NW.ru[k]).replace(/\{(\w+)\}/g, (m, x) => v[x] ?? m);
 Object.assign(DICT.ru, { tab_news: "Новости", q_news: "Новости" }); Object.assign(DICT.ky, { tab_news: "Жаңылык", q_news: "Жаңылыктар" }); Object.assign(DICT.en, { tab_news: "News", q_news: "News" });
 const WMO = c => c === 0 ? "☀️" : c <= 2 ? "🌤️" : c === 3 ? "☁️" : c <= 48 ? "🌁" : c <= 57 ? "🌦️" : c <= 67 ? "🌧️" : c <= 77 ? "🌨️" : c <= 82 ? "🌧️" : c <= 86 ? "❄️" : "⛈️";
@@ -435,30 +435,36 @@ async function loadWeather(force) {
     newsState.wx[id] = { at: Date.now(), d: await fetchJSON(u) }; newsState.wxErr[id] = false;
   } catch (e) { newsState.wxErr[id] = true; }
 }
+// v35: rss2json отвечал 403 → ленты забирает сервер (GitHub Actions, bot/news_fetch.js, раз в час) в news/<набор>.json.
+// На GitHub Pages читаем со своего адреса, на других хостах (Surge, exe) — с raw.githubusercontent.com (CORS), запасной путь — другой.
+const NEWS_REPO = "zusenbaev7-cmd/taza-aba", NEWS_RAW = `https://raw.githubusercontent.com/${NEWS_REPO}/main/news/`;
+// набор лент по языку интерфейса: Kabar и 24.kg выпускают кыргызскую, русскую и английскую версии, Kloop — только русскую (в лентах).
+// Для турецкого интерфейса у КР-изданий нет турецких лент → русский набор (самый полный).
+const newsSet = ctry => ctry === "tr" ? "tr" : "kg-" + (LANG === "ky" ? "ky" : LANG === "en" ? "en" : "ru");
 async function loadNews(force) {
-  const ctry = cityObj().country || "kg", feeds = NEWS_FEEDS[ctry];
+  const ctry = cityObj().country || "kg", set = newsSet(ctry);
   const cur = newsState.news;
-  if (!force && cur && cur.ctry === ctry && Date.now() - cur.at < 30 * 60e3) return;
-  if (cur && cur.ctry !== ctry) { newsState.news = null; newsSrcFilter = "all"; }
+  if (!force && cur && cur.set === set && Date.now() - cur.at < 30 * 60e3) return;
+  if (cur && cur.set !== set) { newsState.news = null; newsSrcFilter = "all"; }
   // DOMParser не выполняет скрипты и не грузит картинки; вызываем ОДИН раз (повторный разбор превратил бы &lt;img…&gt; в настоящий HTML)
   const strip = s => (new DOMParser().parseFromString(String(s || ""), "text/html").body.textContent || "").replace(/\s+/g, " ").trim();
   const safeUrl = u => { try { const x = new URL(String(u || "").trim()); return /^https?:$/.test(x.protocol) ? x.href : ""; } catch (e) { return ""; } };
-  const res = await Promise.all(feeds.map(async F => {
-    try {
-      const j = await fetchJSON("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(F.url));
-      if (j.status !== "ok" || !j.items || !j.items.length) return { F, items: [] };
-      return { F, ok: true, items: j.items.map(x => ({ src: F.name, title: strip(x.title), link: safeUrl(x.link), date: x.pubDate, text: strip(x.description).slice(0, 400) })) };
-    } catch (e) { return { F, items: [] }; }
-  }));
-  const ok = res.filter(r => r.ok);
-  if (!ok.length) { newsState.newsErr = true; if (!cur || cur.ctry !== ctry) newsState.news = null; return; }
+  const bust = "?t=" + Math.floor(Date.now() / 600e3);
+  const own = /\.github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname) ? ["news/"] : [];   // exe собирается без news/ → 404 → raw
+  let j = null;
+  for (const base of [...own, NEWS_RAW]) { try { j = await fetchJSON(base + set + ".json" + bust); if (j && Array.isArray(j.feeds)) break; j = null; } catch (e) { j = null; } }
+  if (!j) { newsState.newsErr = true; if (!cur || cur.set !== set) newsState.news = null; return; }
+  const res = j.feeds.map(F => ({ F, ok: !!(F.items && F.items.length), fresh: F.ok, items: (F.items || []).map(x => ({ src: strip(F.name), title: strip(x.title), link: safeUrl(x.link), date: x.date, text: strip(x.text).slice(0, 400) })).filter(x => x.title) }));
+  const ok = res.filter(r => r.ok && r.items.length);
+  if (!ok.length) { newsState.newsErr = true; if (!cur || cur.set !== set) newsState.news = null; return; }
   const seen = new Set(), items = [];
   ok.flatMap(r => r.items).forEach(x => { const k = x.title.toLowerCase().replace(/[^a-zа-яёçğıöşüөүң0-9]/gi, "").slice(0, 60); if (!seen.has(k) && !(x.link && seen.has(x.link))) { seen.add(k); if (x.link) seen.add(x.link); items.push(x); } });
-  const ts = x => Date.parse((x.date || "").replace(" ", "T") + "Z") || 0;
-  items.sort((x, y) => ts(y) - ts(x));
-  newsState.news = { ctry, at: Date.now(), items, sources: ok.map(r => r.F.name), failed: res.filter(r => !r.ok).map(r => r.F.name) };
+  items.sort((x, y) => newsTs(y) - newsTs(x));
+  newsState.news = { ctry, set, at: Date.now(), updated: Date.parse(j.updated) || 0, items, sources: ok.map(r => strip(r.F.name)), failed: res.filter(r => !r.fresh).map(r => strip(r.F.name)) };
   newsState.newsErr = false;
 }
+const NEWS_AIR_RX = /смог|качеств\S* воздух|загрязн\S* воздух|выброс|углем|угля|уголь|печн\S* отоплен|түтүн|абанын сапат|аба булга|көмүр|air quality|air pollution|smog|emission|coal|hava kirlili|hava kalitesi|egzoz|kömür|эколог|экология|ecolog|ekoloj/i;
+const newsTs = x => Date.parse(x.date || "") || 0;
 let newsSrcFilter = "all";
 const escRx = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 function cityNewsRx() {
@@ -468,15 +474,21 @@ function cityNewsRx() {
   return { test: s => (base ? base.test(s) : false) || (extra ? extra.test(s) : false) };
 }
 function newsHTML() {
-  if (!newsState.news) return newsState.newsErr ? `<div class="card fail">⚠️ ${N("fail")} <button class="btn ghost" data-retry="news">${N("retry")}</button></div>` : `<div class="card">${N("loading")}</div>`;
+  if (!newsState.news) return newsState.newsErr ? `<div class="card fail">⚠️ ${N("newsNone")} <button class="btn ghost" data-retry="news">${N("retry")}</button>
+      <p class="small">${N("newsDirect")} ${(NEWS_SITES[cityObj().country || "kg"] || []).map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join(" · ")}</p></div>` : `<div class="card">${N("loading")}</div>`;
   const S = newsState.news, rx = cityNewsRx(), cn = ctryName(cityObj().country || "kg");
   const items = S.items.filter(x => newsSrcFilter === "all" || x.src === newsSrcFilter);
-  const mine = items.filter(x => rx.test(x.title + " " + x.text)), rest = items.filter(x => !mine.includes(x));
-  const dt = x => { const d = new Date((x.date || "").replace(" ", "T") + "Z"); return isNaN(d) ? "" : d.toLocaleString(numLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
-  const li = x => `<${x.link ? "a" : "div"} class="card news-item"${x.link ? ` href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"` : ""}><b>${/смог|воздух|загрязн|выброс|hava kirlili|smog/i.test(x.title) ? "💨 " : ""}${esc(x.title)}</b><div class="small muted"><span class="nsrc">${esc(x.src)}</span> · ${esc(dt(x))}</div></${x.link ? "a" : "div"}>`;
+  // v35: новости про воздух/смог/уголь — отдельным блоком сверху (полезно мэрии и жителям); остальное — как раньше
+  const air = items.filter(x => NEWS_AIR_RX.test(x.title + " " + x.text));
+  const mine = items.filter(x => !air.includes(x) && rx.test(x.title + " " + x.text)), rest = items.filter(x => !mine.includes(x) && !air.includes(x));
+  const dt = x => { const d = new Date(newsTs(x)); return !newsTs(x) ? "" : d.toLocaleString(numLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
+  const li = x => `<${x.link ? "a" : "div"} class="card news-item"${x.link ? ` href="${esc(x.link)}" target="_blank" rel="noopener noreferrer"` : ""}><b>${NEWS_AIR_RX.test(x.title) ? "💨 " : ""}${esc(x.title)}</b><div class="small muted"><span class="nsrc">${esc(x.src)}</span> · ${esc(dt(x))}</div></${x.link ? "a" : "div"}>`;
   const chips = `<div class="adv-modes nchips">${["all", ...S.sources].map(s => `<button class="${newsSrcFilter === s ? "on" : ""}" aria-pressed="${newsSrcFilter === s}" data-nsrc="${esc(s)}">${s === "all" ? "✨ " + R("all") : esc(s)}</button>`).join("")}</div>`;
   return `${chips}
-    <p class="small muted">🕒 ${N("updN", { t: new Date(S.at).toLocaleTimeString(numLocale(), { hour: "2-digit", minute: "2-digit" }) })} · ${N("srcN", { n: S.sources.length })}</p>
+    <p class="small muted">🕒 ${N("updN", { t: new Date(S.updated || S.at).toLocaleString(numLocale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) })} · ${N("srcN", { n: S.sources.length })}</p>
+    ${LANG === "tr" && S.set === "kg-ru" && NW.tr.newsTrLang ? `<p class="small muted">ℹ️ ${NW.tr.newsTrLang}</p>` : ""}
+    ${S.updated && Date.now() - S.updated > 6 * 3600e3 ? `<p class="small muted">⚠️ ${N("newsStale")}</p>` : ""}
+    ${air.length ? `<h3 class="nh">💨 ${N("airNews")} · ${air.length}</h3>${air.slice(0, 6).map(li).join("")}` : ""}
     <h3 class="nh">${N("cityNews", { city: tr(cityObj().name) })} · ${mine.length}</h3>
     ${mine.length ? mine.slice(0, 15).map(li).join("") : `<p class="small muted">${N("noCity2", { city: tr(cityObj().name) })}</p>`}
     ${mine.length < 3 ? `<h3 class="nh">🗞️ ${N("ctryNews", { c: cn })}</h3>${rest.slice(0, 12).map(li).join("")}` : ""}
@@ -539,6 +551,7 @@ const NEWS_FEEDS = {
   kg: [{ url: "https://kabar.kg/rss/", name: "Kabar" }, { url: "https://24.kg/rss/", name: "24.kg" }, { url: "https://kloop.kg/feed/", name: "Kloop" }],
   tr: [{ url: "https://www.aa.com.tr/tr/rss/default?cat=guncel", name: "Anadolu Ajansı" }, { url: "https://www.trthaber.com/sondakika.rss", name: "TRT Haber" }, { url: "https://www.hurriyet.com.tr/rss/anasayfa", name: "Hürriyet" }, { url: "https://www.sozcu.com.tr/feeds-rss-category-gundem", name: "Sözcü" }],
 };
+const NEWS_SITES = { kg: [["Kabar", "https://kabar.kg/"], ["24.kg", "https://24.kg/"], ["Kloop", "https://kloop.kg/"]], tr: [["Anadolu Ajansı", "https://www.aa.com.tr/tr"], ["TRT Haber", "https://www.trthaber.com/"]] };
 const NEWS_FEED = { kg: { url: "https://24.kg/rss/", name: "24.kg" }, tr: { url: "https://www.aa.com.tr/tr/rss/default?cat=guncel", name: "Anadolu Ajansı" } };
 const CTRY = { ru: { kg: "Кыргызстан", tr: "Турция", lbl: "Страна" }, ky: { kg: "Кыргызстан", tr: "Түркия", lbl: "Өлкө" }, en: { kg: "Kyrgyzstan", tr: "Turkey", lbl: "Country" } };
 const ctryName = k => CTRY[LANG][k];

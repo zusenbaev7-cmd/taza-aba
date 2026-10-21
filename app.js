@@ -1358,6 +1358,9 @@ L.Map.mergeOptions({ zoomAnimation: false, markerZoomAnimation: false });
 /* PWA: офлайн-оболочка (данные о воздухе всегда берутся из сети). */
 if ("serviceWorker" in navigator && location.protocol !== "file:") window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(e => console.warn("SW:", e.message)));
 setLang(LANG);
+// v35: ?city=<id> (ссылки со страниц городов /bishkek/ и т. п.) — открыть приложение сразу на этом городе; параметр убираем из адреса,
+// чтобы дальнейший выбор города в меню не «откатывался» при перезагрузке.
+try { const u = new URL(location.href), qc = u.searchParams.get("city"); if (qc != null) { if (CITIES[qc] && qc !== CITY) { CITY = qc; state.house = { ...CITIES[qc].house, group: state.house.group }; } u.searchParams.delete("city"); history.replaceState(history.state, "", u); } } catch (e) {}
 applyCity(CITY);
 renderChrome();
 route();
