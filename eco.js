@@ -1,0 +1,239 @@
+/* Таза Аба — эко-маршруты v41 (прототип): свой маршрут «Откуда → Куда» как в картах, реальная прокладка
+ * (Valhalla / OSRM FOSSGIS, без ключей), 2–3 варианта, оценка вдыхаемой дозы PM2.5 по поверхности «Дымка»,
+ * лучшее время по почасовому прогнозу, готовые маршруты, 3D-навигатор (eco3d.js, MapLibre — грузится лениво). */
+const ECO_T = {
+  ru: { title: "Эко-маршруты", sub: "Проложите путь, где воздух чище: выберите точки на карте или найдите адрес", from: "Откуда", to: "Куда", stop: "Остановка", add: "Добавить точку", swap: "Поменять местами", me: "Моё местоположение",
+    walk: "Пешком", bike: "Велосипед", car: "Авто", hint: "Нажмите на карту: первая точка — «Откуда», вторая — «Куда». Маркеры можно перетаскивать.", build: "Проложить", building: "Прокладываю маршрут…",
+    here: "Отсюда", there: "Сюда", via: "Через эту точку", min: "мин", h: "ч", km: "км", m: "м", aqi: "AQI в среднем", dose: "Доза PM2.5", cleanest: "Чище всего", fastest: "Быстрее всего", balanced: "Рекомендуем",
+    cleaner: "чище на {p}%", dirtier: "грязнее на {p}%", same: "по воздуху почти одинаково", nav3d: "3D-навигатор", pick: "Выбрать", best: "Лучшее время сегодня", bestAt: "около {t} — AQI ≈ {a}",
+    est: "Оценка: качество воздуха по маршруту — из поверхности «Дымка» (модель CAMS + датчики, сглажено между районами); доза = концентрация × дыхание ({v} м³/ч) × время. Не медицинский прибор.",
+    eqAir: "Данные о воздухе — по районам, поэтому близкие маршруты получают похожую оценку. Выбирайте удобный.", fail: "Сервис маршрутов не ответил — показываю прямую линию (оценка).", lineEst: "по прямой, оценка",
+    ready: "Готовые эко-маршруты", readySub: "Парки, бульвары и набережные — проложим по реальным дорожкам и оценим воздух", go: "Построить", detour: "через {d}", none: "Ничего не найдено", my: "Моё место", mapPt: "Точка на карте",
+    loc: "Определяю местоположение…", locErr: "Не удалось определить местоположение", src: "Маршруты: © OpenStreetMap, Valhalla/OSRM (FOSSGIS). Поиск: Photon (komoot).", fewer: "Удалить точку", near: "рядом с «{d}»" },
+  ky: { title: "Эко-маршруттар", sub: "Абасы тазараак жолду түзүңүз: картадан чекит тандаңыз же даректи издеңиз", from: "Кайдан", to: "Кайда", stop: "Аялдама", add: "Чекит кошуу", swap: "Алмаштыруу", me: "Менин жайгашкан жерим",
+    walk: "Жөө", bike: "Велосипед", car: "Унаа", hint: "Картаны басыңыз: биринчи чекит — «Кайдан», экинчиси — «Кайда». Белгилерди сүйрөсө болот.", build: "Түзүү", building: "Маршрут түзүлүүдө…",
+    here: "Ушул жерден", there: "Ушул жерге", via: "Ушул чекит аркылуу", min: "мүн", h: "саат", km: "км", m: "м", aqi: "Орточо AQI", dose: "PM2.5 дозасы", cleanest: "Эң таза", fastest: "Эң тез", balanced: "Сунуштайбыз",
+    cleaner: "{p}% тазараак", dirtier: "{p}% булганычыраак", same: "аба боюнча дээрлик бирдей", nav3d: "3D-навигатор", pick: "Тандоо", best: "Бүгүн эң жакшы убакыт", bestAt: "болжол менен {t} — AQI ≈ {a}",
+    est: "Баалоо: маршруттагы аба — «Дымка» бетинен (CAMS модели + датчиктер); доза = концентрация × дем алуу ({v} м³/саат) × убакыт. Медициналык прибор эмес.",
+    eqAir: "Аба маалыматы райондор боюнча, ошондуктан жакын маршруттар окшош бааланат. Ыңгайлуусун тандаңыз.", fail: "Маршрут кызматы жооп берген жок — түз сызык көрсөтүлдү (баалоо).", lineEst: "түз сызык, баалоо",
+    ready: "Даяр эко-маршруттар", readySub: "Парктар, бульварлар, жээктер — чыныгы жолдор менен түзүп, абаны баалайбыз", go: "Түзүү", detour: "{d} аркылуу", none: "Эч нерсе табылган жок", my: "Менин жерим", mapPt: "Картадагы чекит",
+    loc: "Жайгашкан жер аныкталууда…", locErr: "Жайгашкан жерди аныктоо мүмкүн болбоду", src: "Маршруттар: © OpenStreetMap, Valhalla/OSRM (FOSSGIS). Издөө: Photon (komoot).", fewer: "Чекитти өчүрүү", near: "«{d}» жанында" },
+  en: { title: "Eco routes", sub: "Plan a path with cleaner air: tap points on the map or search an address", from: "From", to: "To", stop: "Stop", add: "Add stop", swap: "Swap", me: "My location",
+    walk: "Walk", bike: "Bike", car: "Car", hint: "Tap the map: first point is “From”, second is “To”. Drag markers to adjust.", build: "Route", building: "Finding routes…",
+    here: "From here", there: "To here", via: "Via this point", min: "min", h: "h", km: "km", m: "m", aqi: "Average AQI", dose: "PM2.5 dose", cleanest: "Cleanest", fastest: "Fastest", balanced: "Recommended",
+    cleaner: "{p}% cleaner", dirtier: "{p}% dirtier", same: "about the same air", nav3d: "3D navigator", pick: "Select", best: "Best time today", bestAt: "around {t} — AQI ≈ {a}",
+    est: "Estimate: air along the route comes from the “Dymka” surface (CAMS model + sensors, smoothed between districts); dose = concentration × breathing ({v} m³/h) × time. Not a medical device.",
+    eqAir: "Air data is per district, so nearby routes get similar estimates. Pick the most convenient.", fail: "Routing service didn't respond — showing a straight line (estimate).", lineEst: "straight line, estimate",
+    ready: "Ready-made eco routes", readySub: "Parks, boulevards and riversides — routed along real paths with an air estimate", go: "Build", detour: "via {d}", none: "Nothing found", my: "My location", mapPt: "Point on map",
+    loc: "Locating…", locErr: "Couldn't get your location", src: "Routing: © OpenStreetMap, Valhalla/OSRM (FOSSGIS). Search: Photon (komoot).", fewer: "Remove point", near: "near “{d}”" },
+  tr: { title: "Eko rotalar", sub: "Havası daha temiz bir yol çizin: haritaya dokunun veya adres arayın", from: "Nereden", to: "Nereye", stop: "Durak", add: "Nokta ekle", swap: "Yer değiştir", me: "Konumum",
+    walk: "Yürüyüş", bike: "Bisiklet", car: "Araç", hint: "Haritaya dokunun: ilk nokta “Nereden”, ikinci “Nereye”. İşaretçiler sürüklenebilir.", build: "Rota çiz", building: "Rota hesaplanıyor…",
+    here: "Buradan", there: "Buraya", via: "Bu noktadan geç", min: "dk", h: "sa", km: "km", m: "m", aqi: "Ortalama AQI", dose: "PM2.5 dozu", cleanest: "En temiz", fastest: "En hızlı", balanced: "Önerilen",
+    cleaner: "%{p} daha temiz", dirtier: "%{p} daha kirli", same: "hava neredeyse aynı", nav3d: "3D navigasyon", pick: "Seç", best: "Bugün en iyi zaman", bestAt: "yaklaşık {t} — AQI ≈ {a}",
+    est: "Tahmin: rotadaki hava “Dymka” yüzeyinden (CAMS modeli + sensörler); doz = konsantrasyon × solunum ({v} m³/sa) × süre. Tıbbi cihaz değildir.",
+    eqAir: "Hava verisi mahalle bazında; yakın rotalar benzer tahmin alır. En uygununu seçin.", fail: "Rota servisi yanıt vermedi — düz çizgi gösteriliyor (tahmin).", lineEst: "düz çizgi, tahmin",
+    ready: "Hazır eko rotalar", readySub: "Parklar, bulvarlar, nehir kenarları — gerçek yollarla çizilir, hava tahminiyle", go: "Çiz", detour: "{d} üzerinden", none: "Sonuç yok", my: "Konumum", mapPt: "Haritadaki nokta",
+    loc: "Konum alınıyor…", locErr: "Konum alınamadı", src: "Rotalar: © OpenStreetMap, Valhalla/OSRM (FOSSGIS). Arama: Photon (komoot).", fewer: "Noktayı sil", near: "“{d}” yakını" } };
+const ET = (k, o) => { let s = (ECO_T[LANG] || ECO_T.ru)[k] ?? ECO_T.ru[k]; if (o) for (const [a, b] of Object.entries(o)) s = s.replace("{" + a + "}", b); return s; };
+const ECO_V = { walk: 1.4, bike: 2.2, car: 0.6 };            /* вентиляция лёгких, м³/ч (пешком / велосипед / в машине в покое) */
+const ECO_SPEED = { walk: 4.6, bike: 14, car: 30 };          /* для запасного варианта «по прямой», км/ч */
+const ECO_ICON = { walk: '<svg viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="M9 21l2-7 3 3v5M7 12l3-4 4 1 3 3M11 14l-1-4"/></svg>', bike: '<svg viewBox="0 0 24 24"><circle cx="6" cy="17" r="3.5"/><circle cx="18" cy="17" r="3.5"/><path d="M6 17l4-8h5l3 8M10 9l2 8M14 6h3"/></svg>', car: '<svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5zM3 16h18M7 19v-3M17 19v-3"/><circle cx="8" cy="13" r=".8"/><circle cx="16" cy="13" r=".8"/></svg>' };
+/* Готовые маршруты (точки — ориентиры, линия прокладывается по реальным дорожкам OSM) */
+const ECO_READY = {
+  bishkek: [
+    { id: "e_phil", mode: "walk", n: { ru: "Ботсад КНУ → Филармония", ky: "КУУнун ботаникалык багы → Филармония", en: "KNU Botanical Garden → Philharmonic", tr: "KNU Botanik Bahçesi → Filarmoni" }, p: [[42.8857, 74.5887], [42.8783, 74.5876]] },
+    { id: "e_center", mode: "walk", n: { ru: "Филармония → Дубовый парк → Площадь Победы", ky: "Филармония → Эмен паркы → Жеңиш аянты", en: "Philharmonic → Oak Park → Victory Square", tr: "Filarmoni → Meşe Parkı → Zafer Meydanı" }, p: [[42.8783, 74.5876], [42.8768, 74.6060], [42.8792, 74.6162]] },
+    { id: "e_gar", mode: "walk", n: { ru: "Ботанический сад им. Гареева — круг", ky: "Гареев атындагы ботаникалык бак — айлана", en: "Gareev Botanical Garden loop", tr: "Gareev Botanik Bahçesi turu" }, p: [[42.8360, 74.6370], [42.8262, 74.6420], [42.8185, 74.6380], [42.8360, 74.6370]] },
+    { id: "e_oreh", mode: "walk", n: { ru: "Парк «Ореховая роща»", ky: "«Жаңгак токою» паркы", en: "Walnut Grove park", tr: "Ceviz Korusu parkı" }, p: [[42.8250, 74.6270], [42.8232, 74.6292], [42.8250, 74.6270]] },
+    { id: "e_south", mode: "bike", n: { ru: "Южные ворота → Ботсад Гареева", ky: "Түштүк дарбаза → Гареев ботаникалык багы", en: "Southern Gates → Gareev Garden", tr: "Güney Kapıları → Gareev Bahçesi" }, p: [[42.8291, 74.6073], [42.8262, 74.6390]] },
+    { id: "e_vict", mode: "bike", n: { ru: "Центр → Парк Победы (юг)", ky: "Борбор → Жеңиш паркы (түштүк)", en: "Centre → Victory Park (south)", tr: "Merkez → Zafer Parkı (güney)" }, p: [[42.8767, 74.6037], [42.8287, 74.6035]] } ],
+  osh: [
+    { id: "e_sul", mode: "walk", n: { ru: "Подъём на Сулайман-Тоо", ky: "Сулайман-Тоого чыгуу", en: "Up Sulaiman-Too", tr: "Süleyman Dağı'na çıkış" }, p: [[40.5262, 72.7905], [40.5274, 72.7856]] },
+    { id: "e_tokt", mode: "walk", n: { ru: "Парк Спутник → Парк им. Токтогула", ky: "Спутник паркы → Токтогул паркы", en: "Sputnik Park → Toktogul Park", tr: "Sputnik Parkı → Toktogul Parkı" }, p: [[40.5131, 72.8031], [40.5154, 72.8090]] },
+    { id: "e_oshu", mode: "bike", n: { ru: "ОшГУ → Сулайман-Тоо", ky: "ОшМУ → Сулайман-Тоо", en: "Osh State Univ. → Sulaiman-Too", tr: "Oş Devlet Üniv. → Süleyman Dağı" }, p: [[40.5372, 72.8052], [40.5280, 72.7880]] } ],
+  karakol: [
+    { id: "e_kvp", mode: "walk", n: { ru: "Парк Победы — круг", ky: "Жеңиш паркы — айлана", en: "Victory Park loop", tr: "Zafer Parkı turu" }, p: [[42.4858, 78.4050], [42.4830, 78.4090], [42.4858, 78.4050]] } ] };
+
+const eco = { mode: "walk", pts: [null, null], routes: [], sel: 0, busy: false, note: "" };
+let ecoAbort = null;
+const ecoAqiToPm = a => { const B = [[0, 50, 0, 9], [51, 100, 9.1, 35.4], [101, 150, 35.5, 55.4], [151, 200, 55.5, 125.4], [201, 300, 125.5, 225.4], [301, 500, 225.5, 325.4]];
+  for (const [il, ih, cl, ch] of B) if (a <= ih) return cl + (ch - cl) * (Math.max(a, il) - il) / (ih - il); return 325; };
+const ecoRGB = a => { const G = [61, 190, 139], A = [237, 180, 67], O = [245, 146, 69], R = [229, 83, 75], P = [154, 91, 208], M = [122, 35, 64], S = [[0, G], [46, G], [55, A], [96, A], [105, O], [146, O], [155, R], [196, R], [210, P], [290, P], [310, M], [500, M]];
+  for (let i = 1; i < S.length; i++) if (a <= S[i][0]) { const [x0, c0] = S[i - 1], [x1, c1] = S[i], k = (a - x0) / (x1 - x0); return c0.map((v, j) => Math.round(v + (c1[j] - v) * k)); } return S[S.length - 1][1]; };
+const ecoCol = a => `rgb(${ecoRGB(a)})`;
+const ecoKm = (a, b) => kmDist({ lat: a[0], lon: a[1] }, { lat: b[0], lon: b[1] });
+function ecoDecode6(s) { let i = 0, lat = 0, lon = 0; const o = []; while (i < s.length) { for (const k of [0, 1]) { let r = 0, sh = 0, b; do { b = s.charCodeAt(i++) - 63; r |= (b & 31) << sh; sh += 5; } while (b >= 32); const d = r & 1 ? ~(r >> 1) : r >> 1; if (k) lon += d; else lat += d; } o.push([lat / 1e6, lon / 1e6]); } return o; }
+function ecoFmtT(s) { const m = Math.max(1, Math.round(s / 60)); return m < 60 ? `${m} ${ET("min")}` : `${Math.floor(m / 60)} ${ET("h")} ${m % 60} ${ET("min")}`; }
+const ecoFmtD = km => km < 1 ? `${Math.round(km * 1000 / 10) * 10} ${ET("m")}` : `${fmt(km, 1)} ${ET("km")}`;
+
+/* оценка воздуха вдоль линии: выборка каждые ~40 м по поверхности «Дымка» */
+function ecoExposure(geom, durS, mode) {
+  const pts = typeof msPts === "function" ? msPts() : []; const S = []; let km = 0;
+  for (let i = 0; i < geom.length; i++) { if (i) km += ecoKm(geom[i - 1], geom[i]);
+    if (!i || i === geom.length - 1 || km - (S.length ? S[S.length - 1].km : 0) >= 0.04) S.push({ ll: geom[i], km }); }
+  if (pts.length) S.forEach(s => { s.a = Math.round(msIdw(s.ll[0], s.ll[1], pts).v); }); else S.forEach(s => s.a = null);
+  const v = S.filter(s => s.a != null); if (!v.length) return { km, S, aqi: null, pm: null, dose: null };
+  let pmSum = 0, w = 0; for (let i = 1; i < S.length; i++) { const d = S[i].km - S[i - 1].km, a = ((S[i].a ?? 0) + (S[i - 1].a ?? 0)) / 2; pmSum += ecoAqiToPm(a) * d; w += d; }
+  const pm = w ? pmSum / w : ecoAqiToPm(v[0].a), aqi = Math.round(v.reduce((s, x) => s + x.a, 0) / v.length);
+  return { km, S, aqi, pm, dose: pm * ECO_V[mode] * durS / 3600 };
+}
+/* лучшее время сегодня: почасовой прогноз районов вдоль маршрута */
+function ecoBestTime(S) {
+  if (typeof nearestDistrict !== "function") return null; const ids = [...new Set(S.filter((_, i) => i % 5 === 0).map(s => nearestDistrict(s.ll[0], s.ll[1]).id))].filter(id => air.byDistrict[id] && air.byDistrict[id].hourly).slice(0, 10);
+  if (!ids.length) return null; const r0 = air.byDistrict[ids[0]], T = r0.time || [], now = (r0.currentTime || "").slice(0, 13); let i0 = T.findIndex(x => x.slice(0, 13) >= now); if (i0 < 0) return null;
+  let best = null; for (let i = i0; i < Math.min(T.length, i0 + 24); i++) { const hh = +T[i].slice(11, 13); if (hh < 7 || hh > 21) continue;
+    const vs = ids.map(id => air.byDistrict[id].hourly[i]).filter(x => x != null); if (!vs.length) continue; const m = vs.reduce((a, b) => a + b, 0) / vs.length;
+    if (!best || m < best.a - 0.5) best = { a: Math.round(m), t: T[i].slice(11, 16), day: T[i].slice(0, 10) }; }
+  return best;
+}
+/* прокладка: Valhalla (FOSSGIS) → OSRM (FOSSGIS) → прямая */
+async function ecoValhalla(pts, mode, alts, sig) {
+  const costing = { walk: "pedestrian", bike: "bicycle", car: "auto" }[mode];
+  const body = { locations: pts.map((p, i) => ({ lat: +p.ll[0].toFixed(6), lon: +p.ll[1].toFixed(6), type: p.through ? "through" : "break" })), costing, alternates: alts, units: "kilometers", directions_type: "none" };
+  const r = await fetch("https://valhalla1.openstreetmap.de/route?json=" + encodeURIComponent(JSON.stringify(body)), { signal: sig }); if (!r.ok) throw new Error("valhalla " + r.status);
+  const j = await r.json(); const tr2 = x => ({ geom: x.legs.flatMap(l => ecoDecode6(l.shape)), dur: x.summary.time, src: "Valhalla" });
+  return [tr2(j.trip), ...(j.alternates || []).map(a => tr2(a.trip))];
+}
+async function ecoOsrm(pts, mode, sig) {
+  const prof = { walk: "routed-foot", bike: "routed-bike", car: "routed-car" }[mode];
+  const r = await fetch(`https://routing.openstreetmap.de/${prof}/route/v1/driving/${pts.map(p => p.ll[1].toFixed(6) + "," + p.ll[0].toFixed(6)).join(";")}?alternatives=${pts.length === 2 ? 2 : "false"}&overview=full&geometries=geojson`, { signal: sig });
+  if (!r.ok) throw new Error("osrm " + r.status); const j = await r.json(); if (j.code !== "Ok") throw new Error(j.code);
+  return j.routes.map(x => ({ geom: x.geometry.coordinates.map(c => [c[1], c[0]]), dur: x.duration, src: "OSRM" }));
+}
+async function ecoRoute() {
+  const P = eco.pts.filter(Boolean); if (P.length < 2) return;
+  if (ecoAbort) ecoAbort.abort(); ecoAbort = new AbortController(); const sig = ecoAbort.signal, mode = eco.mode;
+  eco.busy = true; eco.note = ""; ecoRender(); let rs = [];
+  try { rs = await ecoValhalla(P, mode, P.length === 2 ? 2 : 0, sig); }
+  catch (e) { if (sig.aborted) return; try { rs = await ecoOsrm(P, mode, sig); } catch (e2) { if (sig.aborted) return;
+    const g = P.map(p => p.ll), km = g.slice(1).reduce((s, p, i) => s + ecoKm(g[i], p), 0); rs = [{ geom: g, dur: km / ECO_SPEED[mode] * 3600, src: "line", est: true }]; eco.note = ET("fail"); } }
+  rs = rs.map(r => ({ ...r, ...ecoExposure(r.geom, r.dur, mode) }));
+  /* дополнительный вариант «через чистый район», если он рядом и заметно чище */
+  if (P.length === 2 && !rs[0].est && typeof msPts === "function") try {
+    const f = rs.reduce((a, b) => a.dur <= b.dur ? a : b), A = P[0].ll, B = P[1].ll, mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2], dkm = ecoKm(A, B);
+    const cand = msPts().filter(p => p.a <= f.aqi - 8 && ecoKm(mid, [p.d.lat, p.d.lon]) <= Math.max(0.6, dkm * 0.35)).sort((x, y) => x.a - y.a || ecoKm(mid, [x.d.lat, x.d.lon]) - ecoKm(mid, [y.d.lat, y.d.lon]))[0];
+    if (cand) { const x = (await ecoValhalla([P[0], { ll: [cand.d.lat, cand.d.lon], through: true }, P[1]], mode, 0, sig))[0], ex = { ...x, ...ecoExposure(x.geom, x.dur, mode), via: dName(cand.d) };
+      if (ex.dur <= f.dur * 1.5 && ex.dose < Math.min(...rs.map(r => r.dose)) * 0.97 && rs.every(r => Math.abs(r.km - ex.km) / r.km > 0.03)) rs.push(ex); }
+  } catch (e) { if (sig.aborted) return; }
+  if (sig.aborted) return;
+  const fast = rs.reduce((a, b) => a.dur <= b.dur ? a : b), clean = rs.reduce((a, b) => (a.dose ?? 1e9) <= (b.dose ?? 1e9) ? a : b);
+  const okT = rs.filter(r => r.dur <= fast.dur * 1.3), rec = okT.reduce((a, b) => (a.dose ?? 1e9) <= (b.dose ?? 1e9) ? a : b);
+  rs.forEach(r => { r.tags = []; if (r === rec) r.tags.push("balanced"); if (r === clean && rs.length > 1) r.tags.push("cleanest"); if (r === fast && rs.length > 1) r.tags.push("fastest");
+    r.vsFast = fast.pm && r.pm ? Math.round((1 - r.pm / fast.pm) * 100) : 0; });
+  rs.sort((a, b) => (b === rec) - (a === rec) || a.dose - b.dose);
+  eco.routes = rs; eco.sel = 0; eco.busy = false; eco.best = ecoBestTime(rs[0].S); ecoRender(true);
+}
+
+/* --- поиск: районы города + Photon (вежливо: от 3 символов, задержка 350 мс, отмена прошлых запросов) --- */
+const ecoNorm = s => String(s || "").toLowerCase().replace(/ё/g, "е").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/[«»"“”()\-–.,]/g, " ").replace(/\s+/g, " ").trim();
+let ecoPhT = 0, ecoPhAb = null;
+async function ecoPhoton(q) { if (ecoPhAb) ecoPhAb.abort(); ecoPhAb = new AbortController(); const c = cityObj().center;
+  const u = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${c[0]}&lon=${c[1]}&limit=6&bbox=${c[1] - 0.4},${c[0] - 0.3},${c[1] + 0.4},${c[0] + 0.3}`;
+  const j = await (await fetch(u, { signal: ecoPhAb.signal })).json();
+  return (j.features || []).map(f => { const p = f.properties, nm = p.name || [p.street, p.housenumber].filter(Boolean).join(" "); return nm ? { ll: [f.geometry.coordinates[1], f.geometry.coordinates[0]], label: nm, sub: [p.street && p.name ? p.street : "", p.district || p.city || ""].filter(Boolean).join(", ") } : null; }).filter(Boolean); }
+function ecoLocal(q) { const n = ecoNorm(q); if (!n) return [];
+  const ds = DISTRICTS.map(d => ({ d, b: Math.min(...Object.values(d.name || {}).map(x => { x = ecoNorm(x); return x.startsWith(n) ? 0 : x.split(" ").some(w => w.startsWith(n)) ? 1 : x.includes(n) ? 2 : 9; })) })).filter(x => x.b < 9).sort((a, b) => a.b - b.b).slice(0, 5)
+    .map(x => ({ ll: [x.d.lat, x.d.lon], label: dName(x.d), sub: x.d.grp && typeof GRP_NAME !== "undefined" && GRP_NAME[x.d.grp] ? tr(GRP_NAME[x.d.grp]) : tr(cityObj().name), a: air.byDistrict[x.d.id] && air.byDistrict[x.d.id].aqi }));
+  const rd = (ECO_READY[CITY] || []).flatMap(r => r.p.map((p, i) => ({ ll: p, label: tr(r.n).split(" → ")[Math.min(i, tr(r.n).split(" → ").length - 1)] }))).filter(x => ecoNorm(x.label).includes(n)).slice(0, 3);
+  return [...ds, ...rd]; }
+function ecoPtLabel(ll) { const d = typeof nearestDistrict === "function" ? nearestDistrict(ll[0], ll[1]) : null; return d ? ET("near", { d: dName(d) }) : ET("mapPt"); }
+function ecoSetPt(i, ll, label) { eco.pts[i] = { ll, label: label || ecoPtLabel(ll) }; ecoRoute(); ecoRender(); }
+
+/* --- отрисовка --- */
+let ecoMap = null, ecoL = null, ecoSvg = null, ecoMk = [];
+function ecoRender(fit) {
+  const el = document.getElementById("view"); if (!el || !el.querySelector(".eco")) return;
+  ecoForm(el.querySelector(".eco-form")); ecoList(el.querySelector(".eco-res")); ecoDraw(fit);
+}
+function ecoForm(f) {
+  const n = eco.pts.length, lab = i => i === 0 ? ET("from") : i === n - 1 ? ET("to") : ET("stop") + " " + i;
+  f.innerHTML = `<div class="eco-modes" role="radiogroup">${["walk", "bike", "car"].map(m => `<button type="button" role="radio" aria-checked="${eco.mode === m}" class="${eco.mode === m ? "on" : ""}" data-m="${m}">${ECO_ICON[m]}<span>${ET(m)}</span></button>`).join("")}</div>
+    <div class="eco-pts">${eco.pts.map((p, i) => `<div class="eco-pt" data-i="${i}"><i class="eco-dot ${i === 0 ? "a" : i === n - 1 ? "b" : "s"}">${i === 0 ? "A" : i === n - 1 ? "B" : i}</i>
+      <div class="eco-in"><input type="search" autocomplete="off" spellcheck="false" aria-label="${esc(lab(i))}" placeholder="${esc(lab(i))}" value="${p ? esc(p.label) : ""}"><ul class="eco-sug" hidden></ul></div>
+      ${i === 0 ? `<button type="button" class="eco-ib" data-me title="${esc(ET("me"))}" aria-label="${esc(ET("me"))}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="7"/></svg></button>` : i === n - 1 ? `<button type="button" class="eco-ib" data-swap title="${esc(ET("swap"))}" aria-label="${esc(ET("swap"))}"><svg viewBox="0 0 24 24"><path d="M7 4v16M7 4l-3 3M7 4l3 3M17 20V4M17 20l-3-3M17 20l3-3"/></svg></button>` : `<button type="button" class="eco-ib" data-del="${i}" aria-label="${esc(ET("fewer"))}">✕</button>`}</div>`).join("")}</div>
+    <div class="eco-row"><button type="button" class="eco-add" ${n >= 5 ? "disabled" : ""}>＋ ${esc(ET("add"))}</button><span class="eco-hint">${esc(ET("hint"))}</span></div>`;
+  f.querySelectorAll("[data-m]").forEach(b => b.onclick = () => { eco.mode = b.dataset.m; ecoRoute(); ecoRender(); });
+  f.querySelector(".eco-add").onclick = () => { eco.pts.splice(eco.pts.length - 1, 0, null); ecoRender(); f.querySelectorAll(".eco-pt input")[eco.pts.length - 2].focus(); };
+  f.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { eco.pts.splice(+b.dataset.del, 1); ecoRoute(); ecoRender(); });
+  f.querySelector("[data-swap]").onclick = () => { eco.pts.reverse(); ecoRoute(); ecoRender(); };
+  f.querySelector("[data-me]").onclick = () => { if (!navigator.geolocation) return toast(ET("locErr")); toast(ET("loc"));
+    navigator.geolocation.getCurrentPosition(p => ecoSetPt(0, [p.coords.latitude, p.coords.longitude], ET("my")), () => toast(ET("locErr")), { enableHighAccuracy: true, timeout: 10000 }); };
+  f.querySelectorAll(".eco-pt").forEach(row => { const i = +row.dataset.i, inp = row.querySelector("input"), ul = row.querySelector("ul"); let res = [], cur = -1;
+    const draw = () => { ul.innerHTML = res.length ? res.map((r, k) => `<li role="option" data-k="${k}">${r.a != null ? `<i style="background:${ecoCol(r.a)}"></i>` : '<i class="pl"></i>'}<span>${esc(r.label)}${r.sub ? `<small>${esc(r.sub)}</small>` : ""}</span>${r.a != null ? `<b>${r.a}</b>` : ""}</li>`).join("") : `<li class="none">${esc(ET("none"))}</li>`; ul.hidden = false; };
+    const pick = k => { const r = res[k]; if (!r) return; ul.hidden = true; ecoSetPt(i, r.ll, r.label); };
+    inp.addEventListener("input", () => { const q = inp.value.trim(); res = ecoLocal(q); cur = -1; if (!q) { ul.hidden = true; return; } draw();
+      clearTimeout(ecoPhT); if (q.length >= 3) ecoPhT = setTimeout(() => ecoPhoton(q).then(ph => { if (inp.value.trim() !== q) return; const seen = new Set(res.map(r => ecoNorm(r.label))); res = [...res, ...ph.filter(p => !seen.has(ecoNorm(p.label)))].slice(0, 9); draw(); }).catch(() => {}), 350); });
+    inp.addEventListener("keydown", e => { const li = ul.querySelectorAll("li[data-k]"); if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!li.length) return; cur = (cur + (e.key === "ArrowDown" ? 1 : -1) + li.length) % li.length; li.forEach((x, j) => x.classList.toggle("on", j === cur)); } else if (e.key === "Enter") { e.preventDefault(); pick(cur >= 0 ? cur : 0); } else if (e.key === "Escape") ul.hidden = true; });
+    inp.addEventListener("blur", () => setTimeout(() => ul.hidden = true, 150));
+    ul.addEventListener("mousedown", e => { const li = e.target.closest("li[data-k]"); if (li) { e.preventDefault(); pick(+li.dataset.k); } }); });
+}
+function ecoBar(S) { const n = 40, step = Math.max(1, S.length / n); const cs = []; for (let i = 0; i < S.length; i += step) { const s = S[Math.floor(i)]; cs.push(s.a == null ? "#ccd" : ecoCol(s.a)); } return `<i class="eco-bar" style="background:linear-gradient(90deg,${cs.join(",")})"></i>`; }
+function ecoList(box) {
+  if (eco.busy) { box.innerHTML = `<div class="eco-card eco-wait"><i class="eco-spin"></i>${esc(ET("building"))}</div>`; return; }
+  if (!eco.routes.length) { box.innerHTML = ""; return; }
+  const rs = eco.routes, same = rs.length > 1 && Math.max(...rs.map(r => r.pm)) / Math.min(...rs.map(r => r.pm)) < 1.04;
+  box.innerHTML = `${eco.note ? `<div class="eco-warn">⚠️ ${esc(eco.note)}</div>` : ""}
+    ${rs.map((r, k) => { const Lv = level(r.aqi);
+      return `<div class="eco-card eco-r ${k === eco.sel ? "sel" : ""}" data-k="${k}" tabindex="0" role="button" aria-pressed="${k === eco.sel}">
+        <div class="eco-r-top"><div class="eco-tags">${r.tags.map(tg => `<span class="eco-tag ${tg}">${esc(ET(tg))}</span>`).join("")}${r.via ? `<span class="eco-tag via">${esc(ET("detour", { d: r.via }))}</span>` : ""}${r.est ? `<span class="eco-tag est">${esc(ET("lineEst"))}</span>` : ""}</div>
+          <b class="eco-time">${ecoFmtT(r.dur)}</b></div>
+        <div class="eco-meta"><span>${ecoFmtD(r.km)}</span><span><i class="eco-dot2" style="background:${ecoCol(r.aqi)}"></i>${esc(ET("aqi"))} ${r.aqi} · ${esc(tr(Lv.name))}</span><span>${esc(ET("dose"))} ≈ ${fmt(r.dose, r.dose < 10 ? 1 : 0)} µg</span>
+          ${rs.length > 1 && r.vsFast ? `<span class="${r.vsFast > 0 ? "g" : "r"}">${esc(ET(r.vsFast > 0 ? "cleaner" : "dirtier", { p: Math.abs(r.vsFast) }))}</span>` : ""}</div>
+        ${ecoBar(r.S)}
+        <div class="eco-act"><button type="button" class="eco-3d" data-3d="${k}"><svg viewBox="0 0 24 24"><path d="M12 2l8 18-8-4-8 4z"/></svg>${esc(ET("nav3d"))}</button></div></div>`; }).join("")}
+    ${same ? `<div class="eco-note">${esc(ET("eqAir"))}</div>` : ""}
+    ${eco.best ? `<div class="eco-card eco-best"><b>🕒 ${esc(ET("best"))}</b><span>${esc(ET("bestAt", { t: eco.best.t, a: eco.best.a }))}</span></div>` : ""}
+    <div class="eco-note">${esc(ET("est", { v: ECO_V[eco.mode] }))}</div>`;
+  box.querySelectorAll(".eco-r").forEach(c => { const go = () => { eco.sel = +c.dataset.k; ecoList(box); ecoDraw(); }; c.onclick = e => { if (!e.target.closest("[data-3d]")) go(); }; c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }; });
+  box.querySelectorAll("[data-3d]").forEach(b => b.onclick = () => ecoOpen3d(eco.routes[+b.dataset["3d"]]));
+}
+function ecoMarker(i) { const n = eco.pts.length, c = i === 0 ? "a" : i === n - 1 ? "b" : "s";
+  return L.divIcon({ className: "", html: `<div class="eco-mk ${c}"><span></span><b>${i === 0 ? "A" : i === n - 1 ? "B" : i}</b></div>`, iconSize: [30, 38], iconAnchor: [15, 36] }); }
+function ecoDraw(fit) {
+  const M = ecoMap; if (!M || M !== map) return; ecoL.clearLayers(); ecoMk.forEach(m => M.removeLayer(m)); ecoMk = [];
+  const dk = document.documentElement.dataset.theme === "dark";
+  eco.routes.forEach((r, k) => { if (k === eco.sel) return;
+    L.polyline(r.geom, { color: dk ? "#0b1218" : "#fff", weight: 9, opacity: .9, lineCap: "round", lineJoin: "round" }).addTo(ecoL);
+    L.polyline(r.geom, { color: dk ? "#5d6b78" : "#9aa7b3", weight: 5, opacity: .95, lineCap: "round", lineJoin: "round" }).on("click", () => { eco.sel = k; ecoRender(); }).addTo(ecoL); });
+  const r = eco.routes[eco.sel];
+  if (r) { L.polyline(r.geom, { color: "#4aa3dc", weight: 22, opacity: .16, lineCap: "round", lineJoin: "round", interactive: false }).addTo(ecoL);
+    L.polyline(r.geom, { color: dk ? "#081018" : "#ffffff", weight: 12, opacity: 1, lineCap: "round", lineJoin: "round", interactive: false }).addTo(ecoL);
+    for (let i = 1; i < r.S.length; i++) { const seg = [r.S[i - 1].ll, r.S[i].ll]; L.polyline(seg, { color: ecoCol(((r.S[i].a ?? 50) + (r.S[i - 1].a ?? 50)) / 2), weight: 7, opacity: 1, lineCap: "round", lineJoin: "round", interactive: false }).addTo(ecoL); }
+    if (!(typeof RED_MOTION !== "undefined" && RED_MOTION)) L.polyline(r.geom, { renderer: ecoSvg, className: "eco-flow", color: "#fff", weight: 2.5, opacity: .85, interactive: false, lineCap: "round" }).addTo(ecoL); }
+  eco.pts.forEach((p, i) => { if (!p) return; const m = L.marker(p.ll, { icon: ecoMarker(i), draggable: true, keyboard: false, zIndexOffset: 900, title: p.label })
+    .on("dragend", e => { const ll = e.target.getLatLng(); ecoSetPt(i, [ll.lat, ll.lng]); }).addTo(M); ecoMk.push(m); });
+  if (fit && r) M.fitBounds(L.latLngBounds(eco.routes.flatMap(x => x.geom)).pad(0.12), { maxZoom: 16 });
+}
+function ecoMapClick(e) { const ll = [e.latlng.lat, e.latlng.lng], n = eco.pts.length;
+  if (!eco.pts[0]) return ecoSetPt(0, ll); if (!eco.pts[n - 1]) return ecoSetPt(n - 1, ll);
+  const pop = L.popup({ className: "eco-pop", closeButton: false }).setLatLng(e.latlng).setContent(`<div class="eco-popb"><button data-a="0">A · ${esc(ET("here"))}</button><button data-a="via">＋ ${esc(ET("via"))}</button><button data-a="1">B · ${esc(ET("there"))}</button></div>`).openOn(ecoMap);
+  pop.getElement().querySelectorAll("[data-a]").forEach(b => b.onclick = () => { ecoMap.closePopup(); const a = b.dataset.a;
+    if (a === "0") ecoSetPt(0, ll); else if (a === "1") ecoSetPt(eco.pts.length - 1, ll); else if (eco.pts.length < 5) { eco.pts.splice(eco.pts.length - 1, 0, null); ecoSetPt(eco.pts.length - 2, ll); } }); }
+function ecoReady(el) {
+  const ready = (ECO_READY[CITY] || []).map(r => ({ id: r.id, mode: r.mode, name: tr(r.n), p: r.p, built: true })), old = (typeof ECO_ROUTES !== "undefined" ? ECO_ROUTES : []).filter(r => !r.far).map(r => ({ id: r.id, mode: r.mode === "bike" ? "bike" : "walk", name: tr(r.name), path: r.path }));
+  const all = [...ready, ...old]; if (!all.length) return "";
+  return `<h2>🌳 ${esc(ET("ready"))}</h2><p class="sub">${esc(ET("readySub"))}</p><div class="eco-ready">${all.map(r => `<button type="button" class="eco-card eco-rd" data-rd="${r.id}">${ECO_ICON[r.mode]}<span><b>${esc(r.name)}</b><small>${esc(ET(r.mode))}</small></span><em>${esc(ET("go"))} →</em></button>`).join("")}</div>`;
+}
+function ecoUseReady(id) { const r = (ECO_READY[CITY] || []).find(x => x.id === id), o = (ECO_ROUTES || []).find(x => x.id === id);
+  if (r) { eco.mode = r.mode; eco.pts = r.p.map(ll => ({ ll, label: ecoPtLabel(ll) })); const nm = tr(r.n).split(" → "); eco.pts[0].label = nm[0]; eco.pts[eco.pts.length - 1].label = nm[nm.length - 1].replace(/ — .*$/, ""); }
+  else if (o) { eco.mode = o.mode === "bike" ? "bike" : "walk"; const p = o.path, k = Math.max(1, Math.floor(p.length / 3)); eco.pts = [p[0], ...(p.length > 3 ? [p[k], p[2 * k]] : []), p[p.length - 1]].map(ll => ({ ll, label: ecoPtLabel(ll) })); eco.pts[0].label = tr(o.name); }
+  ecoRoute(); ecoRender(); document.getElementById("ecoMap").scrollIntoView({ block: "center", behavior: "smooth" }); }
+function viewEco(el) {
+  el.innerHTML = `<div class="eco"><div class="eco-head"><h1>${esc(ET("title"))}</h1><p class="sub">${esc(ET("sub"))}</p></div>
+    <div class="eco-grid"><div class="eco-side"><div class="eco-card eco-form"></div><div class="eco-res" aria-live="polite"></div></div>
+      <div class="eco-mapw"><div id="ecoMap"></div><div class="eco-legend">${[25, 75, 125, 175, 250].map(a => `<i style="background:${ecoCol(a)}"></i>`).join("")}<span>AQI</span></div></div></div>
+    ${ecoReady(el)}<div class="foot">${esc(ET("src"))}</div></div>`;
+  map = mkMap("ecoMap", { zoomControl: true }); ecoMap = map; baseTiles(map); ecoSvg = L.svg({ padding: 0.5 });
+  map.setView(cityObj().center, (cityObj().zoom || 12) + 0.5);
+  if (typeof MsCanvas !== "undefined" && typeof msPts === "function") new MsCanvas((ctx, tl, m, w, h) => { const pts = msPts(); if (!pts.length) return; const S = 10, gw = Math.ceil(w / S), gh = Math.ceil(h / S), off = document.createElement("canvas"); off.width = gw; off.height = gh;
+    const oc = off.getContext("2d"), img = oc.createImageData(gw, gh); for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) { const ll = m.layerPointToLatLng(tl.add([i * S, j * S])), r = msIdw(ll.lat, ll.lng, pts), c = msBinRGB(r.v), al = Math.max(0, Math.min(1, 1 - (r.dmin - 1.2) / 2.5)), k = (j * gw + i) * 4;
+      img.data[k] = c[0]; img.data[k + 1] = c[1]; img.data[k + 2] = c[2]; img.data[k + 3] = Math.round(al * 70); } oc.putImageData(img, 0, 0); ctx.filter = "blur(14px)"; ctx.drawImage(off, 0, 0, gw * S, gh * S); }).addTo(map);
+  ecoL = L.layerGroup().addTo(map); map.on("click", ecoMapClick);
+  el.querySelectorAll("[data-rd]").forEach(b => b.onclick = () => ecoUseReady(b.dataset.rd));
+  ecoRender(true); setTimeout(() => map && map.invalidateSize(), 60);
+}
+/* 3D-навигатор — отдельный модуль, грузится только по нажатию */
+function ecoOpen3d(r) { const go = () => window.eco3dOpen && window.eco3dOpen(r, eco.mode);
+  if (window.eco3dOpen) return go(); const s = document.createElement("script"); s.src = "eco3d.js"; s.onload = go; s.onerror = () => toast("3D: load error"); document.head.appendChild(s); }
+if (typeof views !== "undefined") views.routes = el => viewEco(el);
+if (location.hash.startsWith("#routes")) setTimeout(() => { try { route(true); } catch (e) {} }, 0);
