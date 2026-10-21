@@ -231,7 +231,7 @@ function renderChrome() {
   cs.setAttribute("aria-label", t("cityLbl"));
   const fl = $(".ctry-flag"); if (fl) fl.textContent = cityObj().country === "tr" ? "🇹🇷" : "🇰🇬";
   const ks = $("#ctrySel"); if (ks) { ks.innerHTML = ["kg", "tr"].map(k => `<option value="${k}" ${k === cityObj().country ? "selected" : ""}>${k === "kg" ? "🇰🇬" : "🇹🇷"} ${ctryName(k)}</option>`).join(""); ks.setAttribute("aria-label", ctryName("lbl")); }
-  document.title = ((LANG === "en" || LANG === "tr") ? "Taza Aba — " : "Таза Аба — ") + t("brandSub");
+  applySeo();
   document.documentElement.lang = LANG;
   const tb = $("#tabbar"); if (tb) tb.setAttribute("aria-label", { ru: "Навигация", ky: "Навигация", en: "Navigation", tr: "Gezinme" }[LANG] || "Навигация");
   renderBanner();

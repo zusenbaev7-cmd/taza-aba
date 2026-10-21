@@ -1,6 +1,8 @@
 /* Таза Аба — переводы интерфейса: ru (по умолчанию), ky (кыргызча), en. */
 const LANGS = { ru: "RU", ky: "KG", en: "EN", tr: "TR" };
 let LANG = localStorage.getItem("tazaAba.lang") || "ru";
+// ?lang=ru|ky|en|tr — для ссылок hreflang и поисковиков (выбор запоминается)
+try { const ql = new URLSearchParams(location.search).get("lang"); if (["ru", "ky", "en", "tr"].includes(ql)) { LANG = ql; localStorage.setItem("tazaAba.lang", ql); } } catch (e) {}
 if (!LANGS[LANG] && LANG !== "tr") LANG = "ru";
 
 const DICT = {
@@ -290,7 +292,28 @@ function t(key, vars = {}) {
 }
 /* tr({ru, ky, en}) — выбрать перевод для поля данных. */
 const tr = o => (o && typeof o === "object" && !Array.isArray(o)) ? (o[LANG] ?? (LANG === "tr" ? o.en : undefined) ?? o.ru) : o;
-function setLang(l) { LANG = l; localStorage.setItem("tazaAba.lang", l); document.documentElement.lang = l === "ky" ? "ky" : l; }
+// SEO: заголовок, описание и canonical на языке интерфейса
+const SEO = {
+  ru: { t: "Таза Аба — качество воздуха и смог в Бишкеке, AQI Кыргызстана", d: "Качество воздуха в Бишкеке и 58 городах Кыргызстана и Турции: AQI по районам, прогноз смога, PM2.5, эко-маршруты, ИИ-советник по здоровью. Бесплатно, 4 языка." },
+  ky: { t: "Таза Аба — Бишкектеги абанын сапаты жана түтүн, AQI Кыргызстан", d: "Бишкекте жана Кыргызстан менен Түркиянын 58 шаарында абанын сапаты: райондор боюнча AQI, түтүн (смог) божомолу, PM2.5, эко-маршруттар, ЖИ-кеңешчи. Акысыз." },
+  en: { t: "Taza Aba — Bishkek air quality & smog, live AQI for Kyrgyzstan", d: "Air quality in Bishkek and 58 cities of Kyrgyzstan and Turkey: AQI by district, smog forecast, PM2.5, eco-routes and a free AI health advisor. 4 languages." },
+  tr: { t: "Taza Aba — Bişkek ve Türkiye'de hava kalitesi, canlı AQI", d: "Bişkek ile Kırgızistan ve Türkiye'nin 58 şehrinde hava kalitesi: semt bazında AQI, duman (smog) tahmini, PM2.5, eko rotalar ve ücretsiz YZ danışman." }
+};
+function applySeo() {
+  try {
+    const s = SEO[LANG] || SEO.ru, H = document.head;
+    document.title = s.t;
+    const set = (sel, attr, v) => { const e = H.querySelector(sel); if (e) e.setAttribute(attr, v); };
+    set('meta[name="description"]', "content", s.d);
+    set('meta[property="og:title"]', "content", s.t); set('meta[property="og:description"]', "content", s.d);
+    set('meta[name="twitter:title"]', "content", s.t); set('meta[name="twitter:description"]', "content", s.d);
+    set('meta[property="og:locale"]', "content", { ru: "ru_RU", ky: "ky_KG", en: "en_US", tr: "tr_TR" }[LANG] || "ru_RU");
+    // canonical: язык из ссылки ?lang= — на свою версию; без параметра — корень
+    const ql = new URLSearchParams(location.search).get("lang");
+    set('link[rel="canonical"]', "href", "https://taza-aba.surge.sh/" + (SEO[ql] ? "?lang=" + ql : ""));
+  } catch (e) {}
+}
+function setLang(l) { try { const u = new URL(location.href); if (u.searchParams.has("lang")) { u.searchParams.set("lang", l); history.replaceState(history.state, "", u); } } catch (e) {} LANG = l; localStorage.setItem("tazaAba.lang", l); document.documentElement.lang = l === "ky" ? "ky" : l; }
 
 /* Ещё / Жалобы / Эко-маршруты / быстрые действия */
 Object.assign(DICT.ru, {

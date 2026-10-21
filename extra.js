@@ -170,12 +170,13 @@ function detectQuick(s) {
   return null;
 }
 const PROVIDERS = {
+  free: { free: true, name: "Pollinations.AI → LLM7.io" },
   rules: null,
   openai: { url: "https://api.openai.com/v1", model: "gpt-4o-mini", name: "OpenAI" },
   gemini: { url: "https://generativelanguage.googleapis.com/v1beta/openai", model: "gemini-2.0-flash", name: "Google Gemini" },
   xai: { url: "https://api.x.ai/v1", model: "grok-3-mini", name: "xAI Grok" },
 };
-const provOf = cfg => cfg.provider || (cfg.key ? "openai" : "rules");
+const provOf = cfg => cfg.provider || (cfg.key ? "openai" : "free");   // по умолчанию — бесплатный ИИ (ai.js)
 async function answerFree2(q) {
   const cfg = llmCfg(), prov = provOf(cfg);
   const qk = detectQuick(q);
@@ -199,13 +200,15 @@ async function answerFree2(q) {
   }
 }
 
-const ADV_MODES = ["health", "kids", "asthma", "sport", "heating", "route"];
+const ADV_MODES = ["chat", "health", "kids", "asthma", "sport", "heating", "route"];
 const QUICK = ["walk", "windows", "mask", "coal", "school"];
-const MODE_ICON = { health: "💚", kids: "🧒", asthma: "🫁", sport: "🏃", heating: "🔥", route: "🧭" };
+const MODE_ICON = { chat: "💬", health: "💚", kids: "🧒", asthma: "🫁", sport: "🏃", heating: "🔥", route: "🧭" };
 function viewAdvisor2(el) {
-  if (!adv.mode) adv.mode = "heating";
+  aiRestore();
   const cfg = llmCfg(), prov = provOf(cfg), P = getProfile();
-  let chat = botMsg(t("advHello"));
+  const aiOn = prov !== "rules" && (prov === "free" || !!cfg.key);
+  if (!adv.mode) adv.mode = aiOn ? "chat" : "heating";
+  let chat = adv.mode === "chat" ? botMsg(esc(AIT("hello"))) : botMsg(t("advHello"));
   if (adv.mode === "heating") {
     chat += botMsg(A("heatIntro"));
     ADV_STEPS.forEach((s, i) => {
@@ -215,7 +218,7 @@ function viewAdvisor2(el) {
     });
     if (adv.result) chat += `<div class="bot-ava"><div class="a">🌻</div><div class="msg bot rec">${recHTML(adv.result)}</div></div>`;
   }
-  adv.extra.forEach(m => { chat += m.me ? meMsg(m.text) : botMsg(m.quick ? quickAnswer(m.quick) : m.key ? t(m.key) : m.html); });
+  adv.extra.forEach((m, i) => { chat += m.me ? meMsg(m.text) : m.ai ? `<div class="bot-ava"><div class="a">🌻</div><div class="msg bot ai" data-ai="${i}"></div></div>` : botMsg(m.quick ? quickAnswer(m.quick) : m.key ? t(m.key) : m.html); });
   let chips = "";
   if (adv.mode === "heating") {
     if (!adv.result && adv.step < ADV_STEPS.length) chips = ADV_STEPS[adv.step].opts.map(o => `<button data-ans="${o.v}">${o.l()}</button>`).join("");
@@ -227,7 +230,7 @@ function viewAdvisor2(el) {
   el.innerHTML = `
     <h1>🤖 ${t("advTitle")}</h1>
     <p class="sub">${t("advSub")}</p>
-    <div class="rule-note">${prov !== "rules" && cfg.key ? "🟢 " + t("llmOn") + " · " + (PROVIDERS[prov]?.name || "") : "⚙️ " + A("rulesMode")}</div>
+    <div class="rule-note">${prov === "free" ? AIT("on") : prov !== "rules" && cfg.key ? "🟢 " + t("llmOn") + " · " + esc(PROVIDERS[prov]?.name || "") : "⚙️ " + A("rulesMode")}</div>
     <div class="adv-modes" role="tablist" aria-label="${A("modesLbl")}">${ADV_MODES.map(m => `<button role="tab" aria-selected="${adv.mode === m}" class="${adv.mode === m ? "on" : ""}" data-mode="${m}">${MODE_ICON[m]} ${A("m_" + m)}</button>`).join("")}</div>
     <details class="card adv-profile" ${adv.profOpen ? "open" : ""}><summary>👤 ${A("pTitle")}</summary>
       <div class="pgrid">${chk("kids", "pKids")}${chk("asthma", "pAsthma")}${chk("elderly", "pElderly")}${chk("sport", "pSport")}</div>
@@ -236,19 +239,22 @@ function viewAdvisor2(el) {
     </details>
     <div class="chat" id="chat">${chat}</div>
     <div class="chips">${chips}</div>
+    ${aiOn ? `<div class="quick-q ai-sugg"><span class="qlbl">${AIT("suggL")}</span>${(AI_T[LANG] || AI_T.en).s.map((q, i) => `<button data-sq="${i}">${esc(q)}</button>`).join("")}</div>` : ""}
     <div class="quick-q"><span class="qlbl">${A("quickLbl")}</span>${QUICK.map(q => `<button data-q="${q}">${A("q_" + q)}</button>`).join("")}</div>
-    <form class="ask" id="askForm"><input id="askIn" aria-label="${esc(t("askPh"))}" placeholder="${t("askPh")}" autocomplete="off">${hasSR ? `<button class="btn ghost mic" type="button" id="micBtn" aria-label="${A("voice")}" title="${A("voice")}">🎤</button>` : ""}<button class="btn" type="submit" aria-label="→">→</button></form>
+    <form class="ask" id="askForm"><input id="askIn" aria-label="${esc(t("askPh"))}" placeholder="${t("askPh")}" autocomplete="off">${hasSR ? `<button class="btn ghost mic" type="button" id="micBtn" aria-label="${A("voice")}" title="${A("voice")}">🎤</button>` : ""}<button class="btn ghost" type="button" id="aiStop" hidden>${AIT("stop")}</button><button class="btn" type="submit" aria-label="→">→</button></form>
+    <p class="small muted ai-priv">${esc(aiPrivacyLine())}${adv.extra.length ? ` · <a href="#" id="aiClear">${AIT("clear")}</a>` : ""}</p>
     <details class="card how" id="llmBox"><summary>${t("llmTitle")}</summary>
       <p class="small muted" style="font-weight:700">${t("llmNote")}</p>
       <label for="llmProv">${A("provLbl")}</label>
-      <select id="llmProv">${Object.keys(PROVIDERS).map(k => `<option value="${k}" ${k === prov ? "selected" : ""}>${k === "rules" ? A("p_rules") : PROVIDERS[k].name}</option>`).join("")}</select>
-      <div id="llmFields" class="${prov === "rules" ? "hidden" : ""}">
+      <select id="llmProv">${Object.keys(PROVIDERS).map(k => `<option value="${k}" ${k === prov ? "selected" : ""}>${k === "rules" ? A("p_rules") : k === "free" ? esc(AIT("freeName") + " · " + PROVIDERS.free.name) : PROVIDERS[k].name}</option>`).join("")}</select>
+      <div id="llmFields" class="${prov === "rules" || prov === "free" ? "hidden" : ""}">
         <label for="llmUrl">${t("baseUrl")}</label><input id="llmUrl" value="${esc(cfg.url || pv.url || "")}">
         <label for="llmModel">${t("model")}</label><input id="llmModel" value="${esc(cfg.model || pv.model || "")}">
         <label for="llmKey">${t("apiKey")}</label><input id="llmKey" type="password" value="${esc(cfg.key || "")}" placeholder="API key" autocomplete="off">
       </div>
       <div class="row" style="margin-top:12px"><button class="btn" id="llmSave" style="flex:1">${t("saveBtn")}</button><button class="btn ghost" id="llmClear" style="flex:1">${t("clearBtn")}</button></div>
     </details>`;
+  aiHydrate(el);   // ответы ИИ: безопасная разметка узлами DOM
   // копировать / поделиться для каждого ответа
   el.querySelectorAll(".msg.bot").forEach((m, i) => {
     if (i === 0) return;
@@ -261,10 +267,10 @@ function viewAdvisor2(el) {
     if (navigator.share) { try { await navigator.share({ title: "Таза Аба", text }); } catch {} }
     else { try { await navigator.clipboard.writeText(text); toast(A("copied")); } catch {} }
   });
-  const rerender = () => { if (location.hash.startsWith("#advisor")) { viewAdvisor2($("#view")); decorate($("#view")); scrollChat(); } };
+  const rerender = () => { aiSave(); if (location.hash.startsWith("#advisor")) { viewAdvisor2($("#view")); decorate($("#view")); scrollChat(); } };
   el.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
     adv.mode = b.dataset.mode;
-    if (adv.mode !== "heating") adv.extra.push({ me: true, text: MODE_ICON[adv.mode] + " " + A("m_" + adv.mode) }, { quick: adv.mode });
+    if (adv.mode !== "heating" && adv.mode !== "chat") adv.extra.push({ me: true, text: MODE_ICON[adv.mode] + " " + A("m_" + adv.mode) }, { quick: adv.mode });
     rerender();
   });
   el.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { adv.extra.push({ me: true, text: A("q_" + b.dataset.q) }, { quick: b.dataset.q }); rerender(); });
@@ -295,11 +301,13 @@ function viewAdvisor2(el) {
   if (rs) rs.onclick = () => { adv = { answers: {}, step: 0, extra: [], result: null, mode: "heating" }; rerender(); };
   $("#askForm").onsubmit = async e => {
     e.preventDefault();
-    const q = $("#askIn").value.trim(); if (!q) return;
-    adv.extra.push({ me: true, text: q }); rerender(); typing(); scrollChat();
-    const reply = await answerFree2(q);
-    adv.extra.push(reply); rerender();
+    const f = $("#askForm"); if (f.classList.contains("busy")) return;
+    const q = $("#askIn").value.trim().slice(0, 2000); if (!q) return;
+    await aiSubmit(q, () => { rerender(); scrollChat(); });
   };
+  el.querySelectorAll("[data-sq]").forEach(b => b.onclick = () => { const i = $("#askIn"); i.value = (AI_T[LANG] || AI_T.en).s[+b.dataset.sq]; $("#askForm").requestSubmit(); });
+  const st = $("#aiStop"); if (st) st.onclick = () => aiStop();
+  const cl = $("#aiClear"); if (cl) cl.onclick = e => { e.preventDefault(); aiStop(); adv.extra = []; adv.result = null; adv.step = 0; adv.answers = {}; aiSave(); rerender(); };
   const mic = $("#micBtn");
   if (mic) mic.onclick = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const rec = new SR();
@@ -311,12 +319,12 @@ function viewAdvisor2(el) {
   };
   $("#llmProv").onchange = e => {
     const p = PROVIDERS[e.target.value];
-    $("#llmFields").classList.toggle("hidden", !p);
-    if (p) { $("#llmUrl").value = p.url; $("#llmModel").value = p.model; }
+    $("#llmFields").classList.toggle("hidden", !p || !!p.free);
+    if (p && !p.free) { $("#llmUrl").value = p.url; $("#llmModel").value = p.model; }
   };
   $("#llmSave").onclick = () => {
     const provider = $("#llmProv").value;
-    const c = provider === "rules" ? { provider } : { provider, url: $("#llmUrl").value.trim().replace(/\/$/, ""), model: $("#llmModel").value.trim(), key: $("#llmKey").value.trim() };
+    const c = provider === "rules" || provider === "free" ? { provider } : { provider, url: $("#llmUrl").value.trim().replace(/\/$/, ""), model: $("#llmModel").value.trim(), key: $("#llmKey").value.trim() };
     localStorage.setItem(LLM_STORE, JSON.stringify(c)); toast(t("llmSaved")); rerender();
   };
   $("#llmClear").onclick = () => { localStorage.removeItem(LLM_STORE); toast(t("llmSaved")); rerender(); };

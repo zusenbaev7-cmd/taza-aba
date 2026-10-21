@@ -1,4 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://taza-aba.surge.sh/</loc><lastmod>2026-10-20</lastmod><changefreq>daily</changefreq></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://taza-aba.surge.sh/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/"/>
+  </url>
+  <url>
+    <loc>https://taza-aba.surge.sh/?lang=ru</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/"/>
+  </url>
+  <url>
+    <loc>https://taza-aba.surge.sh/?lang=ky</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/"/>
+  </url>
+  <url>
+    <loc>https://taza-aba.surge.sh/?lang=en</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/"/>
+  </url>
+  <url>
+    <loc>https://taza-aba.surge.sh/?lang=tr</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/"/>
+  </url>
 </urlset>

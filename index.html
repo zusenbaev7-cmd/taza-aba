@@ -2,16 +2,16 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-uaDVzMzVmI+lDcrRBmPJRmkN78LDYjDogddBpBdjPLo=' 'sha256-HaXecz5EsHKWUXSTl0HSRxPRGQfEopInn0owVoEXlJc=' 'sha256-z+KGtNxf10JzKdJxMiSxIFS7Edw/NZJA93xJlMsSXFE=' 'sha256-bzlm4T1fhMNbAvzVNN14ucgRg5OIugAdQ/IoRLvgXXU=' https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https: mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-uaDVzMzVmI+lDcrRBmPJRmkN78LDYjDogddBpBdjPLo=' 'sha256-ZjJY3SxvJHEuUi4xMSf6xOoKv9XfxouNSlVNovAl4oc=' 'sha256-z+KGtNxf10JzKdJxMiSxIFS7Edw/NZJA93xJlMsSXFE=' 'sha256-bzlm4T1fhMNbAvzVNN14ucgRg5OIugAdQ/IoRLvgXXU=' https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self' https: mailto:">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF1DF">
-<meta name="description" content="Таза Аба — качество воздуха в Бишкеке, 58 городах Кыргызстана и Турции: модель CAMS (Open-Meteo) и народные датчики Sensor.Community, прогноз смога, советы и жалобы на дым.">
+<meta name="description" content="Качество воздуха в Бишкеке и 58 городах Кыргызстана и Турции: AQI по районам, прогноз смога, PM2.5, эко-маршруты, ИИ-советник по здоровью. Бесплатно, 4 языка.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Таза Аба">
-<meta property="og:url" content="https://zusenbaev7-cmd.github.io/taza-aba/">
+<meta property="og:url" content="https://taza-aba.surge.sh/">
 <meta property="og:title" content="Таза Аба — чистый воздух рядом с домом">
 <meta property="og:description" content="Реальный AQI по районам, риск вечернего смога, эко-маршруты и честные жалобы на дым. Данные Open-Meteo и Sensor.Community.">
-<meta property="og:image" content="https://zusenbaev7-cmd.github.io/taza-aba/icons/og.png">
+<meta property="og:image" content="https://taza-aba.surge.sh/icons/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Таза Аба — тундук, название и слоган">
@@ -19,18 +19,30 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Таза Аба — чистый воздух рядом с домом">
 <meta name="twitter:description" content="Реальный AQI по районам, риск вечернего смога, эко-маршруты и честные жалобы на дым.">
-<meta name="twitter:image" content="https://zusenbaev7-cmd.github.io/taza-aba/icons/og.png">
+<meta name="twitter:image" content="https://taza-aba.surge.sh/icons/og.png">
 
 <script>/* хранилище: если localStorage/sessionStorage недоступны (данные сайтов запрещены, WebView, песочница) — подменяем памятью, чтобы приложение не падало пустым экраном; safeLS — обёртка с try/catch */(function(){function mem(){var m={},S={getItem:function(k){k=String(k);return Object.prototype.hasOwnProperty.call(m,k)?m[k]:null},setItem:function(k,v){m[String(k)]=String(v)},removeItem:function(k){delete m[String(k)]},clear:function(){m={}},key:function(i){return Object.keys(m)[i]||null}};Object.defineProperty(S,"length",{get:function(){return Object.keys(m).length}});return S}["localStorage","sessionStorage"].forEach(function(n){try{var x=window[n];x.getItem("_t")}catch(e){try{Object.defineProperty(window,n,{value:mem(),configurable:true,writable:true});window.__memStorage=true}catch(_){}}});window.safeLS={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};})();</script>
-<script>/* тема до отрисовки, без вспышки */(function(){try{var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var ac=localStorage.getItem("tazaAba.accent")==="blue";document.documentElement.dataset.accent=ac?"blue":"green";document.querySelector('meta[name="theme-color"]').content=d?(ac?"#0D1722":"#0E1A14"):(ac?"#E9F1F6":"#EEF1DF");}catch(e){}})();</script>
+<script>/* тема до отрисовки, без вспышки */(function(){try{document.documentElement.classList.add("js");var m=localStorage.getItem("tazaAba.theme")||"auto",d=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var ac=localStorage.getItem("tazaAba.accent")==="blue";document.documentElement.dataset.accent=ac?"blue":"green";document.querySelector('meta[name="theme-color"]').content=d?(ac?"#0D1722":"#0E1A14"):(ac?"#E9F1F6":"#EEF1DF");}catch(e){}})();</script>
 <script>/* полифиллы для старых Firefox/Safari + класс ff (в Firefox backdrop-filter очень тормозит прокрутку) */(function(){var w=window,h=document.documentElement;if(/Firefox\//.test(navigator.userAgent))h.classList.add("ff");if(!w.structuredClone)w.structuredClone=function(o){return o===undefined?o:JSON.parse(JSON.stringify(o))};if(!w.requestIdleCallback){w.requestIdleCallback=function(f,o){var t=Date.now();return setTimeout(function(){f({didTimeout:false,timeRemaining:function(){return Math.max(0,50-(Date.now()-t))}})},1)};w.cancelIdleCallback=clearTimeout}if(w.AbortSignal&&!AbortSignal.timeout)AbortSignal.timeout=function(ms){var c=new AbortController();setTimeout(function(){c.abort()},ms);return c.signal};})();</script>
-<title>Таза Аба — качество воздуха в Кыргызстане и Турции</title>
+<title>Таза Аба — качество воздуха и смог в Бишкеке, AQI Кыргызстана</title>
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="icons/favicon-16.png" sizes="16x16" type="image/png">
 <link rel="icon" href="icons/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="canonical" href="https://taza-aba.surge.sh/">
+<link rel="alternate" hreflang="ru" href="https://taza-aba.surge.sh/?lang=ru">
+<link rel="alternate" hreflang="ky" href="https://taza-aba.surge.sh/?lang=ky">
+<link rel="alternate" hreflang="en" href="https://taza-aba.surge.sh/?lang=en">
+<link rel="alternate" hreflang="tr" href="https://taza-aba.surge.sh/?lang=tr">
+<link rel="alternate" hreflang="x-default" href="https://taza-aba.surge.sh/">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+<!-- Проверка владения (вставьте код из консоли и раскомментируйте):
+<meta name="google-site-verification" content="ВСТАВЬТЕ_КОД_GOOGLE">
+<meta name="msvalidate.01" content="ВСТАВЬТЕ_КОД_BING">
+<meta name="yandex-verification" content="ВСТАВЬТЕ_КОД_ЯНДЕКС">
+-->
 <link rel="manifest" href="manifest.webmanifest">
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebApplication", "name": "Таза Аба", "alternateName": ["Taza Aba", "Таза Аба — качество воздуха"], "url": "https://taza-aba.surge.sh/", "applicationCategory": "HealthApplication", "applicationSubCategory": "Air quality", "operatingSystem": "Any (web, PWA), Windows", "browserRequirements": "Requires JavaScript", "inLanguage": ["ru", "ky", "en", "tr"], "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Качество воздуха в Бишкеке и 58 городах Кыргызстана и Турции: AQI и PM2.5 по районам, прогноз смога, эко-маршруты, ИИ-советник.", "image": "https://taza-aba.surge.sh/icons/og.png", "screenshot": "https://taza-aba.surge.sh/icons/og.png", "areaServed": [{"@type": "Country", "name": "Kyrgyzstan"}, {"@type": "Country", "name": "Turkey"}], "publisher": {"@id": "https://taza-aba.surge.sh/#org"}}, {"@context": "https://schema.org", "@type": "Organization", "@id": "https://taza-aba.surge.sh/#org", "name": "Таза Аба", "alternateName": "Taza Aba", "url": "https://taza-aba.surge.sh/", "logo": "https://taza-aba.surge.sh/icons/icon-512.png", "sameAs": ["https://github.com/zusenbaev7-cmd/taza-aba", "https://zusenbaev7-cmd.github.io/taza-aba/"]}]</script>
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +80,19 @@
   </header>
 
   <div id="alertBanner" class="alert-banner hidden"></div>
-  <main id="view" class="view"></main>
+  <main id="view" class="view"><section class="seo-intro" id="seoIntro">
+    <h1>Таза Аба — качество воздуха и смог в Бишкеке, AQI Кыргызстана и Турции</h1>
+    <noscript><p class="seo-ns"><b>Включите JavaScript</b>, чтобы увидеть карту и живой AQI · JavaScript'ти күйгүзүңүз · Please enable JavaScript · Lütfen JavaScript'i açın</p></noscript>
+    <div lang="ru"><h2>Смог в Бишкеке: качество воздуха по районам</h2>
+      <p>«Таза Аба» — бесплатное приложение о качестве воздуха в Кыргызстане и Турции. Индекс AQI и концентрация PM2.5 по районам Бишкека и 58 городам, почасовой прогноз смога, лучшее время для прогулки, эко-маршруты, советы для детей, астматиков и спортсменов, ИИ-советник, жалобы на дым и угольное отопление. Данные: модель CAMS через Open-Meteo (оценка, не измерение) и народные датчики Sensor.Community.</p></div>
+    <div lang="ky"><h2>Бишкектеги түтүн (смог): абанын сапаты райондор боюнча</h2>
+      <p>«Таза Аба» — Кыргызстан менен Түркиядагы абанын сапаты тууралуу акысыз тиркеме. Абанын булганышы: AQI индекси жана PM2.5 Бишкектин райондору жана 58 шаар боюнча, түтүндүн сааттык божомолу, сейилдөөгө эң ылайыктуу убакыт, эко-маршруттар, балдар жана астмасы барлар үчүн кеңештер, ЖИ-кеңешчи.</p></div>
+    <div lang="en"><h2>Bishkek smog and air quality in Kyrgyzstan</h2>
+      <p>Taza Aba is a free app for air quality in Kyrgyzstan and Turkey: live AQI and PM2.5 by district for Bishkek and 58 cities, an hourly smog forecast, the best time to go outside, eco-routes, advice for children, people with asthma and athletes, and a free AI advisor. Data: the CAMS model via Open-Meteo (an estimate, not a measurement) and Sensor.Community citizen sensors.</p></div>
+    <div lang="tr"><h2>Türkiye ve Kırgızistan'da hava kalitesi ve duman</h2>
+      <p>Taza Aba; Kırgızistan ve Türkiye için ücretsiz hava kalitesi uygulamasıdır: semt bazında canlı AQI ve PM2.5, saatlik hava kirliliği tahmini, dışarı çıkmak için en iyi saat, eko rotalar ve ücretsiz YZ danışman.</p></div>
+    <p><b>Кыргызстан:</b> Бишкек, Ош, Джалал-Абад, Каракол, Нарын, Талас, Баткен, Токмок, Балыкчы, Чолпон-Ата, Кара-Балта, Кант, Узген, Кара-Суу, Кызыл-Кия, Майлуу-Суу, Таш-Кумыр, Токтогул и другие — 38 населённых пунктов. <b>Türkiye:</b> İstanbul, Ankara, İzmir, Bursa, Antalya, Konya, Gaziantep, Erzurum, Trabzon, Adana, Kayseri, Samsun, Diyarbakır, Eskişehir, Mersin, Denizli, Şanlıurfa, Malatya, Van, Kocaeli (İzmit).</p>
+  </section></main>
 
   <nav class="tabbar" id="tabbar" aria-label="Навигация">
     <div class="side-brand"><svg class="tunduk" viewBox="0 0 64 64" aria-hidden="true"><g fill="#38BDF8"><path d="M51.0 32.0L61.9 33.8L61.9 30.2z"/><path d="M50.4 36.9L60.5 41.5L61.4 38.0z"/><path d="M48.5 41.5L57.0 48.5L58.8 45.4z"/><path d="M45.4 45.4L51.9 54.4L54.4 51.9z"/><path d="M41.5 48.5L45.4 58.8L48.5 57.0z"/><path d="M36.9 50.4L38.0 61.4L41.5 60.5z"/><path d="M32.0 51.0L30.2 61.9L33.8 61.9z"/><path d="M27.1 50.4L22.5 60.5L26.0 61.4z"/><path d="M22.5 48.5L15.5 57.0L18.6 58.8z"/><path d="M18.6 45.4L9.6 51.9L12.1 54.4z"/><path d="M15.5 41.5L5.2 45.4L7.0 48.5z"/><path d="M13.6 36.9L2.6 38.0L3.5 41.5z"/><path d="M13.0 32.0L2.1 30.2L2.1 33.8z"/><path d="M13.6 27.1L3.5 22.5L2.6 26.0z"/><path d="M15.5 22.5L7.0 15.5L5.2 18.6z"/><path d="M18.6 18.6L12.1 9.6L9.6 12.1z"/><path d="M22.5 15.5L18.6 5.2L15.5 7.0z"/><path d="M27.1 13.6L26.0 2.6L22.5 3.5z"/><path d="M32.0 13.0L33.8 2.1L30.2 2.1z"/><path d="M36.9 13.6L41.5 3.5L38.0 2.6z"/><path d="M41.5 15.5L48.5 7.0L45.4 5.2z"/><path d="M45.4 18.6L54.4 12.1L51.9 9.6z"/><path d="M48.5 22.5L58.8 18.6L57.0 15.5z"/><path d="M50.4 27.1L61.4 26.0L60.5 22.5z"/></g><circle cx="32" cy="32" r="18" fill="#1F5A3D"/><circle cx="32" cy="32" r="13" fill="#38BDF8"/><g stroke="#1F5A3D" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M21 27q11 -6 22 0M21 32h22M21 37q11 6 22 0M27 21q-6 11 0 22M32 19v26M37 21q6 11 0 22"/></g></svg><b>Таза Аба</b></div>
@@ -105,6 +129,7 @@
 <script src="extra.js"></script>
 <script src="i18n_tr.js"></script>
 <script src="quick.js"></script>
+<script src="ai.js"></script>
 <script src="sources.js"></script>
 <script src="app.js"></script>
 <script src="maarif.js"></script>
