@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://taza-aba.surge.sh/sitemap.xml

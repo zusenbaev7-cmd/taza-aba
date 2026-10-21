@@ -92,3 +92,8 @@
 - Примечание: с origin `localhost` Pollinations требует Turnstile (403) → офлайн-exe отвечает через LLM7; на surge/Pages работает Pollinations.
 - **SEO**: заголовок/описание на языке интерфейса (`applySeo`), `?lang=ru|ky|en|tr` + hreflang и x-default, canonical → surge, JSON-LD WebApplication + Organization, статичное 4-язычное вступление с ключевыми словами и списком городов (видно без JS), sitemap с alternates/lastmod, заготовки verification (Google/Bing/Яндекс), ключ IndexNow.
 - sw v33 (+ai.js в SHELL), CSP пересчитан.
+
+## v34 — канонический адрес → GitHub Pages (21.10.2026)
+- *.surge.sh принудительно отдаёт robots.txt «Disallow: /» (политика surge), поэтому canonical, hreflang, og:url, JSON-LD и sitemap указывают на https://zusenbaev7-cmd.github.io/taza-aba/ на обоих хостах; surge — зеркало (SITE_URL для «Поделиться» остаётся surge).
+- deploy-surge.sh больше не переписывает index.html (только config.js), не выкладывает sitemap.xml/robots.txt на surge. robots.txt удалён (на Pages он лежал бы не в корне домена и не работал бы).
+- IndexNow повторно отправлен для адресов Pages (keyLocation /taza-aba/<key>.txt). sw v34.
