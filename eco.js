@@ -52,7 +52,10 @@ const ECO_READY = {
     { id: "e_tokt", mode: "walk", n: { ru: "Парк Спутник → Парк им. Токтогула", ky: "Спутник паркы → Токтогул паркы", en: "Sputnik Park → Toktogul Park", tr: "Sputnik Parkı → Toktogul Parkı" }, p: [[40.5131, 72.8031], [40.5154, 72.8090]] },
     { id: "e_oshu", mode: "bike", n: { ru: "ОшГУ → Сулайман-Тоо", ky: "ОшМУ → Сулайман-Тоо", en: "Osh State Univ. → Sulaiman-Too", tr: "Oş Devlet Üniv. → Süleyman Dağı" }, p: [[40.5372, 72.8052], [40.5280, 72.7880]] } ],
   karakol: [
-    { id: "e_kvp", mode: "walk", n: { ru: "Парк Победы — круг", ky: "Жеңиш паркы — айлана", en: "Victory Park loop", tr: "Zafer Parkı turu" }, p: [[42.4858, 78.4050], [42.4830, 78.4090], [42.4858, 78.4050]] } ] };
+    { id: "e_kvp", mode: "walk", n: { ru: "Парк Победы — круг", ky: "Жеңиш паркы — айлана", en: "Victory Park loop", tr: "Zafer Parkı turu" }, p: [[42.4858, 78.4050], [42.4830, 78.4090], [42.4858, 78.4050]] } ],
+  kochkor: [
+    { id: "e_kkpark", mode: "walk", n: { ru: "Центр (райадминистрация) → парк", ky: "Борбор (райадминистрация) → парк", en: "Centre (district office) → park", tr: "Merkez (ilçe yönetimi) → park" }, p: [[42.21309, 75.75381], [42.21547, 75.76153]] },
+    { id: "e_kktoo", mode: "bike", n: { ru: "Центр → айыл Кара-Тоо", ky: "Борбор → Кара-Тоо айылы", en: "Centre → Kara-Too village", tr: "Merkez → Kara-Too köyü" }, p: [[42.21309, 75.75381], [42.23048, 75.74424]] } ] };
 
 const eco = { mode: "walk", pts: [null, null], routes: [], sel: 0, busy: false, note: "" };
 let ecoAbort = null;

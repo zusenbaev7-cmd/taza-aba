@@ -1,6 +1,6 @@
 # Таза Аба — чистый воздух
 
-**Таза Аба** («чистый воздух» по-кыргызски) — веб-приложение против зимнего смога в Кыргызстане и в Турции: качество воздуха по районам, прогноз, советы и инструменты для жителей и мэрии. Охват — **58 городов**.
+**Таза Аба** («чистый воздух» по-кыргызски) — веб-приложение против зимнего смога в Кыргызстане и в Турции: качество воздуха по районам, прогноз, советы и инструменты для жителей и мэрии. Охват — **59 городов**.
 
 🌐 **Сайт:** https://taza-aba.surge.sh/ (основной) · зеркало на GitHub Pages: https://zusenbaev7-cmd.github.io/taza-aba/
 
@@ -63,7 +63,7 @@ python3 -m http.server 8765
 
 ## English
 
-**Taza Aba** ("clean air" in Kyrgyz) is a web app against winter smog in Kyrgyzstan and Turkey, covering **58 cities**. It has a district-level AQI map, a 3-day and hourly forecast, a traffic & smog view (a labelled **estimate**, not live traffic), a health adviser, complaints, a city-hall panel with a briefing sheet and an open nightly data archive (`archive/`), a map of Maarif schools, end-to-end encrypted accounts, 4 languages (KG/RU/EN/TR), and it works as an offline PWA and as a Windows app.
+**Taza Aba** ("clean air" in Kyrgyz) is a web app against winter smog in Kyrgyzstan and Turkey, covering **59 cities**. It has a district-level AQI map, a 3-day and hourly forecast, a traffic & smog view (a labelled **estimate**, not live traffic), a health adviser, complaints, a city-hall panel with a briefing sheet and an open nightly data archive (`archive/`), a map of Maarif schools, end-to-end encrypted accounts, 4 languages (KG/RU/EN/TR), and it works as an offline PWA and as a Windows app.
 
 **Data:** Open-Meteo / CAMS is a **model**, not measurements. Sensor.Community adds real low-cost sensor readings where available. Map data comes from OpenStreetMap (ODbL).
 

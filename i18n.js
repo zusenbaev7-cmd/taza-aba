@@ -294,10 +294,10 @@ function t(key, vars = {}) {
 const tr = o => (o && typeof o === "object" && !Array.isArray(o)) ? (o[LANG] ?? (LANG === "tr" ? o.en : undefined) ?? o.ru) : o;
 // SEO: заголовок, описание и canonical на языке интерфейса
 const SEO = {
-  ru: { t: "Таза Аба — качество воздуха и смог в Бишкеке, AQI Кыргызстана", d: "Качество воздуха в Бишкеке и 58 городах Кыргызстана и Турции: AQI по районам, прогноз смога, PM2.5, эко-маршруты, ИИ-советник по здоровью. Бесплатно, 4 языка." },
-  ky: { t: "Таза Аба — Бишкектеги абанын сапаты жана түтүн, AQI Кыргызстан", d: "Бишкекте жана Кыргызстан менен Түркиянын 58 шаарында абанын сапаты: райондор боюнча AQI, түтүн (смог) божомолу, PM2.5, эко-маршруттар, ЖИ-кеңешчи. Акысыз." },
-  en: { t: "Taza Aba — Bishkek air quality & smog, live AQI for Kyrgyzstan", d: "Air quality in Bishkek and 58 cities of Kyrgyzstan and Turkey: AQI by district, smog forecast, PM2.5, eco-routes and a free AI health advisor. 4 languages." },
-  tr: { t: "Taza Aba — Bişkek ve Türkiye'de hava kalitesi, canlı AQI", d: "Bişkek ile Kırgızistan ve Türkiye'nin 58 şehrinde hava kalitesi: semt bazında AQI, duman (smog) tahmini, PM2.5, eko rotalar ve ücretsiz YZ danışman." }
+  ru: { t: "Таза Аба — качество воздуха и смог в Бишкеке, AQI Кыргызстана", d: "Качество воздуха в Бишкеке и 59 городах Кыргызстана и Турции: AQI по районам, прогноз смога, PM2.5, эко-маршруты, ИИ-советник по здоровью. Бесплатно, 4 языка." },
+  ky: { t: "Таза Аба — Бишкектеги абанын сапаты жана түтүн, AQI Кыргызстан", d: "Бишкекте жана Кыргызстан менен Түркиянын 59 шаарында абанын сапаты: райондор боюнча AQI, түтүн (смог) божомолу, PM2.5, эко-маршруттар, ЖИ-кеңешчи. Акысыз." },
+  en: { t: "Taza Aba — Bishkek air quality & smog, live AQI for Kyrgyzstan", d: "Air quality in Bishkek and 59 cities of Kyrgyzstan and Turkey: AQI by district, smog forecast, PM2.5, eco-routes and a free AI health advisor. 4 languages." },
+  tr: { t: "Taza Aba — Bişkek ve Türkiye'de hava kalitesi, canlı AQI", d: "Bişkek ile Kırgızistan ve Türkiye'nin 59 şehrinde hava kalitesi: semt bazında AQI, duman (smog) tahmini, PM2.5, eko rotalar ve ücretsiz YZ danışman." }
 };
 function applySeo() {
   try {
