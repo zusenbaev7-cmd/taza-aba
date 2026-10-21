@@ -131,12 +131,14 @@ async function ecoRoute() {
 /* --- поиск: районы города + Photon (вежливо: от 3 символов, задержка 350 мс, отмена прошлых запросов) --- */
 const ecoNorm = s => String(s || "").toLowerCase().replace(/ё/g, "е").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/[«»"“”()\-–.,]/g, " ").replace(/\s+/g, " ").trim();
 let ecoPhT = 0, ecoPhAb = null;
+/* v42b: адрес по-местному — «улица Захарова, 20» (OSM KG: «Захарова улица» → «улица Захарова»); язык Photon: en → en, иначе местные названия (ru/ky/tr) */
+const ecoStreet = s => { if (!s || LANG === "en") return s; const m = String(s).match(/^(.+?)\s+(улица|проспект|переулок|бульвар|проезд|шоссе|көчөсү|проспектиси)$/i); return m ? (/^(улица|проспект|переулок|бульвар|проезд|шоссе)$/i.test(m[2]) ? m[2].toLowerCase() + " " + m[1] : s) : s; };
 async function ecoPhoton(q) { if (ecoPhAb) ecoPhAb.abort(); ecoPhAb = new AbortController(); const c = cityObj().center;
-  const u = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${c[0]}&lon=${c[1]}&limit=6&bbox=${c[1] - 0.4},${c[0] - 0.3},${c[1] + 0.4},${c[0] + 0.3}`;
+  const u = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lang=${LANG === "en" ? "en" : "default"}&lat=${c[0]}&lon=${c[1]}&limit=10&bbox=${c[1] - 0.4},${c[0] - 0.3},${c[1] + 0.4},${c[0] + 0.3}`;
   const j = await (await fetch(u, { signal: ecoPhAb.signal })).json();
-  return (j.features || []).map(f => { const p = f.properties, nm = p.name || [p.street, p.housenumber].filter(Boolean).join(" "); return nm ? { ll: [f.geometry.coordinates[1], f.geometry.coordinates[0]], label: nm, sub: [p.street && p.name ? p.street : "", p.district || p.city || ""].filter(Boolean).join(", ") } : null; }).filter(Boolean); }
+  return (j.features || []).map(f => { const p = f.properties; p.street = ecoStreet(p.street); const nm = p.name || [p.street, p.housenumber].filter(Boolean).join(", "); return nm ? { ll: [f.geometry.coordinates[1], f.geometry.coordinates[0]], label: nm, sub: [p.street && p.name ? p.street : "", p.district || p.city || ""].filter(Boolean).join(", ") } : null; }).filter(Boolean); }
 function ecoLocal(q) { const n = ecoNorm(q); if (!n) return [];
-  const ds = DISTRICTS.map(d => ({ d, b: Math.min(...Object.values(d.name || {}).map(x => { x = ecoNorm(x); return x.startsWith(n) ? 0 : x.split(" ").some(w => w.startsWith(n)) ? 1 : x.includes(n) ? 2 : 9; })) })).filter(x => x.b < 9).sort((a, b) => a.b - b.b).slice(0, 5)
+  const ds = DISTRICTS.map(d => ({ d, b: Math.min(...Object.values(d.name || {}).map(x => { x = ecoNorm(x); return x.startsWith(n) ? 0 : x.split(" ").some(w => w.startsWith(n)) ? 1 : x.includes(n) ? 2 : 9; })) })).filter(x => x.b < 9).sort((a, b) => a.b - b.b).slice(0, 8)
     .map(x => ({ ll: [x.d.lat, x.d.lon], label: dName(x.d), sub: x.d.grp && typeof GRP_NAME !== "undefined" && GRP_NAME[x.d.grp] ? tr(GRP_NAME[x.d.grp]) : tr(cityObj().name), a: air.byDistrict[x.d.id] && air.byDistrict[x.d.id].aqi }));
   const rd = (ECO_READY[CITY] || []).flatMap(r => r.p.map((p, i) => ({ ll: p, label: tr(r.n).split(" → ")[Math.min(i, tr(r.n).split(" → ").length - 1)] }))).filter(x => ecoNorm(x.label).includes(n)).slice(0, 3);
   return [...ds, ...rd]; }
@@ -162,13 +164,23 @@ function ecoForm(f) {
   f.querySelector("[data-swap]").onclick = () => { eco.pts.reverse(); ecoRoute(); ecoRender(); };
   f.querySelector("[data-me]").onclick = () => { if (!navigator.geolocation) return toast(ET("locErr")); toast(ET("loc"));
     navigator.geolocation.getCurrentPosition(p => ecoSetPt(0, [p.coords.latitude, p.coords.longitude], ET("my")), () => toast(ET("locErr")), { enableHighAccuracy: true, timeout: 10000 }); };
+  document.querySelectorAll("body > .eco-sug").forEach(x => x.remove());   /* v42b: старые выпадающие списки (портал) */
   f.querySelectorAll(".eco-pt").forEach(row => { const i = +row.dataset.i, inp = row.querySelector("input"), ul = row.querySelector("ul"); let res = [], cur = -1;
-    const draw = () => { ul.innerHTML = res.length ? res.map((r, k) => `<li role="option" data-k="${k}">${r.a != null ? `<i style="background:${ecoCol(r.a)}"></i>` : '<i class="pl"></i>'}<span>${esc(r.label)}${r.sub ? `<small>${esc(r.sub)}</small>` : ""}</span>${r.a != null ? `<b>${r.a}</b>` : ""}</li>`).join("") : `<li class="none">${esc(ET("none"))}</li>`; ul.hidden = false; };
+    document.body.appendChild(ul); ul.setAttribute("role", "listbox");   /* v42b: список вне карточек — не обрезается и не просвечивает */
+    const place = () => { if (ul.hidden) return; if (!inp.isConnected) { ul.remove(); return; } const r = inp.getBoundingClientRect(), nav = document.querySelector(".tabbar, .bottom-nav, nav.tabs"), nb = nav && getComputedStyle(nav).position === "fixed" && nav.getBoundingClientRect().top > innerHeight / 2 ? nav.getBoundingClientRect().top : innerHeight;
+      const vv = window.visualViewport, vb = vv ? vv.offsetTop + vv.height : innerHeight, bot = Math.min(nb, vb), below = bot - r.bottom - 10, above = r.top - 10, up = below < 170 && above > below; ul.style.left = r.left + "px"; ul.style.width = r.width + "px";
+      ul.style.maxHeight = Math.max(120, Math.min(360, (vv ? vv.height : innerHeight) * 0.5, up ? above : below)) + "px"; if (up) { ul.style.top = ""; ul.style.bottom = (innerHeight - r.top + 4) + "px"; } else { ul.style.bottom = ""; ul.style.top = (r.bottom + 4) + "px"; } };
+    addEventListener("scroll", e => { if (e.target !== ul) place(); }, { passive: true, capture: true }); addEventListener("resize", place); if (window.visualViewport) { visualViewport.addEventListener("resize", place); visualViewport.addEventListener("scroll", place); }
+    ul.addEventListener("wheel", e => e.stopPropagation(), { passive: true }); ul.addEventListener("touchmove", e => e.stopPropagation(), { passive: true });
+    inp.addEventListener("focus", () => { if (matchMedia("(max-width: 1023px)").matches) setTimeout(() => inp.scrollIntoView({ block: "start", behavior: "smooth" }), 250); });
+    document.addEventListener("pointerdown", e => { if (!ul.hidden && e.target !== inp && !ul.contains(e.target)) ul.hidden = true; });
+    const draw0 = () => { ul.innerHTML = res.length ? res.map((r, k) => `<li role="option" data-k="${k}">${r.a != null ? `<i style="background:${ecoCol(r.a)}"></i>` : '<i class="pl"></i>'}<span>${esc(r.label)}${r.sub ? `<small>${esc(r.sub)}</small>` : ""}</span>${r.a != null ? `<b>${r.a}</b>` : ""}</li>`).join("") : `<li class="none">${esc(ET("none"))}</li>`; ul.hidden = false; };
+    const draw = () => { draw0(); place(); };
     const pick = k => { const r = res[k]; if (!r) return; ul.hidden = true; ecoSetPt(i, r.ll, r.label); };
     inp.addEventListener("input", () => { const q = inp.value.trim(); res = ecoLocal(q); cur = -1; if (!q) { ul.hidden = true; return; } draw();
-      clearTimeout(ecoPhT); if (q.length >= 3) ecoPhT = setTimeout(() => ecoPhoton(q).then(ph => { if (inp.value.trim() !== q) return; const seen = new Set(res.map(r => ecoNorm(r.label))); res = [...res, ...ph.filter(p => !seen.has(ecoNorm(p.label)))].slice(0, 9); draw(); }).catch(() => {}), 350); });
+      clearTimeout(ecoPhT); if (q.length >= 3) ecoPhT = setTimeout(() => ecoPhoton(q).then(ph => { if (inp.value.trim() !== q) return; const seen = new Set(res.map(r => ecoNorm(r.label))); res = [...res, ...ph.filter(p => !seen.has(ecoNorm(p.label)))].slice(0, 12); draw(); }).catch(() => {}), 350); });
     inp.addEventListener("keydown", e => { const li = ul.querySelectorAll("li[data-k]"); if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!li.length) return; cur = (cur + (e.key === "ArrowDown" ? 1 : -1) + li.length) % li.length; li.forEach((x, j) => x.classList.toggle("on", j === cur)); } else if (e.key === "Enter") { e.preventDefault(); pick(cur >= 0 ? cur : 0); } else if (e.key === "Escape") ul.hidden = true; });
-    inp.addEventListener("blur", () => setTimeout(() => ul.hidden = true, 150));
+    inp.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== inp) ul.hidden = true; }, 200));
     ul.addEventListener("mousedown", e => { const li = e.target.closest("li[data-k]"); if (li) { e.preventDefault(); pick(+li.dataset.k); } }); });
 }
 function ecoBar(S) { const n = 40, step = Math.max(1, S.length / n); const cs = []; for (let i = 0; i < S.length; i += step) { const s = S[Math.floor(i)]; cs.push(s.a == null ? "#ccd" : ecoCol(s.a)); } return `<i class="eco-bar" style="background:linear-gradient(90deg,${cs.join(",")})"></i>`; }
