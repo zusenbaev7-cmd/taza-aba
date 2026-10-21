@@ -140,7 +140,22 @@ function mkAirRec(r) {
     src: "model", model: { aqi: a0, pm25: r.current.pm2_5 },
   };
 }
+/* Контроль качества датчиков Sensor.Community: одиночный датчик, показывающий во много раз больше соседних датчиков
+ * (или модели CAMS, если соседей нет), а также насыщенный (PM2.5 ≥ 500), считается сбойным и не участвует в расчётах. */
+function sensorQC(list, models) {
+  const ok = [], bad = [];
+  list.forEach(s => {
+    const nb = list.filter(x => x !== s && kmDist(s, x) <= 5).map(x => x.p2);
+    let out = s.p2 >= 500;
+    if (!out && nb.length >= 2) { const m = median(nb); out = s.p2 > Math.max(3 * m, m + 60); }
+    else if (!out && models.length) { let b = null; models.forEach(md => { const k = kmDist(s, md); if (md.pm25 != null && (!b || k < b.k)) b = { k, v: md.pm25 }; }); if (b) out = s.p2 > Math.max(4 * b.v, b.v + 100); }
+    (out ? bad : ok).push(s);
+  });
+  if (bad.length) console.info("Sensor QC: excluded", bad.length, "outlier sensor(s)", bad.map(x => Math.round(x.p2)));
+  return { ok, bad };
+}
 function measuredRec(rec, d, sensors, stations) {
+  const nBad = (air.sensorsBad || []).filter(x => kmDist(d, x) <= 2.5).length; if (nBad) rec.sDrop = nBad;
   const s = sensorsNear(sensors, d);
   if (s) {
     Object.assign(rec, { aqi: s.aqi, pm25: s.pm25, pm10: s.pm10 ?? rec.pm10, src: "sensors", nSensors: s.n, sensorAgeMin: s.age });
@@ -171,9 +186,10 @@ async function loadAirImpl() {
   const farR = ECO_ROUTES.filter(r => r.far), pts = [...DISTRICTS.map(d => [d.lat, d.lon]), ...farR.map(r => r.path[r.path.length >> 1])];
   const wurl = `https://api.open-meteo.com/v1/forecast?latitude=${cc[0]}&longitude=${cc[1]}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,wind_speed_10m,temperature_850hPa,boundary_layer_height&forecast_days=2&wind_speed_unit=ms&timezone=auto`;
   try {
-    const [arr, w, sensors, stations] = await withTimeout(Promise.all([fetchAirPts(pts), fetchJSON(wurl).catch(() => null), loadSensors(cc).catch(() => []),
+    let [arr, w, sensors, stations] = await withTimeout(Promise.all([fetchAirPts(pts), fetchJSON(wurl).catch(() => null), loadSensors(cc).catch(() => []),
       (typeof loadStations === "function" ? loadStations(cc) : Promise.resolve([])).catch(() => [])]), 20000);
     if (CITY !== reqCity) return;
+    { const q = sensorQC(sensors || [], DISTRICTS.map((d, i) => ({ lat: d.lat, lon: d.lon, pm25: arr[i] && arr[i].current ? arr[i].current.pm2_5 : null }))); sensors = q.ok; air.sensorsBad = q.bad; }
     DISTRICTS.forEach((d, i) => { air.byDistrict[d.id] = measuredRec(mkAirRec(arr[i]), d, sensors, stations); });
     air.byRoute = {}; farR.forEach((r, j) => { const x = arr[DISTRICTS.length + j]; if (x && x.current) air.byRoute[r.id] = aqiOf(x.current.us_aqi); });
     air.weather = w && w.current ? w.current : null; air.wxH = w && w.hourly ? w.hourly : null;
@@ -676,7 +692,7 @@ function viewMap(el) {
   const R0 = cityObj().radius || 900, M = map;
   const nn = d => { let m = 1e9; for (const x of DISTRICTS) if (x !== d) m = Math.min(m, kmDist(d, x) * 1000); return m; };
   const pinIcon = (txt, c, sz, cl) => L.divIcon({ className: "", html: `<div class="aqi-pin${cl ? " aqi-cl" : ""}" style="width:${sz}px;height:${sz}px;background:${c}">${txt}</div>`, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
-  const popD = d => { const a = air.byDistrict[d.id], Lv = level(a.aqi); return `<b>${esc(dName(d))}</b>${d.grp && typeof GRP_NAME !== "undefined" ? `<br><small>${esc(tr(GRP_NAME[d.grp]))}</small>` : ""}<br>US AQI: <b style="color:${Lv.color}">${aqiTxt(a.aqi)}</b> — ${tr(Lv.name)}<br>PM2.5: ${fmt(a.pm25, 1)}<br>${t("popupCoal")}: ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}`; };
+  const popD = d => { const a = air.byDistrict[d.id], Lv = level(a.aqi); return `<b>${esc(dName(d))}</b>${d.grp && typeof GRP_NAME !== "undefined" ? `<br><small>${esc(tr(GRP_NAME[d.grp]))}</small>` : ""}<br>US AQI: <b style="color:${Lv.color}">${aqiTxt(a.aqi)}</b> — ${tr(Lv.name)}<br>PM2.5: ${fmt(a.pm25, 1)}<br>${t("popupCoal")}: ${d.coalShare == null ? "—" : Math.round(d.coalShare * 100) + "%"}${a.sDrop ? `<br><small style="color:#9a6b12">⚠️ ${({ ru: "датчик рядом исключён как сбойный", ky: "жакынкы датчик бузук катары эсепке алынган жок", en: "a nearby sensor was excluded as faulty", tr: "yakındaki bir sensör arızalı olarak çıkarıldı" })[LANG] || "датчик рядом исключён как сбойный"}</small>` : ""}`; };
   const MSu = window.MS_STYLE && typeof msSmog === "function" ? msSmog(M, layers.smog, popD) : null, smogT = MSu ? L.layerGroup() : layers.smog;   /* прототипы стилей ?mapstyle= */
   const circ = new Map(), pins = new Map(), pinG = L.layerGroup().addTo(smogT);
   let sat = baseMode() !== "osm";
