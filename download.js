@@ -1,6 +1,6 @@
 /* v45: «Скачать приложение» (#download) — Windows (Neutralino exe), Android (скоро), установка PWA. Файлы — ассеты GitHub Release, не в репозитории. */
 const DL = { tag: "app-v44", ver: "v44", base: "https://github.com/zusenbaev7-cmd/taza-aba/releases/download/app-v44/", rel: "https://github.com/zusenbaev7-cmd/taza-aba/releases/tag/app-v44",
-  files: { exe: { n: "TazaAba.exe", mb: 22.3 }, zip: { n: "TazaAba-Windows-portable.zip", mb: 7.4 }, apk: null } };
+  files: { exe: { n: "TazaAba.exe", mb: 22.3 }, zip: { n: "TazaAba-Windows-portable.zip", mb: 7.4 }, apk: { n: "TazaAba.apk", mb: 0.12 } } };
 const DL_T = {
   ru: { menu: "Скачать приложение", menuSub: "Windows, Android, установка с сайта", title: "Таза Аба — приложения", sub: "Тот же сервис качества воздуха — отдельным окном на компьютере и в телефоне. Бесплатно, без рекламы и регистрации.",
     win: "Windows", winSub: "Windows 10/11 · 64-бит · без установки", exe: "Скачать .exe", zip: "Портативный .zip", and: "Android", andSub: "Android 7+ · APK", soon: "Скоро", apk: "Скачать .apk",
