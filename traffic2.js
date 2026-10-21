@@ -110,32 +110,79 @@ const tfPalB = c => c < 0.35 ? "#4fb3a9" : c < 0.5 ? "#8fbf9a" : c < 0.65 ? "#e0
 const TFE_STOPS = [[0.1, [126, 200, 235]], [0.3, [150, 214, 214]], [0.45, [242, 210, 110]], [0.6, [244, 160, 84]], [0.75, [231, 92, 108]], [0.92, [160, 52, 112]]];
 const tfPalE = c => { const S = TFE_STOPS; if (c <= S[0][0]) return `rgb(${S[0][1]})`; for (let i = 1; i < S.length; i++) if (c <= S[i][0]) { const t = (c - S[i - 1][0]) / (S[i][0] - S[i - 1][0]), a = S[i - 1][1], b = S[i][1]; return `rgb(${a.map((x, k) => Math.round(x + (b[k] - x) * t)).join(",")})`; } return `rgb(${S[S.length - 1][1]})`; };
 const tfCol = (c, s) => { s = s || TF_STYLE; return s === "a" ? tfPalA(c) : s === "e" ? tfPalE(c) : tfPalB(c); };
-const TFE_T = { ru: { t: "Пробки", now: "сейчас", up: "растут", dn: "спадают", eq: "стабильно", s: ["свободно", "почти свободно", "местами затруднено", "плотное движение", "серьёзные пробки", "город стоит"], m: "оценка загруженности (модель)", f: "свободно", j: "пробка" },
-  ky: { t: "Тыгындар", now: "азыр", up: "көбөйүүдө", dn: "азаюуда", eq: "туруктуу", s: ["бош", "дээрлик бош", "жер-жерде кыйын", "жыш кыймыл", "олуттуу тыгындар", "шаар токтоп турат"], m: "жүктөлүштү баалоо (модель)", f: "бош", j: "тыгын" },
-  en: { t: "Traffic", now: "now", up: "rising", dn: "easing", eq: "steady", s: ["free flow", "mostly free", "some slowdowns", "heavy traffic", "serious jams", "gridlock"], m: "congestion estimate (model)", f: "free", j: "jam" },
-  tr: { t: "Trafik", now: "şimdi", up: "artıyor", dn: "azalıyor", eq: "sabit", s: ["akıcı", "çoğunlukla akıcı", "yer yer yavaş", "yoğun trafik", "ciddi sıkışıklık", "şehir kilit"], m: "yoğunluk tahmini (model)", f: "akıcı", j: "sıkışık" } };
+const TFE_T = { ru: {est: "оценка (модель)", more: "Подробнее", close: "Закрыть", delay: "задержка", street: "Улица", t: "Пробки", now: "сейчас", up: "растут", dn: "спадают", eq: "стабильно", s: ["свободно", "почти свободно", "местами затруднено", "плотное движение", "серьёзные пробки", "город стоит"], m: "оценка загруженности (модель)", f: "свободно", j: "пробка" },
+  ky: {est: "баалоо (модель)", more: "Кененирээк", close: "Жабуу", delay: "кечигүү", street: "Көчө", t: "Тыгындар", now: "азыр", up: "көбөйүүдө", dn: "азаюуда", eq: "туруктуу", s: ["бош", "дээрлик бош", "жер-жерде кыйын", "жыш кыймыл", "олуттуу тыгындар", "шаар токтоп турат"], m: "жүктөлүштү баалоо (модель)", f: "бош", j: "тыгын" },
+  en: {est: "estimate (model)", more: "Details", close: "Close", delay: "delay", street: "Street", t: "Traffic", now: "now", up: "rising", dn: "easing", eq: "steady", s: ["free flow", "mostly free", "some slowdowns", "heavy traffic", "serious jams", "gridlock"], m: "congestion estimate (model)", f: "free", j: "jam" },
+  tr: {est: "tahmin (model)", more: "Ayrıntılar", close: "Kapat", delay: "gecikme", street: "Sokak", t: "Trafik", now: "şimdi", up: "artıyor", dn: "azalıyor", eq: "sabit", s: ["akıcı", "çoğunlukla akıcı", "yer yer yavaş", "yoğun trafik", "ciddi sıkışıklık", "şehir kilit"], m: "yoğunluk tahmini (model)", f: "akıcı", j: "sıkışık" } };
 const TFE = k => (TFE_T[LANG] || TFE_T.ru)[k];
+const tfLvl = sc => TFE("s")[sc <= 2 ? 0 : sc <= 4 ? 1 : sc <= 5 ? 2 : sc <= 7 ? 3 : sc <= 9 ? 4 : 5];
+const tfScoreSeg = c => Math.max(1, Math.min(10, Math.round(1 + 9 * Math.min(1, c / 0.9))));   // балл улицы 1–10 из её загруженности
 const tfScore = m => Math.max(1, Math.min(10, Math.round(1 + 9 * Math.min(1, m / 0.72))));
 const tfW = (k, z) => { const b = TF_MAJOR(k) ? 4 : k === "secondary" ? 3 : k === "tertiary" ? 2.2 : 1.4; return b * (z >= 15 ? 1.5 : z >= 14 ? 1.2 : z <= 12 ? 0.8 : 1); };
 /* задержка (оценка): время по длине при скорости свободного потока × (1/(1−0,75c) − 1) */
 const tfDelay = (r, c) => { const v = r.ms || (TF_MAJOR(r.k) ? 60 : r.k === "secondary" ? 50 : 40); return r.km / v * 60 * (1 / (1 - 0.75 * c) - 1); };
 /* стеклянная карточка «Пробки сейчас»: балл 1–10 из средней загруженности (модель), тренд на следующий час */
 function tfeCard(m, st, h, dt, jams) {
-  let el = m.getContainer().querySelector(".tfe-card");
-  if (!el) { el = L.DomUtil.create("div", "tfe-card", m.getContainer()); L.DomEvent.disableClickPropagation(el); }
+  const host = m._tfeHost || m.getContainer(); let el = host.querySelector(".tfe-card");
+  if (!el) { el = m.getContainer().querySelector(".tfe-card"); if (el) host.appendChild(el); }
+  if (!el) { el = L.DomUtil.create("div", "tfe-card", host); L.DomEvent.disableClickPropagation(el); }
+  el.classList.toggle("tfe-card-in", host !== m.getContainer());
   const R = st.R; if (!R) return; const mean = (hh, d) => { let s = 0, w = 0; R.forEach(r => { if (TF_MINOR(r.k)) return; s += tf3C(r, hh, d) * r.km; w += r.km; }); return w ? s / w : 0; };   // балл — по улично-дорожной сети без жилых проездов
   const v = mean(h, dt), nx = mean((h + 1) % 24, dt), sc = tfScore(v), d = nx - v, tr = d > 0.03 ? ["↑", TFE("up"), "up"] : d < -0.03 ? ["↓", TFE("dn"), "dn"] : ["→", TFE("eq"), "eq"];
-  const lvl = TFE("s")[sc <= 2 ? 0 : sc <= 4 ? 1 : sc <= 5 ? 2 : sc <= 7 ? 3 : sc <= 9 ? 4 : 5];
+  const lvl = tfLvl(sc);
+  m.fire("tfescore", { sc, h, lvl, tr: tr[0], now: st.h == null });
   const grad = TFE_STOPS.map(([c, a]) => `rgb(${a}) ${Math.round(c * 100)}%`).join(",");
   el.innerHTML = `<div class="tfe-top"><span class="tfe-ttl">${TFE("t")} · ${st.h == null ? TFE("now") : String(h).padStart(2, "0") + ":00"}</span></div>
     <div class="tfe-row"><span class="tfe-score" style="--c:${tfCol(Math.min(0.95, v / 0.72 * 0.9))}">${sc}</span><div class="tfe-txt"><b>${esc(lvl)}</b><span class="tfe-tr tfe-${tr[2]}">${tr[0]} ${esc(tr[1])}</span></div></div>
     <div class="tfe-bar" style="background:linear-gradient(90deg,${grad})"></div><div class="tfe-bl"><span>${esc(TFE("f"))}</span><span>${esc(TFE("j"))}</span></div>
     <div class="tfe-m">${esc(TFE("m"))}</div>`;
 }
+/* нажатие на улицу (стиль E): ближайшая улица в радиусе 14 px (на телефоне 22 px), жилые — только с зума 14.
+ * Подсветка всей улицы (по названию), стеклянная подсказка: балл 1–10, статус, тренд на час, задержка — всё оценка модели. */
+function tfeTap(m, st, R) {
+  if (m._tfeTapOff) m._tfeTapOff();
+  const hl = L.layerGroup().addTo(m), mob = () => m.getSize().x < 600 || (typeof IS_MOB !== "undefined" && IS_MOB);
+  let sheet = null;
+  const clear = () => { hl.clearLayers(); if (sheet) { sheet.remove(); sheet = null; } };
+  const segD = (p, a, b) => { const dx = b.x - a.x, dy = b.y - a.y, l = dx * dx + dy * dy; let t = l ? ((p.x - a.x) * dx + (p.y - a.y) * dy) / l : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy); };
+  const onClick = e => {
+    const tgt = e.originalEvent && e.originalEvent.target; if (tgt && tgt.closest && tgt.closest(".tfe-sheet,.leaflet-popup,.fm-panel,.fm-chip,.fm-search,.tfe-card")) return;
+    const p = e.containerPoint, z = m.getZoom(), tol = mob() ? 22 : 14;
+    // датчики/станции поверх — не перехватываем
+    let hitMk = false; m.eachLayer(l => { if (!hitMk && l instanceof L.CircleMarker && !(l instanceof L.Circle) && l.options.interactive !== false && l._latlng && m.latLngToContainerPoint(l._latlng).distanceTo(p) <= (l.options.radius || 6) + 3) hitMk = true; }); if (hitMk) return;
+    const bb = m.getBounds().pad(0.05); let best = null, bd = tol + 1;
+    for (const r of R) { if (TF_MINOR(r.k) && z < 14) continue;
+      for (let i = 1; i < r.p.length; i++) { const a = r.p[i - 1], b = r.p[i]; if (!bb.contains(a) && !bb.contains(b)) continue;
+        const d = segD(p, m.latLngToContainerPoint(a), m.latLngToContainerPoint(b)) - (TF_MAJOR(r.k) ? 2 : 0); if (d < bd) { bd = d; best = r; } } }
+    if (!best) { clear(); m.closePopup(); return; }
+    show(best, e.latlng);
+  };
+  const show = (r, ll) => {
+    clear(); const nd = tf3NowHD(), h = st.h == null ? nd.h : st.h, dt = st.dt == null ? nd.dt : st.dt;
+    const same = r.n ? R.filter(x => x.n === r.n && (TF_MINOR(x.k) === TF_MINOR(r.k))) : [r];
+    const c = tf3C(r, h, dt), c1 = tf3C(r, (h + 1) % 24, dt), sc = tfScoreSeg(c), d = c1 - c, tr = d > 0.03 ? ["↑", TFE("up"), "up"] : d < -0.03 ? ["↓", TFE("dn"), "dn"] : ["→", TFE("eq"), "eq"];
+    const dl = Math.max(0, Math.round(same.reduce((s, x) => s + tfDelay(x, tf3C(x, h, dt)), 0))), col = tfCol(c), z = m.getZoom(), w = tfW(r.k, z) + 2;
+    same.forEach(x => { L.polyline(x.p, { color: "#fff", weight: w + 6, opacity: 0.85, lineCap: "round", lineJoin: "round", interactive: false }).addTo(hl); });
+    same.forEach(x => { L.polyline(x.p, { color: tfCol(tf3C(x, h, dt)), weight: w + 1, opacity: 1, lineCap: "round", lineJoin: "round", interactive: false }).addTo(hl); });
+    const name = r.n || tf2Cls(r.k), hh = String(h).padStart(2, "0") + ":00";
+    const html = `<div class="tfs-pop"><div class="tfs-top"><span class="tfs-score" style="--c:${col}" aria-label="${sc}/10">${sc}</span><div class="tfs-tx"><b>${esc(name)}</b><span>${esc(tfLvl(sc))}</span></div></div>
+      <div class="tfs-row"><span class="tfe-tr tfe-${tr[2]}">${tr[0]} ${esc(tr[1])}</span><span class="tfs-dl${dl >= 1 ? "" : " z"}">${dl >= 1 ? "+" + dl + " " + T2("min") : "≈ 0 " + T2("min")} <small>${esc(TFE("delay"))}</small></span></div>
+      <div class="tfs-m">${esc(TFE("est"))} · ${st.h == null ? TFE("now") + " " : ""}${hh} · ${esc(tf2Cls(r.k))}${r.ln ? " · " + r.ln + " " + esc(T2("pLanes").toLowerCase()) : ""}</div>
+      <details class="tfs-more"><summary>${esc(TFE("more"))}</summary><div class="small">${tf2Pop(r, st.N, st.h, st.dt)}</div></details></div>`;
+    if (mob()) { sheet = L.DomUtil.create("div", "tfe-sheet", m.getContainer()); sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-label", name);
+      sheet.innerHTML = `<button type="button" class="tfs-x" aria-label="${esc(TFE("close"))}">×</button>${html}`; L.DomEvent.disableClickPropagation(sheet); L.DomEvent.disableScrollPropagation(sheet);
+      sheet.querySelector(".tfs-x").onclick = clear; sheet.addEventListener("keydown", ev => { if (ev.key === "Escape") clear(); });
+      requestAnimationFrame(() => sheet && sheet.classList.add("on")); }
+    else L.popup({ className: "tfs-popw", maxWidth: 300, minWidth: 240, autoPanPadding: [40, 40], closeButton: true }).setLatLng(ll).setContent(html).openOn(m).on("remove", () => hl.clearLayers());
+  };
+  m.on("click", onClick); m.getContainer().classList.add("tfe-tap");
+  m._tfeShow = show;
+  m._tfeTapOff = () => { m.off("click", onClick); clear(); m.removeLayer(hl); m.getContainer().classList.remove("tfe-tap"); m._tfeTapOff = null; };
+}
 function tf2Layer(onState, ctl) {
   const lg = L.layerGroup(); let built = false; const st = { h: null, dt: null, N: null, lines: [], mode: "cong", R: null };
   const S = TF_STYLE, RED = typeof RED_MOTION !== "undefined" && RED_MOTION;
-  let svgR = null, caseR = null, glowR = null, minR = null;
+  let svgR = null, caseR = null, glowR = null, minR = null, lineR = null;
   const glowG = L.layerGroup(), caseG = L.layerGroup(), lineG = L.layerGroup(), labG = L.layerGroup(); [caseG, glowG, lineG, labG].forEach(g => g.addTo(lg));
   const colorOf = (r, h, dt) => { if (st.mode === "load") return tf2Col(r.load); if (st.mode === "no2") { const v = tf2Val(st.N, r.d, st.h); return tf2Col(v == null ? null : r.load * v / 25 * (TF3_P[dt][h] / 0.75)); } return tfCol(tf3C(r, h, dt)); };
   let raf = 0; const paint = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { const m = lg._map; if (!m) return; const nd = tf3NowHD(), h = st.h == null ? nd.h : st.h, dt = st.dt == null ? nd.dt : st.dt, z = m.getZoom();
@@ -161,28 +208,29 @@ function tf2Layer(onState, ctl) {
     });
     if (S === "e") tfeCard(m, st, h, dt, jams);
     if ((S === "c" || S === "e") && jams.length) { const by = {}; jams.forEach(j => { const k = j.r.n; if (!by[k]) by[k] = { n: k, dl: 0, c: 0, km: 0, best: j }; by[k].dl += j.dl; by[k].km += j.r.km; by[k].c = Math.max(by[k].c, j.c); if (j.r.km > by[k].best.r.km) by[k].best = j; });
+      if (S === "e") Object.values(by).forEach(g => { g.dl = st.R.filter(x => x.n === g.n && !TF_MINOR(x.k)).reduce((a, x) => a + tfDelay(x, tf3C(x, h, dt)), 0); });   // как в подсказке улицы
       Object.values(by).sort((a, b) => b.dl - a.dl).slice(0, 5).forEach((g, i) => { const r = g.best.r;
         L.marker(r.mid, { interactive: false, keyboard: false, icon: L.divIcon({ className: S === "e" ? "tfe-pill" : "tf-jamlab", iconSize: null, html: S === "e" ? `<span class="tfe-dot" style="background:${tfCol(g.c)}"></span><b>${esc(g.n)}</b><i>+${Math.max(1, Math.round(g.dl))} ${T2("min")}</i>` : `<span class="tf-jl-n">${i + 1}</span><b>${esc(g.n)}</b><i>+${Math.max(1, Math.round(g.dl))} ${T2("min")}</i>` }) }).addTo(labG); }); }
     if (lg.onPaint) lg.onPaint(st); }); };
   lg.setHour = h => { st.h = h; paint(); }; lg.setOnly = v => { st.mode = v ? "load" : "cong"; paint(); }; lg.setMode = m => { st.mode = m; paint(); }; lg.setDay = d => { st.dt = d; paint(); };
   lg.meanAt = (h, dt) => { const R = st.R; if (!R) return null; let s = 0, w = 0; R.forEach(r => { s += tf3C(r, h, dt) * r.km; w += r.km; }); return w ? s / w : null; }; lg.st = st;
   lg.style = S;
-  lg.on("remove", () => { const m = lg._mapRef; if (!m) return; m.off("zoomend", paint); const c = m.getContainer(); c.classList.remove("tfs-" + S); const k = c.querySelector(".tfe-card"); if (k) k.remove(); });
+  lg.on("remove", () => { const m = lg._mapRef; if (!m) return; m.off("zoomend", paint); const c = m.getContainer(); c.classList.remove("tfs-" + S); const k = (m._tfeHost || c).querySelector(".tfe-card") || c.querySelector(".tfe-card"); if (k) k.remove(); if (m._tfeTapOff) m._tfeTapOff(); });
   lg.on("add", async () => { const m = lg._map; lg._mapRef = m; if (m) { m.on("zoomend", paint); m.getContainer().classList.add("tfs-" + S);
       if (!m.getPane("tfCase")) { m.createPane("tfCase").style.zIndex = 396; m.createPane("tfGlow").style.zIndex = 398; m.createPane("tfMinor").style.zIndex = 395; m.getPane("tfGlow").classList.add("tf-glowpane"); m.getPane("tfMinor").classList.add("tf-minorpane"); }
-      caseR = caseR || L.canvas({ pane: "tfCase", padding: 0.3 }); glowR = glowR || L.canvas({ pane: "tfGlow", padding: 0.3 }); minR = minR || L.canvas({ pane: "tfMinor", padding: 0.3 }); if (S === "d") svgR = svgR || L.svg({ padding: 0.3 }); }
+      caseR = caseR || L.canvas({ pane: "tfCase", padding: 0.3 }); glowR = glowR || L.canvas({ pane: "tfGlow", padding: 0.3 }); minR = minR || L.canvas({ pane: "tfMinor", padding: 0.3 }); lineR = lineR || L.canvas({ padding: 0.3 }); if (S === "d") svgR = svgR || L.svg({ padding: 0.3 }); }
     if (built) return; built = true;
     try { const [R, N] = await Promise.all([tf2Roads(), tf2No2().catch(e => { console.warn("no2:", e.message); return null; })]); if (!ftAlive(lg)) { built = false; return; }
       st.N = N; st.R = R; if (ctl) ctl(N);
       if (S === "e") { const cc = R.cc, Rs = R.Rs || 3, cf = p => 0.55 + 0.45 * Math.exp(-tf2Km(p, cc) / Rs);
         R.slice().sort((a, b) => (TF2_W[a.k] || 0) - (TF2_W[b.k] || 0) || a.F - b.F).forEach(r => { const minor = TF_MINOR(r.k), pop = () => tf2Pop(r, st.N, st.h, st.dt);
-          if (minor) { const pl = L.polyline(r.p, { renderer: minR, color: "#9aa", weight: 1.2, opacity: 0.5, lineCap: "round", lineJoin: "round" }).bindPopup(pop, { maxWidth: 260 }); st.lines.push({ pl, r }); return; }
+          if (minor) { const pl = L.polyline(r.p, { renderer: minR, color: "#9aa", weight: 1.2, opacity: 0.5, lineCap: "round", lineJoin: "round", interactive: false }); st.lines.push({ pl, r }); return; }
           const cs = L.polyline(r.p, { renderer: caseR, color: "#06121c", weight: 5, opacity: 0.4, lineCap: "round", lineJoin: "round", interactive: false }); st.lines.push({ pl: L.polyline([], { opacity: 0, interactive: false }), cs, r, part: 1 });
           /* градиент вдоль улицы: кусочки по 3 отрезка, локальный множитель близости к центру (та же модель) */
           const base = cf(r.mid); let first = true;
           for (let i = 0; i < r.p.length - 1; i += 3) { const pp = r.p.slice(i, Math.min(r.p.length, i + 4)), lf = Math.max(0.8, Math.min(1.2, cf(pp[Math.floor(pp.length / 2)]) / base));
-            const pl = L.polyline(pp, { color: "#9aa", weight: 2, opacity: 0.9, lineCap: "round", lineJoin: "round" }).bindPopup(pop, { maxWidth: 260 }); st.lines.push({ pl, r, lf, pp, part: first ? 0 : 1 }); first = false; } });
-        paint(); onState && onState(R.length); return; }
+            const pl = L.polyline(pp, { renderer: lineR, color: "#9aa", weight: 2, opacity: 0.9, lineCap: "round", lineJoin: "round", interactive: false }); st.lines.push({ pl, r, lf, pp, part: first ? 0 : 1 }); first = false; } });
+        tfeTap(m, st, R); paint(); onState && onState(R.length); return; }
       R.slice().sort((a, b) => (TF2_W[a.k] || 0) - (TF2_W[b.k] || 0) || a.F - b.F).forEach(r => { const rr = S === "d" && !TF_MINOR(r.k) ? svgR : undefined;
         const cs = S === "a" ? L.polyline(r.p, { renderer: caseR, color: "#0b1a24", weight: 4, opacity: 0.5, lineCap: "round", lineJoin: "round", interactive: false }) : null;
         const pl = L.polyline(r.p, { renderer: rr, color: "#9aa", weight: 2, opacity: 0.9, lineCap: "round", lineJoin: "round", interactive: true, dashArray: rr ? "7 9" : null })

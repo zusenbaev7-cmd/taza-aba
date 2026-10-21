@@ -5,7 +5,7 @@ const ECO_T = {
   ru: { title: "Эко-маршруты", sub: "Проложите путь, где воздух чище: выберите точки на карте или найдите адрес", from: "Откуда", to: "Куда", stop: "Остановка", add: "Добавить точку", swap: "Поменять местами", me: "Моё местоположение",
     walk: "Пешком", bike: "Велосипед", car: "Авто", hint: "Нажмите на карту: первая точка — «Откуда», вторая — «Куда». Маркеры можно перетаскивать.", build: "Проложить", building: "Прокладываю маршрут…",
     here: "Отсюда", there: "Сюда", via: "Через эту точку", min: "мин", h: "ч", km: "км", m: "м", aqi: "AQI в среднем", dose: "Доза PM2.5", cleanest: "Чище всего", fastest: "Быстрее всего", balanced: "Рекомендуем",
-    cleaner: "чище на {p}%", dirtier: "грязнее на {p}%", same: "по воздуху почти одинаково", nav3d: "3D-навигатор", pick: "Выбрать", best: "Лучшее время сегодня", bestAt: "около {t} — AQI ≈ {a}",
+    cleaner: "чище на {p}%", dirtier: "грязнее на {p}%", same: "по воздуху почти одинаково", nav3d: "3D-навигатор", pick: "Выбрать", bestC: "прогноз модели CAMS с поправкой по датчикам", bestM: "по прогнозу модели CAMS", best: "Лучшее время сегодня", bestAt: "около {t} — AQI ≈ {a}",
     est: "Оценка: качество воздуха по маршруту — из поверхности «Дымка» (модель CAMS + датчики, сглажено между районами); доза = концентрация × дыхание ({v} м³/ч) × время. Не медицинский прибор.",
     eqAir: "Данные о воздухе — по районам, поэтому близкие маршруты получают похожую оценку. Выбирайте удобный.", fail: "Сервис маршрутов не ответил — показываю прямую линию (оценка).", lineEst: "по прямой, оценка",
     ready: "Готовые эко-маршруты", readySub: "Парки, бульвары и набережные — проложим по реальным дорожкам и оценим воздух", go: "Построить", detour: "через {d}", none: "Ничего не найдено", my: "Моё место", mapPt: "Точка на карте",
@@ -13,7 +13,7 @@ const ECO_T = {
   ky: { title: "Эко-маршруттар", sub: "Абасы тазараак жолду түзүңүз: картадан чекит тандаңыз же даректи издеңиз", from: "Кайдан", to: "Кайда", stop: "Аялдама", add: "Чекит кошуу", swap: "Алмаштыруу", me: "Менин жайгашкан жерим",
     walk: "Жөө", bike: "Велосипед", car: "Унаа", hint: "Картаны басыңыз: биринчи чекит — «Кайдан», экинчиси — «Кайда». Белгилерди сүйрөсө болот.", build: "Түзүү", building: "Маршрут түзүлүүдө…",
     here: "Ушул жерден", there: "Ушул жерге", via: "Ушул чекит аркылуу", min: "мүн", h: "саат", km: "км", m: "м", aqi: "Орточо AQI", dose: "PM2.5 дозасы", cleanest: "Эң таза", fastest: "Эң тез", balanced: "Сунуштайбыз",
-    cleaner: "{p}% тазараак", dirtier: "{p}% булганычыраак", same: "аба боюнча дээрлик бирдей", nav3d: "3D-навигатор", pick: "Тандоо", best: "Бүгүн эң жакшы убакыт", bestAt: "болжол менен {t} — AQI ≈ {a}",
+    cleaner: "{p}% тазараак", dirtier: "{p}% булганычыраак", same: "аба боюнча дээрлик бирдей", nav3d: "3D-навигатор", pick: "Тандоо", bestC: "CAMS моделинин божомолу, датчиктер боюнча оңдолгон", bestM: "CAMS моделинин божомолу боюнча", best: "Бүгүн эң жакшы убакыт", bestAt: "болжол менен {t} — AQI ≈ {a}",
     est: "Баалоо: маршруттагы аба — «Дымка» бетинен (CAMS модели + датчиктер); доза = концентрация × дем алуу ({v} м³/саат) × убакыт. Медициналык прибор эмес.",
     eqAir: "Аба маалыматы райондор боюнча, ошондуктан жакын маршруттар окшош бааланат. Ыңгайлуусун тандаңыз.", fail: "Маршрут кызматы жооп берген жок — түз сызык көрсөтүлдү (баалоо).", lineEst: "түз сызык, баалоо",
     ready: "Даяр эко-маршруттар", readySub: "Парктар, бульварлар, жээктер — чыныгы жолдор менен түзүп, абаны баалайбыз", go: "Түзүү", detour: "{d} аркылуу", none: "Эч нерсе табылган жок", my: "Менин жерим", mapPt: "Картадагы чекит",
@@ -21,7 +21,7 @@ const ECO_T = {
   en: { title: "Eco routes", sub: "Plan a path with cleaner air: tap points on the map or search an address", from: "From", to: "To", stop: "Stop", add: "Add stop", swap: "Swap", me: "My location",
     walk: "Walk", bike: "Bike", car: "Car", hint: "Tap the map: first point is “From”, second is “To”. Drag markers to adjust.", build: "Route", building: "Finding routes…",
     here: "From here", there: "To here", via: "Via this point", min: "min", h: "h", km: "km", m: "m", aqi: "Average AQI", dose: "PM2.5 dose", cleanest: "Cleanest", fastest: "Fastest", balanced: "Recommended",
-    cleaner: "{p}% cleaner", dirtier: "{p}% dirtier", same: "about the same air", nav3d: "3D navigator", pick: "Select", best: "Best time today", bestAt: "around {t} — AQI ≈ {a}",
+    cleaner: "{p}% cleaner", dirtier: "{p}% dirtier", same: "about the same air", nav3d: "3D navigator", pick: "Select", bestC: "CAMS model forecast, corrected by sensors", bestM: "per the CAMS model forecast", best: "Best time today", bestAt: "around {t} — AQI ≈ {a}",
     est: "Estimate: air along the route comes from the “Dymka” surface (CAMS model + sensors, smoothed between districts); dose = concentration × breathing ({v} m³/h) × time. Not a medical device.",
     eqAir: "Air data is per district, so nearby routes get similar estimates. Pick the most convenient.", fail: "Routing service didn't respond — showing a straight line (estimate).", lineEst: "straight line, estimate",
     ready: "Ready-made eco routes", readySub: "Parks, boulevards and riversides — routed along real paths with an air estimate", go: "Build", detour: "via {d}", none: "Nothing found", my: "My location", mapPt: "Point on map",
@@ -29,7 +29,7 @@ const ECO_T = {
   tr: { title: "Eko rotalar", sub: "Havası daha temiz bir yol çizin: haritaya dokunun veya adres arayın", from: "Nereden", to: "Nereye", stop: "Durak", add: "Nokta ekle", swap: "Yer değiştir", me: "Konumum",
     walk: "Yürüyüş", bike: "Bisiklet", car: "Araç", hint: "Haritaya dokunun: ilk nokta “Nereden”, ikinci “Nereye”. İşaretçiler sürüklenebilir.", build: "Rota çiz", building: "Rota hesaplanıyor…",
     here: "Buradan", there: "Buraya", via: "Bu noktadan geç", min: "dk", h: "sa", km: "km", m: "m", aqi: "Ortalama AQI", dose: "PM2.5 dozu", cleanest: "En temiz", fastest: "En hızlı", balanced: "Önerilen",
-    cleaner: "%{p} daha temiz", dirtier: "%{p} daha kirli", same: "hava neredeyse aynı", nav3d: "3D navigasyon", pick: "Seç", best: "Bugün en iyi zaman", bestAt: "yaklaşık {t} — AQI ≈ {a}",
+    cleaner: "%{p} daha temiz", dirtier: "%{p} daha kirli", same: "hava neredeyse aynı", nav3d: "3D navigasyon", pick: "Seç", bestC: "sensörlerle düzeltilmiş CAMS model tahmini", bestM: "CAMS model tahminine göre", best: "Bugün en iyi zaman", bestAt: "yaklaşık {t} — AQI ≈ {a}",
     est: "Tahmin: rotadaki hava “Dymka” yüzeyinden (CAMS modeli + sensörler); doz = konsantrasyon × solunum ({v} m³/sa) × süre. Tıbbi cihaz değildir.",
     eqAir: "Hava verisi mahalle bazında; yakın rotalar benzer tahmin alır. En uygununu seçin.", fail: "Rota servisi yanıt vermedi — düz çizgi gösteriliyor (tahmin).", lineEst: "düz çizgi, tahmin",
     ready: "Hazır eko rotalar", readySub: "Parklar, bulvarlar, nehir kenarları — gerçek yollarla çizilir, hava tahminiyle", go: "Çiz", detour: "{d} üzerinden", none: "Sonuç yok", my: "Konumum", mapPt: "Haritadaki nokta",
@@ -81,9 +81,13 @@ function ecoExposure(geom, durS, mode) {
 function ecoBestTime(S) {
   if (typeof nearestDistrict !== "function") return null; const ids = [...new Set(S.filter((_, i) => i % 5 === 0).map(s => nearestDistrict(s.ll[0], s.ll[1]).id))].filter(id => air.byDistrict[id] && air.byDistrict[id].hourly).slice(0, 10);
   if (!ids.length) return null; const r0 = air.byDistrict[ids[0]], T = r0.time || [], now = (r0.currentTime || "").slice(0, 13); let i0 = T.findIndex(x => x.slice(0, 13) >= now); if (i0 < 0) return null;
-  let best = null; for (let i = i0; i < Math.min(T.length, i0 + 24); i++) { const hh = +T[i].slice(11, 13); if (hh < 7 || hh > 21) continue;
-    const vs = ids.map(id => air.byDistrict[id].hourly[i]).filter(x => x != null); if (!vs.length) continue; const m = vs.reduce((a, b) => a + b, 0) / vs.length;
-    if (!best || m < best.a - 0.5) best = { a: Math.round(m), t: T[i].slice(11, 16), day: T[i].slice(0, 10) }; }
+  /* v42: поправка прогноза CAMS по датчикам — тот же коэффициент, что у текущего AQI района (скорректированный / модельный),
+   * к 24 ч упреждения ослабляется вдвое (поправка по датчикам устаревает). Без датчиков — чистый прогноз CAMS (так и подписано). */
+  const K = {}; let corr = false; ids.forEach(id => { const r = air.byDistrict[id], m = r.model && r.model.aqi; let k = 1;
+    if (r.aqi != null && m != null && m >= 5 && r.src && r.src !== "model") k = Math.max(0.4, Math.min(2.5, r.aqi / m)); if (Math.abs(k - 1) > 0.03) corr = true; K[id] = k; });
+  let best = null; for (let i = i0; i < Math.min(T.length, i0 + 24); i++) { const hh = +T[i].slice(11, 13); if (hh < 7 || hh > 21) continue; const lead = i - i0;
+    const vs = ids.map(id => { const v = air.byDistrict[id].hourly[i]; return v == null ? null : v * (1 + (K[id] - 1) * Math.max(0.5, 1 - lead / 48)); }).filter(x => x != null); if (!vs.length) continue; const m = vs.reduce((a, b) => a + b, 0) / vs.length;
+    if (!best || m < best.a - 0.5) best = { a: Math.round(m), t: T[i].slice(11, 16), day: T[i].slice(0, 10), corr }; }
   return best;
 }
 /* прокладка: Valhalla (FOSSGIS) → OSRM (FOSSGIS) → прямая */
@@ -182,7 +186,7 @@ function ecoList(box) {
         ${ecoBar(r.S)}
         <div class="eco-act"><button type="button" class="eco-3d" data-3d="${k}"><svg viewBox="0 0 24 24"><path d="M12 2l8 18-8-4-8 4z"/></svg>${esc(ET("nav3d"))}</button></div></div>`; }).join("")}
     ${same ? `<div class="eco-note">${esc(ET("eqAir"))}</div>` : ""}
-    ${eco.best ? `<div class="eco-card eco-best"><b>🕒 ${esc(ET("best"))}</b><span>${esc(ET("bestAt", { t: eco.best.t, a: eco.best.a }))}</span></div>` : ""}
+    ${eco.best ? `<div class="eco-card eco-best"><b>🕒 ${esc(ET("best"))}</b><span>${esc(ET("bestAt", { t: eco.best.t, a: eco.best.a }))}</span><small class="eco-best-src">${esc(ET(eco.best.corr ? "bestC" : "bestM"))}</small></div>` : ""}
     <div class="eco-note">${esc(ET("est", { v: ECO_V[eco.mode] }))}</div>`;
   box.querySelectorAll(".eco-r").forEach(c => { const go = () => { eco.sel = +c.dataset.k; ecoList(box); ecoDraw(); }; c.onclick = e => { if (!e.target.closest("[data-3d]")) go(); }; c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }; });
   box.querySelectorAll("[data-3d]").forEach(b => b.onclick = () => ecoOpen3d(eco.routes[+b.dataset["3d"]]));

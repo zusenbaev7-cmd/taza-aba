@@ -1,0 +1,94 @@
+/* v41: полноэкранные карты (fullmap.js) */
+html.fm-on,html.fm-on body{overflow:hidden;overscroll-behavior:none}
+.fm-view{animation:none!important;min-height:0}
+.fm-host{position:fixed;top:var(--fm-t,0);left:var(--fm-l,0);right:0;bottom:var(--fm-b,0);z-index:400;background:#dfe3e6}
+html[data-theme=dark] .fm-host{background:#11181e}
+.fm-host>#mapEl,.fm-host>#tfMap{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important;max-height:none!important;min-height:0!important}
+/* стекло */
+.fm-chip,.fm-panel,.fm-search input{background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+  border:1px solid rgba(56,152,214,.28);box-shadow:0 10px 30px rgba(15,34,48,.18),inset 0 1px 0 rgba(255,255,255,.7);color:#0f2230}
+html[data-theme=dark] .fm-chip,html[data-theme=dark] .fm-panel,html[data-theme=dark] .fm-search input{background:rgba(14,24,34,.66);border-color:rgba(125,211,252,.28);color:#eaf6ff;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06)}
+/* пилюля */
+.fm-chip{position:absolute;left:12px;bottom:14px;z-index:1050;display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 7px;border-radius:999px;cursor:pointer;font:600 14px/1.2 Inter,system-ui,sans-serif;max-width:calc(100% - 24px);transition:transform .18s ease,box-shadow .18s ease}
+.fm-chip:hover{transform:translateY(-1px)}
+.fm-chip:focus-visible,.fm-x:focus-visible{outline:3px solid #38bdf8;outline-offset:2px}
+.fm-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7dd3fc,#38bdf8);flex:none}
+.fm-ic svg{width:19px;height:19px;fill:none;stroke:#06263a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fm-cv{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.fm-v{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fm-est{font-size:10.5px;font-weight:600;opacity:.62;letter-spacing:.02em}
+.fm-dot{width:9px;height:9px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+.fm-tr{opacity:.75}
+.fm-car{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;opacity:.6;transition:transform .2s}
+.fm-open .fm-car{transform:rotate(180deg)}
+/* панель */
+.fm-panel{position:absolute;left:12px;bottom:72px;z-index:1100;width:400px;max-width:calc(100% - 24px);max-height:calc(100% - 150px);display:flex;flex-direction:column;border-radius:18px;overflow:hidden;
+  opacity:0;transform:translateY(10px) scale(.98);transform-origin:left bottom;visibility:hidden;pointer-events:none;transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s}
+.fm-panel.open{opacity:1;transform:none;visibility:visible;pointer-events:auto;transition:opacity .22s ease,transform .22s ease,visibility 0s}
+.fm-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 8px 16px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(125,170,200,.2)}
+.fm-x{width:32px;height:32px;border-radius:50%;border:0;background:rgba(56,189,248,.16);color:inherit;display:grid;place-items:center;cursor:pointer}
+.fm-x svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2}
+.fm-pb{overflow:auto;padding:10px 14px 14px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.fm-pb h1{font-size:19px;margin:2px 0 2px}.fm-pb .sub{font-size:12.5px;margin:0 0 8px}
+.fm-pb h2{font-size:16px}
+.fm-pb .map-grid{display:block!important;margin:0}.fm-pb .map-col,.fm-pb .list-col{width:auto!important;max-width:none!important;min-width:0}
+.fm-pb .list-col{margin-top:10px}
+.fm-pb .card{box-shadow:none}
+.fm-pb .foot{font-size:11px;opacity:.7}
+.fm-pb .row.between{flex-wrap:wrap;gap:8px}
+.fm-pb .fm-note{margin:0 0 8px!important;float:none!important}
+.fm-pb .ms-note{max-width:none;box-shadow:none}
+.fm-tfe .tfe-card-in{position:static;width:auto;margin:0 0 10px;box-shadow:none}
+/* поиск района — пилюля */
+.fm-search{position:absolute!important;top:10px;left:58px;z-index:1050;width:min(360px,calc(100% - 290px));margin:0!important}
+.fm-search input{width:100%;border-radius:999px!important;padding:10px 16px 10px 38px!important;font-size:14px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:13px center!important;background-size:17px!important}
+.fm-search ul{border-radius:14px;margin-top:6px}
+/* Leaflet-контролы */
+.fm-host .leaflet-bottom.leaflet-left{display:none}
+.fm-host .bm-ctl{box-shadow:0 6px 18px rgba(15,34,48,.18)}
+@media (max-width:700px){
+  .fm-search{left:10px;right:10px;width:auto}
+  .fm-host .leaflet-top{top:52px}
+  .fm-chip{left:10px;bottom:30px;font-size:13px}
+  .fm-panel{left:8px;right:8px;width:auto;max-width:none;bottom:86px;max-height:calc(100% - 146px);border-radius:18px}
+  .fm-host .tfe-sheet{bottom:26px}
+  .fm-host .leaflet-control-attribution{font-size:9px;line-height:1.3;max-width:calc(100% - 16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+}
+@media (prefers-reduced-motion:reduce){.fm-panel,.fm-panel.open,.fm-chip,.fm-car{transition:none}}
+
+/* нажатие на улицу (traffic2.js tfeTap) */
+.tfe-tap{cursor:pointer}.tfe-tap.leaflet-grab{cursor:pointer}.tfe-tap.leaflet-dragging{cursor:grabbing}
+.tfs-pop{font:13px/1.35 Inter,system-ui,sans-serif;min-width:220px}
+.tfs-top{display:flex;align-items:center;gap:12px}
+.tfs-score{display:grid;place-items:center;width:48px;height:48px;flex:none;border-radius:14px;font:700 26px/1 Inter,system-ui,sans-serif;color:#0b1a24;background:var(--c);box-shadow:0 0 0 3px rgba(125,211,252,.25),0 6px 16px color-mix(in srgb,var(--c) 45%,transparent)}
+.tfs-tx{display:flex;flex-direction:column;gap:2px;min-width:0}.tfs-tx b{font-size:15px;line-height:1.2}.tfs-tx span{opacity:.8;font-weight:600}
+.tfs-row{display:flex;justify-content:space-between;gap:10px;margin:10px 0 6px;font-weight:600}
+.tfs-dl{font-variant-numeric:tabular-nums;color:#ffb08a}.tfs-dl small{font-weight:500;opacity:.7;color:inherit}
+.tfs-m{font-size:11px;opacity:.65;border-top:1px solid rgba(125,211,252,.2);padding-top:6px}
+.tfs-more{margin-top:6px;font-size:12px}.tfs-more summary{cursor:pointer;opacity:.8}.tfs-more .small{margin-top:4px;opacity:.9}
+.tfs-popw .leaflet-popup-content-wrapper{background:rgba(14,24,34,.8);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#eaf6ff;border-radius:16px;border:1px solid rgba(125,211,252,.28);box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.tfs-popw .leaflet-popup-tip{background:rgba(14,24,34,.8)}
+.tfs-popw .leaflet-popup-content{margin:14px 16px}
+.tfs-popw a.leaflet-popup-close-button{color:#cfe6f5}
+.tfs-popw .tfs-more b{color:inherit!important}
+.leaflet-container:not(.map-sat) .tfs-popw .leaflet-popup-content-wrapper,.leaflet-container:not(.map-sat) .tfs-popw .leaflet-popup-tip{background:rgba(255,255,255,.82);color:#0f2230;border-color:rgba(56,152,214,.3);box-shadow:0 12px 32px rgba(15,34,48,.2)}
+.leaflet-container:not(.map-sat) .tfs-popw a.leaflet-popup-close-button{color:#466}
+.leaflet-container:not(.map-sat) .tfs-dl{color:#b4233c}
+html[data-theme=dark] .leaflet-container:not(.map-sat) .tfs-popw .leaflet-popup-content-wrapper,html[data-theme=dark] .leaflet-container:not(.map-sat) .tfs-popw .leaflet-popup-tip{background:rgba(14,24,34,.8);color:#eaf6ff}
+html[data-theme=dark] .leaflet-container:not(.map-sat) .tfs-dl{color:#ffb08a}
+.tfe-sheet{position:absolute;left:8px;right:8px;bottom:8px;z-index:1001;padding:14px 16px 12px;border-radius:18px;background:rgba(14,24,34,.78);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);color:#eaf6ff;
+  border:1px solid rgba(125,211,252,.3);box-shadow:0 14px 34px rgba(0,0,0,.4);transform:translateY(calc(100% + 20px));opacity:0;transition:transform .25s ease,opacity .25s ease;max-height:60%;overflow:auto}
+.tfe-sheet.on{transform:none;opacity:1}
+.leaflet-container:not(.map-sat) .tfe-sheet{background:rgba(255,255,255,.84);color:#0f2230;border-color:rgba(56,152,214,.3)}
+html[data-theme=dark] .leaflet-container:not(.map-sat) .tfe-sheet{background:rgba(14,24,34,.8);color:#eaf6ff}
+.tfs-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(125,211,252,.18);color:inherit;font-size:20px;line-height:1;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.tfe-sheet{transition:none}}
+.tfs-dl.z{color:inherit!important;opacity:.75}
+/* карточка «Пробки сейчас» внутри панели — по теме сайта; пилюли пробок в тёмной теме — тёмные */
+.fm-tfe .tfe-card-in{color:#0f2230;background:rgba(255,255,255,.55);border-color:rgba(56,152,214,.3);-webkit-backdrop-filter:none;backdrop-filter:none}
+.fm-tfe .tfe-card-in .tfe-up{color:#c2581c}.fm-tfe .tfe-card-in .tfe-dn{color:#0369a1}
+html[data-theme=dark] .fm-tfe .tfe-card-in{color:#eaf6ff;background:rgba(14,24,34,.5);border-color:rgba(125,211,252,.28)}
+html[data-theme=dark] .fm-tfe .tfe-card-in .tfe-up{color:#f6a35c}html[data-theme=dark] .fm-tfe .tfe-card-in .tfe-dn{color:#7dd3fc}
+html[data-theme=dark] .leaflet-container:not(.map-sat) .tfe-pill{background:rgba(14,24,34,.66);color:#f1f8ff;border-color:rgba(255,255,255,.14)}
+html[data-theme=dark] .leaflet-container:not(.map-sat) .tfe-pill i{color:#ffb08a}
