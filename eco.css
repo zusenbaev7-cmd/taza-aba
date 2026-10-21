@@ -104,3 +104,23 @@ body > .eco-sug li{color:inherit}
 body > .eco-sug li.on,body > .eco-sug li:hover{background:rgba(74,163,220,.16)}
 body > .eco-sug li.none{color:#7a8a96}
 body > .eco-sug li i.pl{border-color:#4aa3dc}
+/* v45-traffic (прототип): предпочтение маршрута, время отправления, пробки на карточках, легенда пробок */
+.eco-tfp{display:flex;align-items:center;gap:5px 10px;flex-wrap:wrap;margin:0 0 10px}
+.eco-lab{font:800 10.5px/1 Manrope,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);flex:1 0 auto}
+.eco-seg{display:flex;flex:1 0 100%;order:3;gap:3px;padding:3px;border-radius:12px;background:rgba(120,140,160,.12);min-width:0}
+.eco-seg button,.eco-depc{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;background:transparent;padding:7px 5px;border-radius:9px;font:700 12px/1.15 Manrope,system-ui,sans-serif;color:var(--mut);cursor:pointer;min-width:0;text-align:center}
+.eco-seg button i{font-style:normal;font-size:13px}
+.eco-seg button.on,.eco-depc.on{background:var(--card,#fff);color:var(--ink,#1d3b53);box-shadow:0 2px 8px -3px rgba(0,0,0,.25)}
+html[data-theme=dark] .eco-seg button.on,html[data-theme=dark] .eco-depc.on{background:rgba(255,255,255,.12);color:#eaf4fb}
+.eco-depc select{border:0;background:transparent;font:800 12px Manrope,sans-serif;color:inherit;padding:0 2px;cursor:pointer;-webkit-appearance:none;appearance:none}
+html[data-theme=dark] .eco-depc select option{background:#15212c;color:#eaf4fb}
+.eco-dept{font:800 11px Manrope,sans-serif;color:var(--ec,#4aa3dc)}
+.eco-depc{flex:0 0 auto;gap:3px;padding:7px 10px}.eco-depc select{padding-right:12px;background:linear-gradient(45deg,transparent 50%,currentColor 50%) right 4px top 55%/4px 4px no-repeat,linear-gradient(-45deg,transparent 50%,currentColor 50%) right 0 top 55%/4px 4px no-repeat}
+.eco-tfm{display:flex;flex-wrap:wrap;gap:6px 10px;margin:-2px 0 8px;font:600 12px Manrope,sans-serif;color:var(--mut)}
+.eco-tfm .r{color:#c0443d;font-weight:800}html[data-theme=dark] .eco-tfm .r{color:#ff8a80}
+.eco-tfs{display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:999px;background:color-mix(in srgb,var(--tc) 16%,transparent);box-shadow:inset 3px 0 0 var(--tc)}
+.eco-tfs b{color:var(--ink,#1d3b53)}html[data-theme=dark] .eco-tfs b{color:#fff}
+.eco-tfd{font-weight:800;color:#b5651d}html[data-theme=dark] .eco-tfd{color:#ffb547}
+.eco-legend2{bottom:62px}.eco-legend2 i{width:12px}.eco-legend2 i:nth-child(5){border-radius:0;margin-right:0}.eco-legend2 i:nth-child(7){border-radius:0 4px 4px 0}
+.eco-legend2 span{margin:0 6px}.eco-legend2 em{font-style:normal;margin-left:2px;opacity:.85}
+@media (max-width:600px){.eco-seg button,.eco-depc{font-size:11.5px;padding:7px 4px}.eco-legend2 em{display:none}.eco-legend{bottom:54px}.eco-legend2{bottom:88px;top:auto;left:auto;right:12px;padding:4px 6px}.eco-legend2 span{margin:0 4px}.eco-legend2 i{width:9px}}
