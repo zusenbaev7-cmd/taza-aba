@@ -4,6 +4,7 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}
 .ch{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:4px solid var(--sky);background:var(--card)}
 .brand{display:flex;gap:8px;align-items:center;font-weight:800;font-size:20px;color:var(--grn);text-decoration:none}
+.brand{cursor:pointer;border-radius:10px}.brand:hover{opacity:.88}.brand:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
 .cl{display:flex;gap:6px;flex-wrap:wrap}.cl a{padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
 .cl a[aria-current]{background:var(--sky);border-color:var(--sky);color:#06283d;font-weight:700}
 main{max-width:860px;margin:0 auto;padding:18px}

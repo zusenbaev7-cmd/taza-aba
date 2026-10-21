@@ -200,6 +200,7 @@ async function loadAirImpl() {
 
 /* ---------------- Шапка, меню, язык ---------------- */
 const TAB_LABEL = { news: "tab_news", home: "tab_home", map: "tab_map", house: "tab_house", group: "tab_group", advisor: "tab_advisor", more: "tab_more" };
+const HOME_LBL = { ru: "Таза Аба — на главную", ky: "Таза Аба — башкы бетке", en: "Taza Aba — home", tr: "Taza Aba — ana sayfa" };
 function renderChrome() {
   const b = $("#dataBadge");
   if (air.status === "loading") { b.className = "data-badge"; b.textContent = "…"; }
@@ -225,6 +226,7 @@ function renderChrome() {
     else if (k === "trees" && typeof FT === "function") sp.textContent = FT("tr");
   });
   document.querySelectorAll("#langSw button").forEach(x => x.classList.toggle("on", x.dataset.lang === LANG));
+  document.querySelectorAll(".home-link").forEach(a => a.setAttribute("aria-label", HOME_LBL[LANG] || HOME_LBL.ru));
   renderThemeBtn();
   const cs = $("#citySel");
   cs.innerHTML = CITY_ORDER.map(id => `<option value="${id}" ${id === CITY ? "selected" : ""}>${CITIES[id].emoji} ${tr(CITIES[id].short || CITIES[id].name)}</option>`).join("");
@@ -236,8 +238,33 @@ function renderChrome() {
   const tb = $("#tabbar"); if (tb) tb.setAttribute("aria-label", { ru: "Навигация", ky: "Навигация", en: "Navigation", tr: "Gezinme" }[LANG] || "Навигация");
   renderBanner();
 }
-document.querySelectorAll("#langSw button").forEach(x => x.onclick = () => { setLang(x.dataset.lang); renderChrome(); route(true); });
-$("#themeBtn").onclick = () => { cycleTheme(); renderChrome(); route(true); };
+/* v36: смена языка без «вспышки». Раньше route() перезапускал CSS-анимацию .view (opacity 0 → 1 + сдвиг 6px),
+ * и при первом переходе на KG/TR браузер лениво докачивал шрифтовые подмножества (cyrillic-ext / latin-ext) → FOUT.
+ * Теперь: текст перерисовывается на месте без перезапуска анимации, высота фиксируется (нет скачка прокрутки),
+ * мягкий cross-fade 150 мс (отключается при prefers-reduced-motion), шрифты для всех языков подгружаются заранее. */
+function switchLang(l) {
+  if (!l || l === LANG) return;
+  const el = $("#view"), y = scrollY;
+  el.style.minHeight = el.offsetHeight + "px";
+  setLang(l); renderChrome(); route(true, true);
+  if (scrollY !== y) window.scrollTo(0, y);
+  if (!RED_MOTION && el.animate) { try { el.animate([{ opacity: 0.7 }, { opacity: 1 }], { duration: 150, easing: "ease-out" }); } catch (e) { /* без анимации */ } }
+  clearTimeout(switchLang._t); switchLang._t = setTimeout(() => { el.style.minHeight = ""; }, 600);
+}
+document.querySelectorAll("#langSw button").forEach(x => x.onclick = () => switchLang(x.dataset.lang));
+/* логотип → главная (#home, без перезагрузки — работает и на /taza-aba/, и в корне Surge) */
+/* в боковом меню логотип — div role="link" (тег <a> внутри .tabbar подхватил бы стили вкладок) */
+const goHome = e => {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
+  e.preventDefault();
+  if (location.hash && location.hash !== "#home") { location.hash = "#home"; return; }   // hashchange → route() → вверх страницы
+  window.scrollTo({ top: 0, behavior: RED_MOTION ? "auto" : "smooth" });
+};
+document.querySelectorAll(".home-link").forEach(a => { a.addEventListener("click", goHome);
+  if (a.tagName !== "A") a.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") goHome(e); }); });
+/* заранее подгрузить подмножества шрифтов (ң ө ү — cyrillic-ext, ğ ş ı İ — latin-ext), чтобы первый переход на KG/TR не мигал */
+setTimeout(() => { try { if (document.fonts && document.fonts.load) ["Manrope", "Unbounded"].forEach(f => ["700", "800"].forEach(w => document.fonts.load(`${w} 16px ${f}`, "ңөүҢӨҮğşıİçöüĞŞ").catch(() => {}))); } catch (e) {} }, 1200);
+$("#themeBtn").onclick = () => { cycleTheme(); renderChrome(); route(true, true); };
 $("#citySel").onchange = e => switchCity(e.target.value);
 $("#ctrySel").onchange = e => switchCountry(e.target.value);
 function switchCity(id) {
@@ -269,7 +296,7 @@ let map = null;
 const views = { home: viewHome2, map: viewMap, house: viewHouse, group: viewGroup, advisor: el => viewAdvisor2(el), more: viewMore2,
   profile: viewProfile, complaints: el => viewComplaints2(el), routes: el => viewRoutes2(el), news: el => viewNews(el), weather: el => viewNews(el) };
 const TAB_OF = { house: "more", group: "more", profile: "more", complaints: "more", routes: "more", weather: "news", history: "more", schools: "more", cleanair: "more", traffic: "more", trees: "more" };
-function route(keepScroll) {
+function route(keepScroll, soft) {
   const [tab, anchor] = (location.hash || "#home").slice(1).split("/");
   const v = views[tab] ? tab : "home";
   const activeTab = TAB_OF[v] || v;
@@ -283,7 +310,7 @@ function route(keepScroll) {
   if (map) { try { map.stop(); map.off(); map.remove(); } catch (e) { /* карта уже удалена */ } map = null; }
   const el = $("#view");
   const y = window.scrollY;
-  el.style.animation = "none"; el.offsetHeight; el.style.animation = "";
+  if (!soft) { el.style.animation = "none"; el.offsetHeight; el.style.animation = ""; }
   if (air.status === "loading" && (["home", "routes"].includes(v) || (v === "map" && mapMode !== "country"))) {
     el.innerHTML = `<h1>${t("loading")}</h1><p class="sub">${t("loadingSub")}</p><div class="skeleton"></div>`;
     return;

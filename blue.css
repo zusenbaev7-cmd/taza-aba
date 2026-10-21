@@ -76,3 +76,9 @@ html[data-accent="blue"] .mf-cl{background:#1d4f7a}
 /* history.css */
 html[data-accent="blue"] .h-tabs button.on{background:#1d4f7a}
 html[data-accent="blue"] .h-svg .hline{stroke:#1d4f7a}
+
+/* v36: логотип = ссылка на главную */
+.home-link{text-decoration:none;cursor:pointer;border-radius:12px;-webkit-tap-highlight-color:transparent}
+a.brand.home-link{color:inherit}
+.home-link:hover{opacity:.88}
+.home-link:focus-visible{outline:3px solid #38BDF8;outline-offset:3px}
