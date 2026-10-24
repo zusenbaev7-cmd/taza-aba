@@ -2,7 +2,7 @@
  * Данные: Open-Meteo Air Quality (модель CAMS), past_days=92, по координатам выбранного района; сравнение районов — past_days=7.
  * Это модельные значения, не измерения датчиков. Кэш в localStorage с меткой времени (1 ч), при ошибке — честно показываем кэш или ошибку. */
 "use strict";
-const HT = {
+const HIST_T = {   // v49: было HT — конфликт с const HT из hero.js (SyntaxError, #history не открывался)
   ru: { title: "История и статистика", sub: "Как менялся воздух в районе {d}", src: "Модель CAMS (Open-Meteo), а не измерения датчиков · часовые значения US AQI и PM2.5", r24: "24 ч", r7: "7 дней", r30: "30 дней", r90: "90 дней",
     avg: "Средний AQI", min: "Минимум", max: "Максимум", chart24: "AQI по часам за последние 24 ч", chartH: "AQI по часам", chartD: "Средний AQI по дням", cats: "Дни по категориям (средний AQI за сутки)",
     byHour: "В какое время суток хуже (средний AQI по часам 0–23)", byWd: "По дням недели (средний AQI)", peak: "Пик в среднем около {h}:00, чище всего около {l}:00.",
@@ -32,7 +32,7 @@ const HT = {
     loading: "Geçmiş yükleniyor…", err: "Geçmiş yüklenemedi", errSub: "Open-Meteo yanıt vermedi. Biraz sonra tekrar deneyin.", offline: "İnternet yok — bağlantı gelince geçmiş yüklenecek.",
     cached: "{t} tarihli kayıtlı veri", empty: "Bu dönem için veri yok.", retry: "Tekrar dene", wd: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"], back: "← Ana sayfa", noSc: "Sensor.Community sensörleri burada kullanılmıyor: günlük arşivleri telefon için çok ağır." },
 };
-const H = (k, v = {}) => { const x = (HT[LANG] || HT.ru)[k] ?? HT.ru[k] ?? k; return typeof x === "string" ? x.replace(/\{(\w+)\}/g, (m, y) => v[y] ?? m) : x; };
+const H = (k, v = {}) => { const x = (HIST_T[LANG] || HIST_T.ru)[k] ?? HIST_T.ru[k] ?? k; return typeof x === "string" ? x.replace(/\{(\w+)\}/g, (m, y) => v[y] ?? m) : x; };
 const WHO_PM25 = 15, H_TTL = 3600e3;
 const hist = { range: "7", st: {}, inflight: {} };
 const hKey = (kind, id) => `tazaAba.hist.${CITY}.${kind}.${id}`;

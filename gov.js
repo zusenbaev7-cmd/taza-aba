@@ -611,3 +611,32 @@ function gvMyHTML(A) {
     b.onclick = () => { const txt = `${tr(cityObj().name)} — ${GV("myH")} (${Q.per})\n` + Q.yrs.map(r => `${r.y}: PM2.5 ${fmt(r.pm, 1)} ${GV("unit")}, ${GV("myW")}: ${r.w}/${r.n}`).join("\n") + `\n${Q.sum}\n${GV("myNote")}\n${SITE_URL}`;
       (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { b.textContent = "✓ " + GV("myOk"); setTimeout(() => { b.textContent = GV("myCopy"); }, 2000); }).catch(() => {}); }; }).catch(() => {}); };
 })();
+/* v49: строка «те же дни прошлых лет» (из открытого архива, модель CAMS) в памятке A4 (#govbrief) и в кыргызском листе A5 (#govbrief/gazeta). */
+Object.assign(GV_S.ru, { bMy: "Те же дни прошлых лет ({per}): в {y} г. средний PM2.5 {a} мкг/м³ — на {p} % {dir}, чем в среднем за {yy} ({b}). Модель CAMS, центр города; разница зависит и от погоды.",
+  bMySame: "Те же дни прошлых лет ({per}): в {y} г. средний PM2.5 {a} мкг/м³ — примерно как в среднем за {yy} ({b}). Модель CAMS, центр города; разница зависит и от погоды." });
+Object.assign(GV_S.ky, { bMy: "Мурунку жылдардын ушул эле күндөрү ({per}): {y}-жылы орточо PM2.5 {a} мкг/м³ — {yy} ж. орточодон ({b}) {p} % {dir}. CAMS модели, шаардын борбору; айырма аба ырайына да көз каранды.",
+  bMySame: "Мурунку жылдардын ушул эле күндөрү ({per}): {y}-жылы орточо PM2.5 {a} мкг/м³ — болжол менен {yy} ж. орточодой ({b}). CAMS модели, шаардын борбору; айырма аба ырайына да көз каранды." });
+Object.assign(GV_S.en, { bMy: "Same days in earlier years ({per}): mean PM2.5 in {y} was {a} µg/m³, {p}% {dir} than the {yy} average ({b}). CAMS model, city centre; the difference also depends on the weather.",
+  bMySame: "Same days in earlier years ({per}): mean PM2.5 in {y} was {a} µg/m³, about the same as the {yy} average ({b}). CAMS model, city centre; the difference also depends on the weather." });
+Object.assign(GV_S.tr, { bMy: "Önceki yıllarda aynı günler ({per}): {y} yılında ortalama PM2.5 {a} µg/m³; {yy} ortalamasından ({b}) %{p} {dir}. CAMS modeli, şehir merkezi; fark hava koşullarına da bağlıdır.",
+  bMySame: "Önceki yıllarda aynı günler ({per}): {y} yılında ortalama PM2.5 {a} µg/m³; {yy} ortalamasıyla ({b}) hemen hemen aynı. CAMS modeli, şehir merkezi; fark hava koşullarına da bağlıdır." });
+function gvMyLine(A) {
+  const Q = gvMyData(A); if (!Q) return null;
+  const cur = Q.yrs[0], prev = Q.yrs.slice(1), avg = prev.reduce((s, r) => s + r.pm, 0) / prev.length, pc = Math.round(100 * (cur.pm - avg) / avg);
+  const yy = prev.length === 1 ? String(prev[0].y) : `${prev[prev.length - 1].y}–${prev[0].y}`, o = { per: Q.per, y: cur.y, a: fmt(cur.pm, 1), yy, b: fmt(avg, 1) };
+  return Math.abs(pc) < 5 ? GV("bMySame", o) : GV("bMy", Object.assign(o, { p: Math.abs(pc), dir: GV(pc > 0 ? "myUp" : "myDn") }));
+}
+const gvMyLn = {};   // CITY|lang → строка (для текста «Скопировать»)
+(function () { const _r = gvBriefRender, _bt = gvBriefText, _gt = gvGzText;
+  const ins = (s, line, after) => { if (!line) return s; const L = s.split("\n"), i = after ? L.indexOf(after) : -1; L.splice(i >= 0 ? i + 1 : 3, 0, line); return L.join("\n"); };
+  gvBriefText = function (G, B, winLine) { return ins(_bt(G, B, winLine), gvMyLn[CITY + "|" + LANG], winLine); };
+  gvGzText = function (P) { return gvWithLang("ky", () => ins(_gt(P), gvMyLn[CITY + "|ky"], P.winLine)); };   // и подписи «30 күн» всегда на кыргызском (раньше — на языке интерфейса)
+  gvBriefRender = function (el, G) { _r(el, G);
+    const gz = el.classList.contains("v-gazeta"), anchor = el.querySelector(gz ? "#gzWin" : "#gbWin"); if (!anchor) return;
+    const lg = gz ? "ky" : LANG, c = CITY, put = t => { const old = el.querySelector("#gbMy"); if (old) old.remove(); if (!t) return;
+      anchor.insertAdjacentHTML("afterend", `<p class="small gb-my" id="gbMy"${gz ? ' lang="ky"' : ""}>📅 ${esc(t)}</p>`); };
+    const k = c + "|" + lg; if (gvMyLn[k]) return put(gvMyLn[k]);
+    gvArLoad(c).then(A => { if (CITY !== c || !el.isConnected || !el.contains(anchor)) return; let t = null;
+      try { t = gvWithLang(lg, () => gvMyLine(A)); } catch (e) { console.warn("brief same-period:", e.message); }
+      if (t) { gvMyLn[k] = t; put(t); } }).catch(e => console.warn("brief same-period:", e.message)); };
+})();

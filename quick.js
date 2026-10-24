@@ -150,7 +150,7 @@ function lazyView(name, files, ready, run) {
   views[name] = el => {
     if (ready()) return run(el);
     el.innerHTML = `<h1>${Q("lzLoad")}</h1><div class="skeleton"></div>`;
-    withTimeout(lazyLoad(files), 15000).then(() => { if ((location.hash || "").slice(1).split("/")[0] === name) route(true); })
+    withTimeout(lazyLoad(files), 15000).then(() => { if (!ready()) throw new Error("lazy module " + name + " loaded but not ready"); if ((location.hash || "").slice(1).split("/")[0] === name) route(true); })   // v49: без проверки ready() ошибка в модуле давала бесконечный цикл route()
       .catch(e => { console.warn(e.message); if ((location.hash || "").slice(1).split("/")[0] !== name) return;
         el.innerHTML = `<div class="card nodata"><div style="font-size:42px">📦</div><h1>${Q("lzErr")}</h1><button class="btn" id="lzRetry">${Q("retry")}</button></div>`;
         $("#lzRetry").onclick = () => route(true); });
