@@ -139,3 +139,10 @@ html[data-theme="dark"] .gz-t td{border-color:rgba(255,255,255,.1)}
   .v-gazeta .gz-sw,.v-gazeta .gz-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 @media print{.app{padding:0!important;margin:0!important;max-width:none!important}}
+/* v47: тот же период в прошлые годы */
+.gv-my{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+.gv-my h4{margin:0 0 6px;font-size:1rem}
+.gv-my .gv-t td:not(:first-child),.gv-my .gv-t th:not(:first-child){text-align:right}
+.gv-my tr.gv-my-cur td{font-weight:700;background:color-mix(in srgb,var(--accent,#0ea5e9) 12%,transparent)}
+.gv-my .gv-t th{white-space:normal;vertical-align:bottom;font-size:.82rem}.gv-my .gv-t td{white-space:nowrap}
+.gv-my .gv-tw{max-width:640px}

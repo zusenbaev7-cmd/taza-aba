@@ -564,3 +564,50 @@ function gvGzRender(el, G) {
     el.classList.remove("v-gazeta"); _b(el, G);
     const acts = el.querySelector(".gb-sheet .gv-acts"); if (acts && cityObj().country !== "tr") acts.insertAdjacentHTML("beforeend", `<a class="btn ghost" href="#govbrief/gazeta">${GV("gzLink")}</a>`); };
 })();
+/* v47: «Тот же период в прошлые годы» — из открытого архива (те же календарные дни каждого года, модель CAMS). */
+Object.assign(GV_S.ru, { myH: "Тот же период в прошлые годы", mySub: "{per}: средний PM2.5 и число суток выше нормы ВОЗ (15 мкг/м³) за одни и те же календарные дни каждого года.",
+  myY: "Год", myPm: "Средний PM2.5", myW: "Суток > 15", myN: "Суток с данными", mySum: "{y}: {per} — средний PM2.5 {a} мкг/м³, это на {p} % {dir}, чем в среднем за {yy} ({b} мкг/м³).", myUp: "выше", myDn: "ниже", mySame: "{y}: {per} — средний PM2.5 {a} мкг/м³, примерно как в среднем за {yy} ({b} мкг/м³).",
+  myNote: "Модель CAMS, центр города, а не измерения датчиков. Разница между годами зависит и от погоды (ветер, инверсии, температура), поэтому сама по себе не доказывает эффект конкретных мер. Годы, где данных меньше чем за 80 % дней, не показываются.", myCopy: "📋 Скопировать для справки", myOk: "Скопировано",
+  myMon: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"], myPer: "{a}–{b} {m}", myPer1: "{a} {m}" });
+Object.assign(GV_S.ky, { myH: "Мурунку жылдардагы ушул эле мезгил", mySub: "{per}: ар бир жылдын ошол эле календардык күндөрүндөгү орточо PM2.5 жана ДССУ ченеминен (15 мкг/м³) ашкан суткалар.",
+  myY: "Жыл", myPm: "Орточо PM2.5", myW: "Сутка > 15", myN: "Маалыматы бар сутка", mySum: "{y}: {per} — орточо PM2.5 {a} мкг/м³, бул {yy} жылдардагы орточодон ({b} мкг/м³) {p} % {dir}.", myUp: "жогору", myDn: "төмөн", mySame: "{y}: {per} — орточо PM2.5 {a} мкг/м³, болжол менен {yy} жылдардагы орточодой ({b} мкг/м³).",
+  myNote: "CAMS модели, шаардын борбору — датчиктердин өлчөөсү эмес. Жылдардын айырмасы аба ырайына да (шамал, инверсия, температура) көз каранды, ошондуктан өзүнчө белгилүү бир чаранын натыйжасын далилдебейт. Күндөрдүн 80 %дан азы боюнча маалымат бар жылдар көрсөтүлбөйт.", myCopy: "📋 Маалымкат үчүн көчүрүү", myOk: "Көчүрүлдү",
+  myMon: ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"], myPer: "{m} {a}–{b}", myPer1: "{m} {a}" });
+Object.assign(GV_S.en, { myH: "Same period in earlier years", mySub: "{per}: mean PM2.5 and days above the WHO guideline (15 µg/m³) over the same calendar days of each year.",
+  myY: "Year", myPm: "Mean PM2.5", myW: "Days > 15", myN: "Days with data", mySum: "{y}: {per} — mean PM2.5 {a} µg/m³, {p}% {dir} than the {yy} average ({b} µg/m³).", myUp: "higher", myDn: "lower", mySame: "{y}: {per} — mean PM2.5 {a} µg/m³, about the same as the {yy} average ({b} µg/m³).",
+  myNote: "CAMS model, city centre — not sensor measurements. Year-to-year differences also depend on the weather (wind, inversions, temperature), so on their own they do not prove the effect of specific measures. Years with data for fewer than 80% of the days are not shown.", myCopy: "📋 Copy for a report", myOk: "Copied",
+  myMon: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], myPer: "{m} {a}–{b}", myPer1: "{m} {a}" });
+Object.assign(GV_S.tr, { myH: "Önceki yıllarda aynı dönem", mySub: "{per}: her yılın aynı takvim günlerinde ortalama PM2.5 ve DSÖ sınırını (15 µg/m³) aşan gün sayısı.",
+  myY: "Yıl", myPm: "Ortalama PM2.5", myW: "Gün > 15", myN: "Verili gün", mySum: "{y}: {per} — ortalama PM2.5 {a} µg/m³; {yy} ortalamasından ({b} µg/m³) %{p} {dir}.", myUp: "yüksek", myDn: "düşük", mySame: "{y}: {per} — ortalama PM2.5 {a} µg/m³; {yy} ortalamasıyla ({b} µg/m³) hemen hemen aynı.",
+  myNote: "CAMS modeli, şehir merkezi — sensör ölçümü değildir. Yıllar arasındaki fark hava koşullarına da (rüzgâr, inversiyon, sıcaklık) bağlıdır; tek başına belirli bir önlemin etkisini kanıtlamaz. Günlerin %80'inden azı için verisi olan yıllar gösterilmez.", myCopy: "📋 Rapor için kopyala", myOk: "Kopyalandı",
+  myMon: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], myPer: "{a}–{b} {m}", myPer1: "{a} {m}" });
+function gvMyData(A) {
+  const R = A.rows.filter(r => r.pm != null); if (R.length < 30) return null;
+  const last = R[R.length - 1].d; let [Y, M, D] = last.split("-").map(Number);
+  if (D < 7) { M -= 1; if (M < 1) { M = 12; Y -= 1; } D = new Date(Date.UTC(Y, M, 0)).getUTCDate(); }   // в начале месяца — предыдущий полный месяц
+  const mm = String(M).padStart(2, "0"), by = {};
+  for (const r of R) { const [y, m, d] = r.d.split("-").map(Number); if (m === M && d <= D) (by[y] = by[y] || []).push(r.pm); }
+  const yrs = Object.keys(by).map(Number).sort((a, b) => b - a).filter(y => by[y].length >= Math.ceil(D * 0.8))
+    .map(y => { const v = by[y]; return { y, n: v.length, pm: v.reduce((s, x) => s + x, 0) / v.length, w: v.filter(x => x > 15).length }; });
+  if (yrs.length < 2 || yrs[0].y !== Y) return null;
+  const mon = GV("myMon")[M - 1], per = D === 1 ? GV("myPer1", { a: 1, m: mon }) : GV("myPer", { a: 1, b: D, m: mon });
+  const cur = yrs[0], prev = yrs.slice(1), avg = prev.reduce((s, r) => s + r.pm, 0) / prev.length, pc = Math.round(100 * (cur.pm - avg) / avg);
+  const yy = prev.length === 1 ? String(prev[0].y) : `${prev[prev.length - 1].y}–${prev[0].y}`;
+  const sum = Math.abs(pc) < 5 ? GV("mySame", { y: cur.y, per, a: fmt(cur.pm, 1), yy, b: fmt(avg, 1) })
+    : GV("mySum", { y: cur.y, per, a: fmt(cur.pm, 1), yy, b: fmt(avg, 1), p: Math.abs(pc), dir: GV(pc > 0 ? "myUp" : "myDn") });
+  return { yrs, per, sum, mm };
+}
+function gvMyHTML(A) {
+  const Q = gvMyData(A); if (!Q) return "";
+  const rows = Q.yrs.map((r, i) => `<tr${i ? "" : ' class="gv-my-cur"'}><td>${r.y}</td><td><b>${fmt(r.pm, 1)}</b></td><td>${r.w}</td><td>${r.n}</td></tr>`).join("");
+  return `<div class="gv-my"><h4>📅 ${GV("myH")}</h4><p class="small">${esc(GV("mySub", { per: Q.per }))}</p>
+    <div class="gv-tw"><table class="gv-t"><thead><tr><th>${GV("myY")}</th><th>${GV("myPm")}, ${GV("unit")}</th><th>${GV("myW")}</th><th>${GV("myN")}</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p><b>${esc(Q.sum)}</b></p><div class="gv-acts gv-noprint"><button class="btn ghost" id="gvMyCopy" type="button">${GV("myCopy")}</button></div><p class="small muted">${esc(GV("myNote"))}</p></div>`;
+}
+(function () { const _h = gvArHTML, _m = gvArMount;
+  gvArHTML = function (A) { const s = _h(A); let my = ""; try { my = gvMyHTML(A); } catch (e) { console.warn("same-period:", e.message); }
+    return my ? s.replace(/(<\/svg><p class="small muted">[\s\S]*?<\/p>)/, `$1${my}`) : s; };
+  gvArMount = function () { _m(); const c = CITY; gvArLoad(c).then(A => { const b = $("#gvMyCopy"); if (!b || CITY !== c) return; const Q = gvMyData(A); if (!Q) return;
+    b.onclick = () => { const txt = `${tr(cityObj().name)} — ${GV("myH")} (${Q.per})\n` + Q.yrs.map(r => `${r.y}: PM2.5 ${fmt(r.pm, 1)} ${GV("unit")}, ${GV("myW")}: ${r.w}/${r.n}`).join("\n") + `\n${Q.sum}\n${GV("myNote")}\n${SITE_URL}`;
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { b.textContent = "✓ " + GV("myOk"); setTimeout(() => { b.textContent = GV("myCopy"); }, 2000); }).catch(() => {}); }; }).catch(() => {}); };
+})();
