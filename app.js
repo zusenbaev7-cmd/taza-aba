@@ -373,12 +373,12 @@ function baseMode() { const v = localStorage.getItem(BASE_KEY); return v === "sa
 function baseTiles(m) {
   const TO = { keepBuffer: 2, updateWhenIdle: IS_MOB, updateWhenZooming: false };
   const osm = () => window.MS_STYLE && typeof msBaseTile === "function" ? msBaseTile() : L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { ...TO, className: "tl-osm", maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
-  const sat = () => L.tileLayer(ESRI("World_Imagery"), { ...TO, className: "tl-sat", detectRetina: false, maxZoom: 18, maxNativeZoom: 18, attribution: ESRI_ATTR });
+  const sat = () => L.tileLayer(ESRI("World_Imagery"), { ...TO, className: "tl-sat", detectRetina: !LOWEND && (window.devicePixelRatio || 1) > 1.4, maxZoom: 18, maxNativeZoom: 18, attribution: ESRI_ATTR });
   const lab = () => [L.tileLayer(ESRI("Reference/World_Transportation"), { ...TO, className: "tl-sat", maxZoom: 18, opacity: 0.85 }), L.tileLayer(ESRI("Reference/World_Boundaries_and_Places"), { ...TO, className: "tl-sat", maxZoom: 18 })];
   let cur = [];
   const apply = mode => {
     cur.forEach(l => m.removeLayer(l));
-    cur = mode === "osm" ? [osm()] : mode === "sat" ? [sat()] : [sat(), ...lab()];
+    cur = mode === "osm" ? [window.iosBaseLayer ? iosBaseLayer(osm) : osm()] : mode === "sat" ? [sat()] : [sat(), ...(window.iosHybLayer ? [iosHybLayer(() => L.layerGroup(lab()))] : lab())]; /* v44-ios: векторная «Схема»/гибрид, фолбэк — растр */
     cur.forEach(l => l.addTo(m));
     const c = m.getContainer(); c.classList.toggle("map-sat", mode !== "osm");
     c.querySelectorAll(".bm-ctl button").forEach(b => b.setAttribute("aria-pressed", b.dataset.bm === mode));

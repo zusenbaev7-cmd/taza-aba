@@ -197,12 +197,12 @@ function ecoList(box) {
           ${rs.length > 1 && r.vsFast ? `<span class="${r.vsFast > 0 ? "g" : "r"}">${esc(ET(r.vsFast > 0 ? "cleaner" : "dirtier", { p: Math.abs(r.vsFast) }))}</span>` : ""}</div>
         ${ecoTfMeta(r)}
         ${ecoBar(r.S)}
-        <div class="eco-act"><button type="button" class="eco-3d" data-3d="${k}"><svg viewBox="0 0 24 24"><path d="M12 2l8 18-8-4-8 4z"/></svg>${esc(ET("nav3d"))}</button></div></div>`; }).join("")}
+        <div class="eco-act"><button type="button" class="eco-3d" data-3d="${k}"><svg viewBox="0 0 24 24"><path d="M12 2l8 18-8-4-8 4z"/></svg>${esc(ET("nav3d"))}</button><button type="button" class="eco-3d eco-3ds" data-3d="${k}" data-sat="1" style="margin-left:6px"><svg viewBox="0 0 24 24"><path d="M2 16l20-8-8 12-2-5z"/></svg>${esc(ECO_SAT3D[LANG] || ECO_SAT3D.ru)}</button></div></div>`; }).join("")}
     ${same ? `<div class="eco-note">${esc(ET("eqAir"))}</div>` : ""}
     ${eco.best ? `<div class="eco-card eco-best"><b>🕒 ${esc(ET("best"))}</b><span>${esc(ET("bestAt", { t: eco.best.t, a: eco.best.a }))}</span><small class="eco-best-src">${esc(ET(eco.best.corr ? "bestC" : "bestM"))}</small></div>` : ""}
     <div class="eco-note">${esc(ET("est", { v: ECO_V[eco.mode] }))}</div>${eco.tfOk && eco.hd ? `<div class="eco-note">🚦 ${esc(ETT("note", { t: eco.hd.t + (eco.hd.tom ? " " + ETT("tomorrow") : "") }))}</div>` : ""}`;
   box.querySelectorAll(".eco-r").forEach(c => { const go = () => { eco.sel = +c.dataset.k; ecoList(box); ecoDraw(); }; c.onclick = e => { if (!e.target.closest("[data-3d]")) go(); }; c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }; });
-  box.querySelectorAll("[data-3d]").forEach(b => b.onclick = () => ecoOpen3d(eco.routes[+b.dataset["3d"]]));
+  box.querySelectorAll("[data-3d]").forEach(b => b.onclick = () => ecoOpen3d(eco.routes[+b.dataset["3d"]], b.dataset.sat ? { sat: true, fly: true } : null));
 }
 function ecoMarker(i) { const n = eco.pts.length, c = i === 0 ? "a" : i === n - 1 ? "b" : "s";
   return L.divIcon({ className: "", html: `<div class="eco-mk ${c}"><span></span><b>${i === 0 ? "A" : i === n - 1 ? "B" : i}</b></div>`, iconSize: [30, 38], iconAnchor: [15, 36] }); }
@@ -353,7 +353,8 @@ function ecoTfDraw(L0) { const ix = ecoTfIx[CITY], hd = eco.hd; if (!ix || !hd |
 function ecoTfLegend() { if (!ECO_HAS_TF() || typeof tfCol !== "function") return ""; return `<div class="eco-legend eco-legend2"><span>${esc(ETT("free"))}</span>${[0.15, 0.35, 0.5, 0.65, 0.8, 0.92].map(c => `<i style="background:${tfCol(c)}"></i>`).join("")}<span>${esc(ETT("jam"))}</span><em>🚦 ${esc(ETT("leg"))}</em></div>`; }
 for (const l in ECO_TT) if (ECO_T[l]) ECO_T[l].nojam = ECO_TT[l].nojam;
 /* 3D-навигатор — отдельный модуль, грузится только по нажатию */
-function ecoOpen3d(r) { const go = () => window.eco3dOpen && window.eco3dOpen(r, eco.mode);
+const ECO_SAT3D = { ru: "3D-спутник", ky: "3D-спутник", en: "3D satellite", tr: "3D uydu" }; /* v44-sat: облёт маршрута над спутниковым снимком с рельефом */
+function ecoOpen3d(r, o) { const go = () => window.eco3dOpen && window.eco3dOpen(r, eco.mode, o);
   if (window.eco3dOpen) return go(); const s = document.createElement("script"); s.src = "eco3d.js"; s.onload = go; s.onerror = () => toast("3D: load error"); document.head.appendChild(s); }
 if (typeof views !== "undefined") views.routes = el => viewEco(el);
 if (location.hash.startsWith("#routes")) setTimeout(() => { try { route(true); } catch (e) {} }, 0);

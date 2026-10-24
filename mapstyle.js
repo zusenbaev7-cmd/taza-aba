@@ -69,7 +69,7 @@ function msSearchUI(M, focus) {
 function msSmog(M, G, popD) {
   const cont = M.getContainer(); cont.classList.add("ms-on", "ms-a");
   if (!M.getPane("msRef")) { const pn = M.createPane("msRef"); pn.style.zIndex = 450; pn.style.pointerEvents = "none"; }
-  let ref = null; const syncRef = mode => { if (ref) M.removeLayer(ref); ref = mode === "osm" ? msRefTile().addTo(M) : null; }; syncRef(baseMode()); M.on("basemode", e => syncRef(e.mode));
+  let ref = null; const syncRef = mode => { if (ref) M.removeLayer(ref); ref = mode === "osm" ? (window.iosRefLayer ? iosRefLayer(M, msRefTile) : msRefTile()).addTo(M) : null; }; syncRef(baseMode()); M.on("basemode", e => syncRef(e.mode));
   if (M.getSize().x < 600) cont.insertAdjacentHTML("afterend", `<div class="ms-note ms-note-out">${esc(MST("note"))} · ▼ ${esc(MST("lo").toLowerCase())} · ▲ ${esc(MST("hi").toLowerCase())}</div>`);
   else { const note = L.control({ position: "bottomleft" }); note.onAdd = () => { const d = L.DomUtil.create("div", "ms-note"); d.textContent = MST("note"); return d; }; note.addTo(M); }
   /* легенда под картой — та же палитра */

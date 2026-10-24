@@ -1,0 +1,14 @@
+/* v44-ios: векторная «Схема» в стиле iOS + премиальная цветокоррекция спутника */
+.leaflet-container.ios-vec{background:#f4f1ea}
+.leaflet-container.ios-vec.ios-dark,html[data-theme=dark] .leaflet-container.ios-vec{background:#1b211e}
+.leaflet-gl-layer{pointer-events:none}
+.leaflet-gl-layer canvas.tl-vec{filter:none!important;outline:none}
+/* спутник: мягкая «дорогая» цветокоррекция — контраст, насыщенность, лёгкая теплота.
+   Только когда карта без своих фильтров («Дымка» .ms-on, трафик .tfs-*) — без двойной обработки. */
+.leaflet-container:not(.ms-on):not([class*="tfs-"]) .tl-sat{filter:contrast(1.09) saturate(1.16) brightness(1.03) sepia(.07) hue-rotate(-5deg)}
+html[data-theme=dark] .leaflet-container:not(.ms-on):not([class*="tfs-"]) .tl-sat{filter:contrast(1.12) saturate(1.02) brightness(.8) sepia(.06) hue-rotate(-4deg)}
+/* «Дымка» и трафик: подложка-спутник приглушена их собственными фильтрами; тёмная тема — чуть темнее, но не дважды */
+html[data-theme=dark] .ms-on .tl-sat{filter:saturate(.35) brightness(.72)}
+/* гибрид: векторный оверлей (дороги + подписи) — без фильтров */
+.map-sat .leaflet-gl-layer canvas{filter:none!important}
+html.lowend .leaflet-container .tl-sat{filter:none}
